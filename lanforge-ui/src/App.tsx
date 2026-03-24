@@ -48,7 +48,41 @@ import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminPartnersPage from './pages/AdminPartnersPage';
 import AdminCartsPage from './pages/AdminCartsPage';
 import AdminCustomBuildsPage from './pages/AdminCustomBuildsPage';
+import AdminBuildRequestsPage from './pages/AdminBuildRequestsPage';
 import AdminReviewsPage from './pages/AdminReviewsPage';
+import ComingSoonPage from './pages/ComingSoonPage';
+import { useLocation } from 'react-router-dom';
+import api from './utils/api';
+
+const AppContent = ({ children }: { children: React.ReactNode }) => {
+  const [settings, setSettings] = React.useState<any>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const location = useLocation();
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await api.get('/business/public');
+        setSettings(response.data.businessInfo);
+      } catch (error) {
+        console.error('Error fetching settings', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSettings();
+  }, [location.pathname]);
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (settings?.comingSoonMode && !location.pathname.startsWith('/admin')) {
+    return <ComingSoonPage />;
+  }
+
+  return <>{children}</>;
+};
 
 function App() {
   // Initialize Intercom on component mount
@@ -60,7 +94,8 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
+      <AppContent>
+        <div className="App">
         <ScrollToTop />
         <ScrollProgress />
         <Routes>
@@ -254,11 +289,13 @@ function App() {
             <Route path="/admin/partners" element={<AdminPartnersPage />} />
             <Route path="/admin/carts" element={<AdminCartsPage />} />
             <Route path="/admin/custom-builds" element={<AdminCustomBuildsPage />} />
+            <Route path="/admin/build-requests" element={<AdminBuildRequestsPage />} />
             <Route path="/admin/reviews" element={<AdminReviewsPage />} />
             <Route path="/admin/settings" element={<AdminSettingsPage />} />
           </Route>
         </Routes>
-      </div>
+        </div>
+      </AppContent>
     </Router>
   );
 }

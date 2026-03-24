@@ -22,6 +22,8 @@ export interface IBusinessInfo extends Document {
     instagram?: string;
     youtube?: string;
   };
+  comingSoonMode?: boolean;
+  comingSoonDate?: Date;
   updatedAt: Date;
 }
 
@@ -47,7 +49,9 @@ const BusinessInfoSchema = new Schema<IBusinessInfo>(
       twitter: String,
       instagram: String,
       youtube: String,
-    }
+    },
+    comingSoonMode: { type: Boolean, default: false },
+    comingSoonDate: { type: Date }
   },
   { timestamps: true }
 );

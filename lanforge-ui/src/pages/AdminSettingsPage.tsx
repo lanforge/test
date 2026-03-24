@@ -12,7 +12,9 @@ const AdminSettingsPage: React.FC = () => {
     currency: 'USD',
     flatShippingRate: 29.99,
     freeShippingThreshold: 500,
-    socialLinks: { facebook: '', twitter: '', instagram: '', youtube: '' }
+    socialLinks: { facebook: '', twitter: '', instagram: '', youtube: '' },
+    comingSoonMode: false,
+    comingSoonDate: ''
   });
   
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +26,16 @@ const AdminSettingsPage: React.FC = () => {
     try {
       const response = await api.get('/business');
       if (response.data.businessInfo) {
-        setSettings(response.data.businessInfo);
+        // Ensure we properly map boolean properties
+        const bizInfo = response.data.businessInfo;
+        setSettings(prev => ({
+          ...prev,
+          ...bizInfo,
+          // Explicitly map booleans to avoid undefined overriding default state
+          taxEnabled: bizInfo.taxEnabled === true,
+          comingSoonMode: bizInfo.comingSoonMode === true, // Force to true or false
+          comingSoonDate: bizInfo.comingSoonDate || ''
+        }));
       }
     } catch (error) {
       console.error('Failed to fetch business info', error);
@@ -54,7 +65,31 @@ const AdminSettingsPage: React.FC = () => {
     setIsSaving(true);
     setMessage(null);
     try {
-      await api.put('/business', settings);
+      // Ensure specific types and remove empty string objects that might throw errors
+      const payload: Record<string, any> = {
+        ...settings,
+        comingSoonMode: settings.comingSoonMode === true,
+        taxEnabled: settings.taxEnabled === true
+      };
+      
+      // If date is empty string, make it null or undefined
+      if (payload.comingSoonDate === '') {
+        delete payload.comingSoonDate;
+      }
+      
+      const response = await api.put('/business', payload);
+      
+      // Update local state with whatever the server returned to ensure it matches
+      if (response.data && response.data.businessInfo) {
+        setSettings(prev => ({
+          ...prev,
+          ...response.data.businessInfo,
+          taxEnabled: response.data.businessInfo.taxEnabled === true,
+          comingSoonMode: response.data.businessInfo.comingSoonMode === true,
+          comingSoonDate: response.data.businessInfo.comingSoonDate || ''
+        }));
+      }
+      
       setMessage({ type: 'success', text: 'Business info saved successfully.' });
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
@@ -73,8 +108,8 @@ const AdminSettingsPage: React.FC = () => {
     <div className="space-y-6 max-w-4xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Business Information</h1>
-          <p className="text-gray-400 mt-1">Manage global business details</p>
+          <h1 className="text-2xl font-bold text-white">Global Settings</h1>
+          <p className="text-gray-400 mt-1">Manage global business details and store modes</p>
         </div>
         <button 
           onClick={handleSave}
@@ -99,6 +134,49 @@ const AdminSettingsPage: React.FC = () => {
           {message.text}
         </div>
       )}
+
+      {/* Store Modes */}
+      <div className="card overflow-hidden">
+        <div className="p-6 border-b border-gray-800">
+          <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+            <svg className="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>Store Modes</span>
+          </h2>
+        </div>
+        <div className="p-6 space-y-6">
+          <div className="flex flex-col space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="text-sm font-medium text-white">Coming Soon Mode</label>
+                <p className="text-xs text-gray-400">Enable this to lock down the site and only show a coming soon page with a build request form.</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer"
+                  checked={settings.comingSoonMode === true}
+                  onChange={(e) => handleChange('comingSoonMode', e.target.checked)}
+                />
+                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+              </label>
+            </div>
+            
+            {settings.comingSoonMode && (
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Target Launch Date</label>
+                <input
+                  type="datetime-local"
+                  value={settings.comingSoonDate ? new Date(settings.comingSoonDate).toISOString().slice(0, 16) : ''}
+                  onChange={(e) => handleChange('comingSoonDate', e.target.value)}
+                  className="w-full bg-gray-900 border border-gray-700 rounded-lg py-2 px-3 text-white focus:outline-none focus:border-primary-500"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* General Settings */}
       <div className="card overflow-hidden">

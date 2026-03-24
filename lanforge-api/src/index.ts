@@ -39,6 +39,7 @@ import newsletterRoutes from './routes/newsletter';
 import rmaRoutes from './routes/rma';
 import giftCardRoutes from './routes/giftcards';
 import businessRoutes from './routes/business';
+import buildRequestRoutes from './routes/build-requests';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -94,6 +95,35 @@ if (process.env.NODE_ENV === 'development') {
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
+// ── Coming Soon Middleware ──────────────────────────────────────────────────
+app.use(async (req, res, next) => {
+  try {
+    // Only check if it's an API route that isn't admin, auth, settings, or build-requests
+    if (
+      req.path.startsWith('/api/') &&
+      !req.path.startsWith('/api/admin') &&
+      !req.path.startsWith('/api/auth') &&
+      !req.path.startsWith('/api/settings/public') &&
+      !req.path.startsWith('/api/business/public') &&
+      !req.path.startsWith('/api/build-requests') &&
+      !req.path.startsWith('/api/newsletter')
+    ) {
+      const mongoose = require('mongoose');
+      if (mongoose.connection.readyState === 1) {
+        const BusinessInfo = require('./models/BusinessInfo').default;
+        const businessInfo = await BusinessInfo.findOne();
+        if (businessInfo && businessInfo.comingSoonMode === true) {
+          res.status(503).json({ error: 'Service Unavailable - Coming Soon Mode is active' });
+          return;
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error in coming soon middleware:', error);
+  }
+  next();
+});
+
 // ── API Routes ────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
@@ -123,6 +153,7 @@ app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/rma', rmaRoutes);
 app.use('/api/giftcards', giftCardRoutes);
 app.use('/api/business', businessRoutes);
+app.use('/api/build-requests', buildRequestRoutes);
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {

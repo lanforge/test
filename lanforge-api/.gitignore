@@ -3,4 +3,10 @@ dist/
 .env
 .env.example
 uploads/
-*.logsecrets/
+*.log
+secrets/
+out*.txt
+test*.js
+test*.ts
+*output.txt
+fix-db.js

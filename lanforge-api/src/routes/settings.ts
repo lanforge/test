@@ -22,12 +22,6 @@ router.get('/public', async (_req: Request, res: Response): Promise<void> => {
 
     const settings = await Settings.find({ key: { $in: publicKeys } });
     
-    // Convert array of documents to a simple key-value object
-    const settingsMap: Record<string, any> = {};
-    settings.forEach((s) => {
-      settingsMap[s.key] = s.value;
-    });
-
     // Provide safe fallbacks if the database hasn't been seeded yet by the admin
     const defaultPublicSettings = {
       storeName: 'LANForge',
@@ -42,7 +36,16 @@ router.get('/public', async (_req: Request, res: Response): Promise<void> => {
       maintenanceMode: false
     };
 
-    res.json({ settings: { ...defaultPublicSettings, ...settingsMap } });
+    // Since we've migrated to BusinessInfo for settings
+    const BusinessInfo = require('../models/BusinessInfo').default;
+    const businessInfo = await BusinessInfo.findOne();
+
+    res.json({ 
+      settings: { 
+        ...defaultPublicSettings, 
+        ...(businessInfo ? businessInfo.toObject() : {}) 
+      } 
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error retrieving public settings' });
   }

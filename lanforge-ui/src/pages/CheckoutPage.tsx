@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 import '../App.css';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || 'pk_test_TYooMQauvdEDq54NiTphI7jx');
+
+const libraries: ("places")[] = ["places"];
 
 const CheckoutForm: React.FC = () => {
   const [activeSection, setActiveSection] = useState<'shipping' | 'billing' | 'shippingMethod' | 'donation' | 'payment'>('shipping');
@@ -15,9 +18,72 @@ const CheckoutForm: React.FC = () => {
   const [donationOption, setDonationOption] = useState<'none' | 'roundup' | 'fixed' | 'custom'>('none');
   const [customDonation, setCustomDonation] = useState('');
   const [shippingInsurance, setShippingInsurance] = useState(true);
-  const [shippingMethod, setShippingMethod] = useState<'standard' | 'express' | 'overnight'>('standard');
+  
+  const [shippoRates, setShippoRates] = useState<any[]>([]);
+  const [shippingMethod, setShippingMethod] = useState<string>('standard');
+  const [shippingMethodCost, setShippingMethodCost] = useState<number>(49.99);
+  const [isFetchingRates, setIsFetchingRates] = useState(false);
+  
   const [discountCode, setDiscountCode] = useState('');
   const [customDiscountAmount, setCustomDiscountAmount] = useState(0);
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '',
+    libraries: libraries,
+  });
+
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+  const onLoadAutocomplete = (autocomplete: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = autocomplete;
+  };
+
+  const onPlaceChanged = () => {
+    if (autocompleteRef.current !== null) {
+      const place = autocompleteRef.current.getPlace();
+      if (place && place.address_components) {
+        let address1 = '';
+        let locality = '';
+        let administrative_area_level_1 = '';
+        let postal_code = '';
+        let country = 'US';
+
+        for (const component of place.address_components) {
+          const componentType = component.types[0];
+          switch (componentType) {
+            case 'street_number':
+              address1 = `${component.long_name} ${address1}`;
+              break;
+            case 'route':
+              address1 += component.short_name;
+              break;
+            case 'postal_code':
+              postal_code = `${component.long_name}`;
+              break;
+            case 'locality':
+              locality = component.long_name;
+              break;
+            case 'administrative_area_level_1':
+              administrative_area_level_1 = component.short_name;
+              break;
+            case 'country':
+              country = component.short_name;
+              break;
+          }
+        }
+
+        setShippingForm((prev) => ({
+          ...prev,
+          address: address1,
+          city: locality,
+          state: administrative_area_level_1,
+          zip: postal_code,
+          country: country,
+        }));
+      }
+    }
+  };
 
   const [shippingForm, setShippingForm] = useState({
     firstName: '',
@@ -29,7 +95,7 @@ const CheckoutForm: React.FC = () => {
     city: '',
     state: '',
     zip: '',
-    country: 'United States'
+    country: 'US'
   });
 
   const [billingForm, setBillingForm] = useState({
@@ -42,7 +108,7 @@ const CheckoutForm: React.FC = () => {
     city: '',
     state: '',
     zip: '',
-    country: 'United States'
+    country: 'US'
   });
 
   const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -106,12 +172,13 @@ const CheckoutForm: React.FC = () => {
   const calculateSubtotal = () => cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   const calculateTax = () => calculateSubtotal() * 0.08;
   const calculateShipping = () => {
-    switch (shippingMethod) {
-      case 'standard': return 49.99;
-      case 'express': return 79.99;
-      case 'overnight': return 129.99;
-      default: return 49.99;
+    if (shippoRates.length > 0) {
+      const selectedRate = shippoRates.find(r => r.objectId === shippingMethod);
+      if (selectedRate) {
+        return parseFloat(selectedRate.amount);
+      }
     }
+    return shippingMethodCost;
   };
   const calculateInsurance = () => shippingInsurance ? 29.99 : 0;
   const calculateDonation = () => {
@@ -185,6 +252,7 @@ const CheckoutForm: React.FC = () => {
         },
         paymentMethod: 'stripe',
         discountCode: discountCode || undefined,
+        shippingAmount: calculateShipping(),
       };
 
       const res = await fetch(`${process.env.REACT_APP_API_URL}/orders`, {
@@ -212,11 +280,99 @@ const CheckoutForm: React.FC = () => {
     window.location.href = `/order-status${orderId ? `?id=${orderId}` : ''}`;
   };
 
-  const handleSectionComplete = (section: string) => {
+  const fetchShippoRates = async () => {
+    setIsFetchingRates(true);
+    try {
+      const addressTo = {
+        name: `${shippingForm.firstName} ${shippingForm.lastName}`,
+        street1: shippingForm.address,
+        street2: shippingForm.apartment,
+        city: shippingForm.city,
+        state: shippingForm.state,
+        zip: shippingForm.zip,
+        country: shippingForm.country,
+        phone: shippingForm.phone,
+        email: shippingForm.email,
+      };
+
+      const parcels = [
+        {
+          length: '10',
+          width: '15',
+          height: '10',
+          distanceUnit: 'in',
+          weight: '1',
+          massUnit: 'lb',
+        }
+      ];
+
+      const lineItems = cartItems.map(item => ({
+        currency: 'USD',
+        manufacture_country: 'US',
+        quantity: item.quantity,
+        sku: item.id.toString(),
+        title: item.name,
+        total_price: item.price.toString(),
+        weight: '10', // Default weight since it's not stored in cart item currently
+        weight_unit: 'lb'
+      }));
+
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/shipping/rates`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ addressTo, lineItems }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        
+        // Format names to match requirements
+        let formattedRates = (data.rates || []).map((r: any) => {
+          let name = `${r.provider} ${r.servicelevel?.name || ''}`;
+          if (name.includes('UPS Ground Saver') || name.includes('UPS Ground')) name = 'UPS Ground';
+          else if (name.includes('UPS Next Day Air Saver') || name.includes('UPS Next Day')) name = 'UPS Next Day';
+          else if (name.includes('UPS 2nd Day Air') || name.includes('UPS Two Day') || name.includes('UPS Second Day')) name = 'UPS Two Day';
+          return { ...r, displayName: name };
+        });
+
+        // Filter to only include the 3 requested tiers
+        const desiredRates = ['UPS Ground', 'UPS Two Day', 'UPS Next Day'];
+        let filteredRates = formattedRates.filter((r: any) => desiredRates.includes(r.displayName));
+
+        // Sort by price
+        filteredRates.sort((a: any, b: any) => parseFloat(a.amount) - parseFloat(b.amount));
+
+        setShippoRates(filteredRates);
+        if (filteredRates.length > 0) {
+          setShippingMethod(filteredRates[0].objectId);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch rates', error);
+    } finally {
+      setIsFetchingRates(false);
+    }
+  };
+
+  const handleSectionComplete = async (section: string) => {
+    if (section === 'shipping' || (section === 'billing' && useSameAddress) || (section === 'billing' && !useSameAddress)) {
+      // Before moving to shippingMethod, fetch rates
+      if (activeSection === 'shipping' || activeSection === 'billing') {
+        const nextSection = section === 'shipping' ? (useSameAddress ? 'shippingMethod' : 'billing') : 'shippingMethod';
+        if (nextSection === 'shippingMethod') {
+          await fetchShippoRates();
+        }
+      }
+    }
+
     setCompletedSections(prev => new Set(prev).add(section));
     const sections: ('shipping' | 'billing' | 'shippingMethod' | 'donation' | 'payment')[] = ['shipping', 'billing', 'shippingMethod', 'donation', 'payment'];
     const currentIndex = sections.indexOf(activeSection);
-    if (currentIndex < sections.length - 1) {
+    
+    // Custom logic to skip billing if useSameAddress is true and we're completing shipping
+    if (section === 'shipping' && useSameAddress) {
+      setActiveSection('shippingMethod');
+    } else if (currentIndex < sections.length - 1) {
       setActiveSection(sections[currentIndex + 1]);
     }
   };
@@ -272,12 +428,21 @@ const CheckoutForm: React.FC = () => {
                     <div className="form-group"><label>Last Name *</label><input type="text" name="lastName" value={shippingForm.lastName} onChange={handleShippingChange} required /></div>
                     <div className="form-group"><label>Email *</label><input type="email" name="email" value={shippingForm.email} onChange={handleShippingChange} required /></div>
                     <div className="form-group"><label>Phone *</label><input type="tel" name="phone" value={shippingForm.phone} onChange={handleShippingChange} required /></div>
-                    <div className="form-group col-span-2"><label>Address *</label><input type="text" name="address" value={shippingForm.address} onChange={handleShippingChange} required /></div>
+                    <div className="form-group col-span-2">
+                      <label>Address *</label>
+                      {isLoaded ? (
+                        <Autocomplete onLoad={onLoadAutocomplete} onPlaceChanged={onPlaceChanged}>
+                          <input type="text" name="address" value={shippingForm.address} onChange={handleShippingChange} required placeholder="Start typing your address..." style={{ width: '100%' }} />
+                        </Autocomplete>
+                      ) : (
+                        <input type="text" name="address" value={shippingForm.address} onChange={handleShippingChange} required style={{ width: '100%' }} />
+                      )}
+                    </div>
                     <div className="form-group"><label>Apartment, suite, etc.</label><input type="text" name="apartment" value={shippingForm.apartment} onChange={handleShippingChange} /></div>
                     <div className="form-group"><label>City *</label><input type="text" name="city" value={shippingForm.city} onChange={handleShippingChange} required /></div>
                     <div className="form-group"><label>State *</label><input type="text" name="state" value={shippingForm.state} onChange={handleShippingChange} required /></div>
                     <div className="form-group"><label>ZIP Code *</label><input type="text" name="zip" value={shippingForm.zip} onChange={handleShippingChange} required /></div>
-                    <div className="form-group"><label>Country *</label><select name="country" value={shippingForm.country} onChange={handleShippingChange} required><option value="United States">United States</option></select></div>
+                    <div className="form-group"><label>Country *</label><select name="country" value={shippingForm.country} onChange={handleShippingChange} required><option value="US">United States</option><option value="CA">Canada</option></select></div>
                   </div>
                 </motion.div>
               )}
@@ -298,12 +463,12 @@ const CheckoutForm: React.FC = () => {
                       <div className="form-group"><label>Last Name *</label><input type="text" name="lastName" value={billingForm.lastName} onChange={handleBillingChange} required /></div>
                       <div className="form-group"><label>Email *</label><input type="email" name="email" value={billingForm.email} onChange={handleBillingChange} required /></div>
                       <div className="form-group"><label>Phone *</label><input type="tel" name="phone" value={billingForm.phone} onChange={handleBillingChange} required /></div>
-                      <div className="form-group col-span-2"><label>Address *</label><input type="text" name="address" value={billingForm.address} onChange={handleBillingChange} required /></div>
+                      <div className="form-group col-span-2"><label>Address *</label><input type="text" name="address" value={billingForm.address} onChange={handleBillingChange} required style={{ width: '100%' }} /></div>
                       <div className="form-group"><label>Apartment, suite, etc.</label><input type="text" name="apartment" value={billingForm.apartment} onChange={handleBillingChange} /></div>
                       <div className="form-group"><label>City *</label><input type="text" name="city" value={billingForm.city} onChange={handleBillingChange} required /></div>
                       <div className="form-group"><label>State *</label><input type="text" name="state" value={billingForm.state} onChange={handleBillingChange} required /></div>
                       <div className="form-group"><label>ZIP Code *</label><input type="text" name="zip" value={billingForm.zip} onChange={handleBillingChange} required /></div>
-                      <div className="form-group"><label>Country *</label><select name="country" value={billingForm.country} onChange={handleBillingChange} required><option value="United States">United States</option></select></div>
+                      <div className="form-group"><label>Country *</label><select name="country" value={billingForm.country} onChange={handleBillingChange} required><option value="US">United States</option><option value="CA">Canada</option></select></div>
                     </div>
                   )}
                 </motion.div>
@@ -315,29 +480,59 @@ const CheckoutForm: React.FC = () => {
                     <h2>Shipping Method</h2>
                     <button type="button" className="btn btn-outline btn-small" onClick={() => handleSectionComplete('shippingMethod')}>Continue</button>
                   </div>
-                  <div className="shipping-options">
-                    <label className={`shipping-option ${shippingMethod === 'standard' ? 'selected' : ''}`}>
-                      <input type="radio" name="shippingMethod" value="standard" checked={shippingMethod === 'standard'} onChange={(e) => setShippingMethod(e.target.value as any)} />
-                      <div className="option-content">
-                        <div className="option-header"><span className="option-title">Standard Shipping</span><span className="option-price">${calculateShipping().toFixed(2)}</span></div>
-                        <p className="option-description">5-7 business days</p>
-                      </div>
-                    </label>
-                    <label className={`shipping-option ${shippingMethod === 'express' ? 'selected' : ''}`}>
-                      <input type="radio" name="shippingMethod" value="express" checked={shippingMethod === 'express'} onChange={(e) => setShippingMethod(e.target.value as any)} />
-                      <div className="option-content">
-                        <div className="option-header"><span className="option-title">Express Shipping</span><span className="option-price">$79.99</span></div>
-                        <p className="option-description">2-3 business days</p>
-                      </div>
-                    </label>
-                    <label className={`shipping-option ${shippingMethod === 'overnight' ? 'selected' : ''}`}>
-                      <input type="radio" name="shippingMethod" value="overnight" checked={shippingMethod === 'overnight'} onChange={(e) => setShippingMethod(e.target.value as any)} />
-                      <div className="option-content">
-                        <div className="option-header"><span className="option-title">Overnight Shipping</span><span className="option-price">$129.99</span></div>
-                        <p className="option-description">Next business day</p>
-                      </div>
-                    </label>
-                  </div>
+                  {isFetchingRates ? (
+                    <div className="py-8 flex flex-col items-center justify-center">
+                      <div className="w-10 h-10 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4"></div>
+                      <p className="text-gray-400">Calculating real-time shipping rates...</p>
+                    </div>
+                  ) : (
+                    <div className="shipping-options">
+                      {shippoRates.length > 0 ? (
+                        shippoRates.map((rate) => (
+                          <label key={rate.objectId} className={`shipping-option ${shippingMethod === rate.objectId ? 'selected' : ''}`}>
+                            <input 
+                              type="radio" 
+                              name="shippingMethod" 
+                              value={rate.objectId} 
+                              checked={shippingMethod === rate.objectId} 
+                              onChange={(e) => setShippingMethod(e.target.value)} 
+                            />
+                            <div className="option-content">
+                              <div className="option-header">
+                                <span className="option-title">{rate.displayName || `${rate.provider} ${rate.servicelevel?.name}`}</span>
+                                <span className="option-price">${parseFloat(rate.amount).toFixed(2)}</span>
+                              </div>
+                              <p className="option-description">Estimated delivery: {rate.estimatedDays || '3-5'} days</p>
+                            </div>
+                          </label>
+                        ))
+                      ) : (
+                        <>
+                          <label className={`shipping-option ${shippingMethod === 'standard' ? 'selected' : ''}`}>
+                            <input type="radio" name="shippingMethod" value="standard" checked={shippingMethod === 'standard'} onChange={(e) => { setShippingMethod(e.target.value); setShippingMethodCost(49.99); }} />
+                            <div className="option-content">
+                              <div className="option-header"><span className="option-title">Standard Shipping</span><span className="option-price">$49.99</span></div>
+                              <p className="option-description">5-7 business days</p>
+                            </div>
+                          </label>
+                          <label className={`shipping-option ${shippingMethod === 'express' ? 'selected' : ''}`}>
+                            <input type="radio" name="shippingMethod" value="express" checked={shippingMethod === 'express'} onChange={(e) => { setShippingMethod(e.target.value); setShippingMethodCost(79.99); }} />
+                            <div className="option-content">
+                              <div className="option-header"><span className="option-title">Express Shipping</span><span className="option-price">$79.99</span></div>
+                              <p className="option-description">2-3 business days</p>
+                            </div>
+                          </label>
+                          <label className={`shipping-option ${shippingMethod === 'overnight' ? 'selected' : ''}`}>
+                            <input type="radio" name="shippingMethod" value="overnight" checked={shippingMethod === 'overnight'} onChange={(e) => { setShippingMethod(e.target.value); setShippingMethodCost(129.99); }} />
+                            <div className="option-content">
+                              <div className="option-header"><span className="option-title">Overnight Shipping</span><span className="option-price">$129.99</span></div>
+                              <p className="option-description">Next business day</p>
+                            </div>
+                          </label>
+                        </>
+                      )}
+                    </div>
+                  )}
                   <label className="checkbox-label insurance-checkbox">
                     <input type="checkbox" checked={shippingInsurance} onChange={(e) => setShippingInsurance(e.target.checked)} />
                     <div><span className="checkbox-title">Add Shipping Insurance</span><span className="checkbox-price">+ $29.99</span><p className="checkbox-description">Protect your order during shipping</p></div>

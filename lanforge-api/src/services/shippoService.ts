@@ -8,10 +8,36 @@ export const createShipment = async (addressFrom: any, addressTo: any, parcels: 
       addressFrom: addressFrom,
       addressTo: addressTo,
       parcels: parcels,
+      carrierAccounts: ['f5af2b1f4fe54476b103493f3e76c27b'],
       async: false,
     });
   } catch (error: any) {
     throw new Error(`Failed to create shipment: ${error.message}`);
+  }
+};
+
+export const getLiveRates = async (addressTo: any, lineItems: any[]) => {
+  try {
+    const response = await fetch('https://api.goshippo.com/live-rates', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `ShippoToken ${process.env.SHIPPO_API_TOKEN}`
+      },
+      body: JSON.stringify({
+        address_to: addressTo,
+        line_items: lineItems
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      throw new Error(`Shippo Live Rates Error: ${errorData}`);
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    throw new Error(`Failed to fetch live rates: ${error.message}`);
   }
 };
 

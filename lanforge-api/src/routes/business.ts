@@ -36,29 +36,34 @@ router.put(
   '/',
   protect,
   staffOrAdmin,
-  [
-    body('storeName').optional().isString(),
-    body('email').optional().isEmail(),
-    body('phone').optional().isString(),
-    body('taxRate').optional().isNumeric(),
-  ],
   async (req: AuthRequest, res: Response): Promise<void> => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
-
     try {
       let businessInfo = await BusinessInfo.findOne();
-      if (!businessInfo) {
-        businessInfo = await BusinessInfo.create(req.body);
-      } else {
-        businessInfo = await BusinessInfo.findOneAndUpdate({}, req.body, { new: true, runValidators: true });
+      
+      const updateData = { ...req.body };
+      
+      if (updateData.comingSoonDate === '') {
+        updateData.comingSoonDate = null;
       }
       
+      if (!businessInfo) {
+        businessInfo = await BusinessInfo.create(updateData);
+      } else {
+        // Force the schema fields into the document by using set
+        businessInfo.set(updateData);
+        // Specifically force the fields to avoid mongoose filtering
+        if (req.body.comingSoonMode !== undefined) {
+          businessInfo.comingSoonMode = req.body.comingSoonMode;
+        }
+        if (req.body.comingSoonDate !== undefined) {
+          businessInfo.comingSoonDate = req.body.comingSoonDate || null;
+        }
+        await businessInfo.save();
+      }
+
       res.json({ message: 'Business info updated successfully', businessInfo });
     } catch (error) {
+      console.error(error);
       res.status(500).json({ message: 'Server error updating business info' });
     }
   }

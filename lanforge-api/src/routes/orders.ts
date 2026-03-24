@@ -31,7 +31,7 @@ router.post(
     }
 
     try {
-      const { items, shippingAddress, billingAddress, paymentMethod, discountCode, creatorCode, customerId } = req.body;
+      const { items, shippingAddress, billingAddress, paymentMethod, discountCode, creatorCode, customerId, shippingAmount } = req.body;
 
       // Validate items and calculate subtotal
       let subtotal = 0;
@@ -119,9 +119,7 @@ router.post(
       }
 
       // Shipping
-      const FREE_SHIPPING_THRESHOLD = 500;
-      const FLAT_RATE = 29.99;
-      const shipping = subtotal - discount >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_RATE;
+      const shipping = typeof shippingAmount === 'number' ? shippingAmount : 29.99;
 
       // Tax (8%)
       const TAX_RATE = 0.08;
