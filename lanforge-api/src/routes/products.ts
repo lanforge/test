@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
+import mongoose from 'mongoose';
 import Product from '../models/Product';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
@@ -42,7 +43,7 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     const [products, total] = await Promise.all([
       Product.find(filter)
         .select('-cost -reserved -reorderPoint -reorderQty -location')
-        .populate('parts', 'name type brand')
+        .populate('parts', 'name type brand partModel')
         .sort(sortObj)
         .skip(skip)
         .limit(limit),
@@ -60,7 +61,7 @@ router.get('/featured', async (_req: Request, res: Response): Promise<void> => {
   try {
     let products = await Product.find({ isActive: true, isFeatured: true })
       .select('-cost -reserved -reorderPoint -reorderQty -location')
-      .populate('parts', 'name type brand')
+      .populate('parts', 'name type brand partModel')
       .sort({ 'ratings.average': -1 })
       .limit(12);
       
@@ -68,7 +69,7 @@ router.get('/featured', async (_req: Request, res: Response): Promise<void> => {
     if (products.length === 0) {
       products = await Product.find({ isActive: true })
         .select('-cost -reserved -reorderPoint -reorderQty -location')
-        .populate('parts', 'name type brand')
+        .populate('parts', 'name type brand partModel')
         .sort({ createdAt: -1 })
         .limit(12);
     }
@@ -114,7 +115,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       isActive: true,
     })
       .select('-cost -reserved -reorderPoint -reorderQty -location')
-      .populate('parts', 'name type brand');
+      .populate('parts', 'name type brand partModel');
 
     if (!product) {
       res.status(404).json({ message: 'Product not found' });
@@ -256,6 +257,40 @@ router.post('/bulk/delete', protect, staffOrAdmin, async (req: AuthRequest, res:
     res.json({ message: `Deactivated ${ids.length} products` });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /api/products/recalculate — admin/staff
+router.post('/recalculate', protect, staffOrAdmin, async (_req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const Settings = mongoose.model('Settings');
+    const markupSetting = await Settings.findOne({ key: 'productMarkupPercentage' });
+    const markupPercentage = markupSetting && typeof markupSetting.value === 'number' ? markupSetting.value : 20;
+    const markupMultiplier = 1 + (markupPercentage / 100);
+
+    const products = await Product.find({}).populate('parts');
+    
+    let updatedCount = 0;
+    for (const product of products) {
+      // Just use the existing cost as truth
+      // (which is explicitly set from Admin > Add/Edit Product or imported as a flat number)
+      
+      const calculatedPrice = product.cost * markupMultiplier;
+      
+      // Round up to nearest 49.99 or 99.99
+      const cents = Math.round(calculatedPrice * 100);
+      const roundingUnit = 5000; // $50.00 in cents
+      const chunks = Math.ceil((cents + 1) / roundingUnit);
+      product.price = (chunks * roundingUnit - 1) / 100;
+
+      await product.save();
+      updatedCount++;
+    }
+
+    res.json({ message: `Successfully recalculated ${updatedCount} products with a ${markupPercentage}% markup.` });
+  } catch (error) {
+    console.error('Error recalculating products:', error);
+    res.status(500).json({ message: 'Server error recalculating products' });
   }
 });
 

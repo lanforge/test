@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLaptop, faEnvelope, faCartShopping, faGear, faTruckFast } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 
 const ContactPage: React.FC = () => {
@@ -43,7 +45,7 @@ const ContactPage: React.FC = () => {
                   {/* Email */}
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-xl">
-                      📧
+                      <FontAwesomeIcon icon={faEnvelope} />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-2">Email Support</h3>
@@ -59,7 +61,7 @@ const ContactPage: React.FC = () => {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-2">Live Chat</h3>
-                      <p className="text-white mb-1">Available via Intercom widget</p>
+                      <p className="text-white mb-1">Available via Live Chat widget</p>
                       <p className="text-gray-400 text-sm">Bottom right corner of every page</p>
                     </div>
                   </div>
@@ -95,7 +97,7 @@ const ContactPage: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-white mb-2">What's your return policy?</h4>
-                    <p className="text-gray-400">30-day return policy for unopened items. See our full policy <a href="/shipping" className="text-emerald-400 hover:text-emerald-300">here</a>.</p>
+                    <p className="text-gray-400">14-day return policy for unopened items. See our full policy <a href="/shipping" className="text-emerald-400 hover:text-emerald-300">here</a>.</p>
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-white mb-2">Do you offer international shipping?</h4>
@@ -135,7 +137,7 @@ const ContactPage: React.FC = () => {
                         </svg>
                       </div>
                       <p className="text-gray-300">
-                        Click the <strong className="text-white">Intercom chat widget</strong> in the 
+                        Click the <strong className="text-white">Live chat widget</strong> in the 
                         <strong className="text-white"> bottom right corner</strong> of your screen
                       </p>
                     </div>
@@ -179,8 +181,8 @@ const ContactPage: React.FC = () => {
 
                   <div className="mt-8 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
                     <p className="text-blue-400 text-sm">
-                      <strong>Note:</strong> The Intercom chat widget is available on every page of our website. 
-                      Just look for the blue chat bubble in the bottom right corner!
+                      <strong>Note:</strong> The Live chat widget is available on every page of our website.
+                      Just look for the chat bubble in the bottom right corner!
                     </p>
                   </div>
                 </div>
@@ -191,22 +193,22 @@ const ContactPage: React.FC = () => {
                 <h3 className="text-xl font-bold text-white mb-6">Support Categories</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
-                    <div className="text-lg mb-2">🛒</div>
+                    <div className="text-lg mb-2"><FontAwesomeIcon icon={faCartShopping} /></div>
                     <h4 className="font-semibold text-white mb-1">Order Support</h4>
                     <p className="text-gray-400 text-sm">Tracking, returns, and order questions</p>
                   </div>
                   <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
-                    <div className="text-lg mb-2">⚙️</div>
+                    <div className="text-lg mb-2"><FontAwesomeIcon icon={faGear} /></div>
                     <h4 className="font-semibold text-white mb-1">Technical Support</h4>
                     <p className="text-gray-400 text-sm">Setup, troubleshooting, and repairs</p>
                   </div>
                   <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
-                    <div className="text-lg mb-2">💻</div>
+                    <div className="text-lg mb-2"><FontAwesomeIcon icon={faLaptop} /></div>
                     <h4 className="font-semibold text-white mb-1">Product Questions</h4>
                     <p className="text-gray-400 text-sm">Specifications and compatibility</p>
                   </div>
                   <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
-                    <div className="text-lg mb-2">🚚</div>
+                    <div className="text-lg mb-2"><FontAwesomeIcon icon={faTruckFast} /></div>
                     <h4 className="font-semibold text-white mb-1">Shipping & Delivery</h4>
                     <p className="text-gray-400 text-sm">Shipping options and delivery times</p>
                   </div>

@@ -47,6 +47,14 @@ router.post(
         notes,
       });
 
+      // Send notification
+      try {
+        const { sendNotification } = await import('../services/notificationService');
+        await sendNotification(`New RMA Request (${rmaNumber}) for Order ${orderNumber}\nEmail: ${email}\nNotes: ${notes || 'None'}`);
+      } catch (notifErr) {
+        console.error('Failed to send notification:', notifErr);
+      }
+
       res.status(201).json({ message: 'RMA Requested Successfully', rmaNumber });
     } catch (error) {
       res.status(500).json({ message: 'Server error' });

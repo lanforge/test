@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { PageStatusContext } from '../App';
 
 const Header: React.FC = () => {
+  const disabledPages = useContext(PageStatusContext);
+  const isEnabled = (path: string) => !disabledPages.some(p => p === path || (p !== '/' && path.startsWith(`${p}/`)));
+
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
   const [partnersDropdownOpen, setPartnersDropdownOpen] = useState(false);
   const [supportDropdownOpen, setSupportDropdownOpen] = useState(false);
@@ -21,7 +25,7 @@ const Header: React.FC = () => {
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
               <img 
-                src="https://lanforge.co/cdn/shop/files/logo2.png?height=120&v=1763939118" 
+                src="/logo-2.png" 
                 alt="LANForge" 
                 className="h-12 w-auto transition-transform duration-300 group-hover:scale-105"
               />
@@ -31,15 +35,18 @@ const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
-            <Link 
-              to="/" 
-              className="text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium relative group"
-            >
-              Home
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-neon group-hover:w-full transition-all duration-300" />
-            </Link>
+            {isEnabled('/') && (
+              <Link 
+                to="/" 
+                className="text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium relative group"
+              >
+                Home
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-neon group-hover:w-full transition-all duration-300" />
+              </Link>
+            )}
             
             {/* Products Dropdown */}
+            {(isEnabled('/pcs') || isEnabled('/configurator') || isEnabled('/accessories')) && (
             <div 
               className="relative"
               onMouseEnter={() => setProductsDropdownOpen(true)}
@@ -65,37 +72,47 @@ const Header: React.FC = () => {
                 onMouseEnter={() => setProductsDropdownOpen(true)}
                 onMouseLeave={() => setProductsDropdownOpen(false)}
               >
-                <Link to="/pcs" className="dropdown-item">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                  </svg>
-                  PCs
-                </Link>
-                <Link to="/configurator" className="dropdown-item">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  Custom PC
-                </Link>
-                <Link to="/accessories" className="dropdown-item">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                  </svg>
-                  Accessories
-                </Link>
+                {isEnabled('/pcs') && (
+                  <Link to="/pcs" className="dropdown-item">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    </svg>
+                    PCs
+                  </Link>
+                )}
+                {isEnabled('/configurator') && (
+                  <Link to="/configurator" className="dropdown-item">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Custom PC
+                  </Link>
+                )}
+                {isEnabled('/accessories') && (
+                  <Link to="/accessories" className="dropdown-item">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                    Accessories
+                  </Link>
+                )}
               </div>
             </div>
+            )}
 
-            <Link 
-              to="/configurator" 
-              className="text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium relative group"
-            >
-              Configurator
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-neon group-hover:w-full transition-all duration-300" />
-            </Link>
+            {isEnabled('/configurator') && (
+              <Link 
+                to="/configurator" 
+                className="text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium relative group"
+              >
+                Configurator
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-neon group-hover:w-full transition-all duration-300" />
+              </Link>
+            )}
 
             {/* Partners Dropdown */}
+            {(isEnabled('/partners') || isEnabled('/press') || isEnabled('/affiliate-application')) && (
             <div 
               className="relative"
               onMouseEnter={() => setPartnersDropdownOpen(true)}
@@ -121,28 +138,36 @@ const Header: React.FC = () => {
                 onMouseEnter={() => setPartnersDropdownOpen(true)}
                 onMouseLeave={() => setPartnersDropdownOpen(false)}
               >
-                <Link to="/partners" className="dropdown-item">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                  Our Partners
-                </Link>
-                <Link to="/press" className="dropdown-item">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                  </svg>
-                  Press & Media
-                </Link>
-                <Link to="/affiliate-application" className="dropdown-item">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Affiliate Application
-                </Link>
+                {isEnabled('/partners') && (
+                  <Link to="/partners" className="dropdown-item">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Our Partners
+                  </Link>
+                )}
+                {isEnabled('/press') && (
+                  <Link to="/press" className="dropdown-item">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                    </svg>
+                    Press & Media
+                  </Link>
+                )}
+                {isEnabled('/affiliate-application') && (
+                  <Link to="/affiliate-application" className="dropdown-item">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Affiliate Application
+                  </Link>
+                )}
               </div>
             </div>
+            )}
 
             {/* Support Dropdown */}
+            {(isEnabled('/contact') || isEnabled('/tech-support') || isEnabled('/pc-services')) && (
             <div 
               className="relative"
               onMouseEnter={() => setSupportDropdownOpen(true)}
@@ -168,45 +193,57 @@ const Header: React.FC = () => {
                 onMouseEnter={() => setSupportDropdownOpen(true)}
                 onMouseLeave={() => setSupportDropdownOpen(false)}
               >
-                <Link to="/contact" className="dropdown-item">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  Contact
-                </Link>
-                <Link to="/tech-support" className="dropdown-item">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  Tech Support
-                </Link>
-                <Link to="/pc-services" className="dropdown-item">
-                  <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                  PC Services
-                </Link>
+                {isEnabled('/contact') && (
+                  <Link to="/contact" className="dropdown-item">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Contact
+                  </Link>
+                )}
+                {isEnabled('/tech-support') && (
+                  <Link to="/tech-support" className="dropdown-item">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    Tech Support
+                  </Link>
+                )}
+                {isEnabled('/pc-services') && (
+                  <Link to="/pc-services" className="dropdown-item">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    PC Services
+                  </Link>
+                )}
               </div>
             </div>
+            )}
 
-            <Link 
-              to="/faq" 
-              className="text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium relative group"
-            >
-              FAQ
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-neon group-hover:w-full transition-all duration-300" />
-            </Link>
-            <Link 
-              to="/warranty" 
-              className="text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium relative group"
-            >
-              Warranty
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-neon group-hover:w-full transition-all duration-300" />
-            </Link>
+            {isEnabled('/faq') && (
+              <Link 
+                to="/faq" 
+                className="text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium relative group"
+              >
+                FAQ
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-neon group-hover:w-full transition-all duration-300" />
+              </Link>
+            )}
+            {isEnabled('/warranty') && (
+              <Link 
+                to="/warranty" 
+                className="text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium relative group"
+              >
+                Warranty
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-neon group-hover:w-full transition-all duration-300" />
+              </Link>
+            )}
           </nav>
 
           {/* Actions */}
           <div className="flex items-center gap-4">
+            {isEnabled('/cart') && (
             <Link to="/cart" className="relative">
               <button className="inline-flex items-center justify-center p-2 rounded-xl text-gray-500 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300 ease-out cursor-pointer">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,7 +251,9 @@ const Header: React.FC = () => {
                 </svg>
               </button>
             </Link>
+            )}
             
+            {isEnabled('/configurator') && (
             <Link to="/configurator" className="hidden sm:block">
               <button className="btn btn-primary">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,6 +262,7 @@ const Header: React.FC = () => {
                 Build Your PC
               </button>
             </Link>
+            )}
 
             {/* Mobile Menu Button */}
             <button 
@@ -252,14 +292,17 @@ const Header: React.FC = () => {
             >
               <div className="py-6 border-t border-gray-800/50">
                 <div className="space-y-4">
-                  <Link 
-                    to="/" 
-                    className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Home
-                  </Link>
+                  {isEnabled('/') && (
+                    <Link 
+                      to="/" 
+                      className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Home
+                    </Link>
+                  )}
                   
+                  {(isEnabled('/pcs') || isEnabled('/configurator') || isEnabled('/accessories')) && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between py-2 text-text-secondary font-medium">
                       <span>Products</span>
@@ -274,39 +317,49 @@ const Header: React.FC = () => {
                     </div>
                     {productsDropdownOpen && (
                       <div className="pl-4 space-y-2">
-                        <Link 
-                          to="/pcs" 
-                          className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          PCs
-                        </Link>
-                        <Link 
-                          to="/configurator" 
-                          className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          Custom PC
-                        </Link>
-                        <Link 
-                          to="/accessories" 
-                          className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          Accessories
-                        </Link>
+                        {isEnabled('/pcs') && (
+                          <Link 
+                            to="/pcs" 
+                            className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            PCs
+                          </Link>
+                        )}
+                        {isEnabled('/configurator') && (
+                          <Link 
+                            to="/configurator" 
+                            className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Custom PC
+                          </Link>
+                        )}
+                        {isEnabled('/accessories') && (
+                          <Link 
+                            to="/accessories" 
+                            className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Accessories
+                          </Link>
+                        )}
                       </div>
                     )}
                   </div>
+                  )}
 
-                  <Link 
-                    to="/configurator" 
-                    className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Configurator
-                  </Link>
+                  {isEnabled('/configurator') && (
+                    <Link 
+                      to="/configurator" 
+                      className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Configurator
+                    </Link>
+                  )}
 
+                  {(isEnabled('/partners') || isEnabled('/press') || isEnabled('/affiliate-application')) && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between py-2 text-text-secondary font-medium">
                       <span>Partners</span>
@@ -321,31 +374,39 @@ const Header: React.FC = () => {
                     </div>
                     {partnersDropdownOpen && (
                       <div className="pl-4 space-y-2">
-                        <Link 
-                          to="/partners" 
-                          className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          Our Partners
-                        </Link>
-                        <Link 
-                          to="/press" 
-                          className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          Press & Media
-                        </Link>
-                        <Link 
-                          to="/affiliate-application" 
-                          className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          Affiliate Application
-                        </Link>
+                        {isEnabled('/partners') && (
+                          <Link 
+                            to="/partners" 
+                            className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Our Partners
+                          </Link>
+                        )}
+                        {isEnabled('/press') && (
+                          <Link 
+                            to="/press" 
+                            className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Press & Media
+                          </Link>
+                        )}
+                        {isEnabled('/affiliate-application') && (
+                          <Link 
+                            to="/affiliate-application" 
+                            className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Affiliate Application
+                          </Link>
+                        )}
                       </div>
                     )}
                   </div>
+                  )}
 
+                  {(isEnabled('/contact') || isEnabled('/tech-support') || isEnabled('/pc-services')) && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between py-2 text-text-secondary font-medium">
                       <span>Support</span>
@@ -360,46 +421,58 @@ const Header: React.FC = () => {
                     </div>
                     {supportDropdownOpen && (
                       <div className="pl-4 space-y-2">
-                        <Link 
-                          to="/contact" 
-                          className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          Contact
-                        </Link>
-                        <Link 
-                          to="/tech-support" 
-                          className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          Tech Support
-                        </Link>
-                        <Link 
-                          to="/pc-services" 
-                          className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          PC Services
-                        </Link>
+                        {isEnabled('/contact') && (
+                          <Link 
+                            to="/contact" 
+                            className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Contact
+                          </Link>
+                        )}
+                        {isEnabled('/tech-support') && (
+                          <Link 
+                            to="/tech-support" 
+                            className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Tech Support
+                          </Link>
+                        )}
+                        {isEnabled('/pc-services') && (
+                          <Link 
+                            to="/pc-services" 
+                            className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            PC Services
+                          </Link>
+                        )}
                       </div>
                     )}
                   </div>
+                  )}
 
-                  <Link 
-                    to="/faq" 
-                    className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    FAQ
-                  </Link>
-                  <Link 
-                    to="/warranty" 
-                    className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Warranty
-                  </Link>
+                  {isEnabled('/faq') && (
+                    <Link 
+                      to="/faq" 
+                      className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      FAQ
+                    </Link>
+                  )}
+                  {isEnabled('/warranty') && (
+                    <Link 
+                      to="/warranty" 
+                      className="block py-2 text-text-secondary hover:text-accent-neon transition-colors duration-300 font-medium"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Warranty
+                    </Link>
+                  )}
 
+                  {isEnabled('/configurator') && (
                   <div className="pt-4">
                     <Link 
                       to="/configurator" 
@@ -412,6 +485,7 @@ const Header: React.FC = () => {
                       Build Your PC
                     </Link>
                   </div>
+                  )}
                 </div>
               </div>
             </motion.div>

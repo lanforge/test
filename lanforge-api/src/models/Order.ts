@@ -37,6 +37,9 @@ export interface IOrder extends Document {
   discount: number;
   discountCode?: string;
   creatorCode?: string; // Links to Partner/Affiliate
+  donationCause?: mongoose.Types.ObjectId;
+  donationAmount?: number;
+  lanforgeDonationAmount?: number;
   total: number;
   status: 'order-confirmed' | 'building' | 'benchmarking' | 'shipped' | 'out-for-delivery' | 'delivered' | 'returned' | 'cancelled';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
@@ -44,6 +47,8 @@ export interface IOrder extends Document {
   paymentId?: string;
   trackingNumber?: string;
   carrier?: string;
+  shippingRates?: any[];
+  selectedShippingRate?: any;
   notes?: string;
   loyaltyPointsEarned: number;
   loyaltyPointsUsed: number;
@@ -89,6 +94,9 @@ const OrderSchema = new Schema<IOrder>(
     discount: { type: Number, default: 0 },
     discountCode: { type: String },
     creatorCode: { type: String },
+    donationCause: { type: Schema.Types.ObjectId, ref: 'DonationCause' },
+    donationAmount: { type: Number, default: 0 },
+    lanforgeDonationAmount: { type: Number, default: 0 },
     total: { type: Number, required: true },
     status: {
       type: String,
@@ -113,6 +121,8 @@ const OrderSchema = new Schema<IOrder>(
     paymentId: { type: String },
     trackingNumber: { type: String },
     carrier: { type: String },
+    shippingRates: [{ type: Schema.Types.Mixed }],
+    selectedShippingRate: { type: Schema.Types.Mixed },
     notes: { type: String },
     loyaltyPointsEarned: { type: Number, default: 0 },
     loyaltyPointsUsed: { type: Number, default: 0 },

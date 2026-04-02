@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faBox } from '@fortawesome/free-solid-svg-icons';
+import BuildRequestModal from './BuildRequestModal';
 
 interface ComponentOption {
-  id: number;
+  id: string | number;
   name: string;
   description: string;
   price: number;
+  specs?: any;
 }
 
 interface CaseOption {
@@ -16,17 +21,39 @@ interface CaseOption {
   image: string;
   formFactor: string;
   color: string;
+  specs?: any;
 }
 
 interface ConfiguratorProps {
   selectedCase: CaseOption;
+  baseProductId?: string;
+  initialSelectedParts?: Record<string, any>;
 }
 
-const Configurator: React.FC<ConfiguratorProps> = ({ selectedCase }) => {
+const Configurator: React.FC<ConfiguratorProps> = (props) => {
+  const { selectedCase, baseProductId, initialSelectedParts } = props;
   const [componentCategories, setComponentCategories] = useState<any[]>([]);
-  const [selectedComponents, setSelectedComponents] = useState<Record<string, ComponentOption>>({});
+  const [selectedComponents, setSelectedComponents] = useState<Record<string, any>>(initialSelectedParts || {});
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [showReviewModal, setShowReviewModal] = useState<boolean>(false);
+  const [isBuildRequestModalOpen, setIsBuildRequestModalOpen] = useState<boolean>(false);
+  const [buildFeePercentage, setBuildFeePercentage] = useState<number>(10);
+  const [isSharing, setIsSharing] = useState<boolean>(false);
+  const draftBuildIdRef = React.useRef<string | null>(null);
+  const pendingSavePromiseRef = React.useRef<Promise<any> | null>(null);
+
+  React.useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/business/public`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.businessInfo?.buildFeePercentage !== undefined) {
+          setBuildFeePercentage(data.businessInfo.buildFeePercentage);
+        }
+      })
+      .catch(err => console.error('Failed to fetch business info:', err));
+
+    window.scrollTo(0, 0);
+  }, []);
 
   React.useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/pc-parts?limit=200`)
@@ -34,58 +61,443 @@ const Configurator: React.FC<ConfiguratorProps> = ({ selectedCase }) => {
       .then(data => {
         if (data.parts) {
           const grouped: Record<string, any> = {
-            cpu: { id: 'cpu', name: 'CPU', icon: '⚡', options: [] },
-            gpu: { id: 'gpu', name: 'GPU', icon: '🎮', options: [] },
-            ram: { id: 'ram', name: 'RAM', icon: '🧠', options: [] },
-            motherboard: { id: 'motherboard', name: 'Motherboard', icon: '🔌', options: [] },
-            storage: { id: 'storage', name: 'Storage', icon: '💾', options: [] },
-            psu: { id: 'psu', name: 'PSU', icon: '🔋', options: [] },
-            os: { id: 'os', name: 'OS', icon: '🪟', options: [] }
+            cpu: { id: 'cpu', name: 'Processor', options: [] },
+            gpu: { id: 'gpu', name: 'Graphics', options: [] },
+            motherboard: { id: 'motherboard', name: 'Motherboard', options: [] },
+            ram: { id: 'ram', name: 'Memory', options: [] },
+            storage: { id: 'storage', name: 'Storage', options: [] },
+            cooler: { id: 'cooler', name: 'CPU Cooler', options: [] },
+            psu: { id: 'psu', name: 'Power Supply', options: [] },
+            fans: { id: 'fans', name: 'Case Fans', options: [] },
+            os: { id: 'os', name: 'Operating System', options: [] }
           };
 
           data.parts.forEach((p: any) => {
-            const cat = grouped[p.type] || grouped['storage']; // map ssd/hdd to storage
+            // Map types like 'ssd', 'hdd' to 'storage', and ignore cases or other unmapped types here
+            let typeKey = p.type;
+            if (['ssd', 'hdd', 'nvme', 'm.2'].includes(p.type.toLowerCase())) {
+              typeKey = 'storage';
+            }
+            if (['cpu cooler', 'liquid cooler', 'air cooler', 'cpu-cooler'].includes(p.type.toLowerCase())) {
+              typeKey = 'cooler';
+            }
+            if (['case fan', 'case fans', 'fan', 'fans'].includes(p.type.toLowerCase())) {
+              typeKey = 'fans';
+            }
+            
+            const cat = grouped[typeKey];
             if (cat) {
               cat.options.push({
                 id: p._id,
-                name: p.name,
-                description: p.brand + ' ' + p.model,
-                price: p.price
+                name: p.name || `${p.brand || ''} ${p.partModel || ''}`.trim() || 'Unknown Component',
+                description: `${p.brand || ''} ${p.partModel || ''}`.trim(),
+                price: p.price || 0,
+                specs: p.specs || {}
               });
             }
           });
 
           // Filter out empty categories
           const categoriesArray = Object.values(grouped).filter(c => c.options.length > 0);
+
+          // Sort options in each category from lowest price to highest price
+          categoriesArray.forEach(category => {
+            category.options.sort((a: any, b: any) => a.price - b.price);
+          });
+
           setComponentCategories(categoriesArray);
 
-          // Set defaults
-          const defaults: Record<string, ComponentOption> = {};
-          categoriesArray.forEach(c => {
-            if (c.options.length > 0) defaults[c.id] = c.options[0];
-          });
-          setSelectedComponents(defaults);
+          // After fetching categories, map the pre-filled exact components if passed in
+          if (props.initialSelectedParts && Object.keys(props.initialSelectedParts).length > 0) {
+            const resolvedComponents: Record<string, any> = {};
+            
+            Object.entries(props.initialSelectedParts).forEach(([key, part]: [string, any]) => {
+              const category = categoriesArray.find(c => c.id === key);
+              if (category) {
+                if (key === 'fans') {
+                  const partsList = Array.isArray(part) ? part : [part];
+                  resolvedComponents[key] = partsList.map(p => {
+                    const fullOption = category.options.find((o: any) => String(o.id) === String(p.id || p._id || p));
+                    return fullOption || {
+                      id: p.id || p._id || p,
+                      name: p.name || 'Unknown Component',
+                      description: p.description || '',
+                      price: p.price || 0
+                    };
+                  });
+                } else {
+                  const fullOption = category.options.find((o: any) => String(o.id) === String(part.id || part._id || part));
+                  if (fullOption) {
+                    resolvedComponents[key] = fullOption;
+                  } else {
+                    // Ensure partial item still falls back properly
+                    resolvedComponents[key] = {
+                      id: part.id || part._id || part,
+                      name: part.name || 'Unknown Component',
+                      description: part.description || '',
+                      price: part.price || 0,
+                      specs: part.specs || {}
+                    };
+                  }
+                }
+              }
+            });
+            
+            setSelectedComponents(resolvedComponents);
+          }
         }
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [props.initialSelectedParts]);
 
-  const currentCategory = componentCategories[currentStep] || { id: '', name: '', icon: '', options: [] };
+  const getFilteredOptions = (category: any) => {
+    if (!category || !category.options) return [];
+    
+    return category.options.filter((option: any) => {
+      const specs = option.specs || {};
+
+      if (category.id === 'motherboard') {
+        // Case form factor check
+        const caseFf = selectedCase.formFactor?.toLowerCase() || '';
+        const boardFf = specs.formFactor?.toLowerCase() || '';
+        if (caseFf && boardFf) {
+          const isCaseItx = caseFf.includes('itx');
+          const isCaseMatx = caseFf.includes('matx') || caseFf.includes('micro');
+          const isCaseAtx = caseFf.includes('atx') && !isCaseMatx;
+          const isCaseMidFull = caseFf.includes('mid-tower') || caseFf.includes('full-tower') || caseFf.includes('mid tower') || caseFf.includes('full tower');
+
+          const isBoardItx = boardFf.includes('itx');
+          const isBoardMatx = boardFf.includes('matx') || boardFf.includes('micro');
+          const isBoardAtx = boardFf.includes('atx') && !isBoardMatx;
+
+          if (isCaseItx && !isCaseMatx && !isCaseAtx) {
+            // strictly ITX cases
+            if (!isBoardItx) return false;
+          } else if (isCaseMatx) {
+            // mATX cases (support mATX and ITX)
+            if (isBoardAtx) return false;
+          } else if (isCaseAtx || isCaseMidFull) {
+            // ATX / Mid-Tower / Full-Tower cases
+            // User requested: don't offer ITX mobos for ATX builds
+            if (isBoardItx) return false;
+          }
+        }
+
+        // CPU socket check
+        const cpu = selectedComponents.cpu;
+        if (cpu && cpu.specs?.socket && specs.socket) {
+          if (cpu.specs.socket !== specs.socket) return false;
+        }
+      }
+
+      if (category.id === 'ram') {
+        const mobo = selectedComponents.motherboard;
+        if (mobo && mobo.specs?.memoryType && specs.type) {
+          if (mobo.specs.memoryType !== specs.type) return false;
+        }
+      }
+
+      if (category.id === 'gpu') {
+        const maxLength = selectedCase.specs?.maxGpuLength;
+        if (maxLength && specs.length) {
+          if (specs.length > maxLength) return false;
+        }
+      }
+
+      if (category.id === 'cooler') {
+        const cpu = selectedComponents.cpu;
+        const mobo = selectedComponents.motherboard;
+        const targetSocket = cpu?.specs?.socket || mobo?.specs?.socket;
+        
+        if (targetSocket && specs.socketSupport) {
+          if (Array.isArray(specs.socketSupport)) {
+             const supports = specs.socketSupport.some((s: string) => s.toLowerCase() === targetSocket.toLowerCase());
+             if (!supports) return false;
+          } else if (typeof specs.socketSupport === 'string') {
+             if (!specs.socketSupport.toLowerCase().includes(targetSocket.toLowerCase())) return false;
+          }
+        }
+        
+        // Also check CPU cooler height against case maxCpuCoolerHeight
+        const maxHeight = selectedCase.specs?.maxCpuCoolerHeight;
+        if (maxHeight && specs.height) {
+          if (specs.height > maxHeight) return false;
+        }
+      }
+
+      return true;
+    });
+  };
+
+  const currentCategory = componentCategories[currentStep] || { id: '', name: '', options: [] };
 
   // Calculate total price including the selected case
-  const componentsTotal = Object.values(selectedComponents).reduce((sum, comp) => sum + comp.price, 0);
-  const totalPrice = componentsTotal + selectedCase.price;
+  const componentsTotal = Object.values(selectedComponents).reduce((sum, comp) => {
+    if (Array.isArray(comp)) {
+      return sum + comp.reduce((s, c) => s + c.price, 0);
+    }
+    return sum + comp.price;
+  }, 0);
+  
+  const subtotal = componentsTotal + selectedCase.price;
+  let calculatedBuildFee = subtotal * (buildFeePercentage / 100);
+  if (calculatedBuildFee > 0) {
+    const tens = Math.floor(calculatedBuildFee / 10) * 10;
+    const opt1 = tens + 5.99;
+    const opt2 = tens + 9.99;
+    const opt3 = tens + 15.99;
+    
+    if (calculatedBuildFee <= opt1) {
+      calculatedBuildFee = opt1;
+    } else if (calculatedBuildFee <= opt2) {
+      calculatedBuildFee = opt2;
+    } else {
+      calculatedBuildFee = opt3;
+    }
+  } else {
+    calculatedBuildFee = 99.99;
+  }
+  
+  const totalPrice = subtotal + calculatedBuildFee;
+
+  // Automatically save draft custom build and sync to URL so state isn't lost
+  const saveDraftBuild = async (newSelectedComponents: Record<string, any>) => {
+    // Wait for any pending save to complete so we don't create multiple documents
+    if (pendingSavePromiseRef.current) {
+      try {
+        await pendingSavePromiseRef.current;
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    const performSave = async () => {
+      try {
+        const partsMap = new Map<string | number, { quantity: number; partType: string }>();
+        
+        Object.entries(newSelectedComponents).forEach(([catId, comp]) => {
+          const items = Array.isArray(comp) ? comp : [comp];
+          items.forEach(item => {
+            const existing = partsMap.get(item.id);
+            if (existing) {
+              existing.quantity += 1;
+            } else {
+              partsMap.set(item.id, { quantity: 1, partType: 'Component' });
+            }
+          });
+        });
+
+        const parts = Array.from(partsMap.entries()).map(([partId, data]) => ({
+          part: partId,
+          quantity: data.quantity,
+          partType: data.partType
+        }));
+        
+        parts.push({
+          part: selectedCase.id,
+          quantity: 1,
+          partType: 'Case'
+        });
+        
+        if (parts.length === 1) return; // Only case selected, don't bother saving yet
+
+        // Dynamically re-calculate what the totals would be
+        const newComponentsTotal = Object.values(newSelectedComponents).reduce((sum: number, comp: any) => {
+          if (Array.isArray(comp)) {
+            return sum + comp.reduce((s, c) => s + c.price, 0);
+          }
+          return sum + comp.price;
+        }, 0);
+        
+        const newSubtotal = newComponentsTotal + selectedCase.price;
+        let newCalculatedBuildFee = newSubtotal * (buildFeePercentage / 100);
+        if (newCalculatedBuildFee > 0) {
+          const tens = Math.floor(newCalculatedBuildFee / 10) * 10;
+          if (newCalculatedBuildFee <= tens + 5.99) newCalculatedBuildFee = tens + 5.99;
+          else if (newCalculatedBuildFee <= tens + 9.99) newCalculatedBuildFee = tens + 9.99;
+          else newCalculatedBuildFee = tens + 15.99;
+        } else {
+          newCalculatedBuildFee = 99.99;
+        }
+        
+        const newTotalPrice = newSubtotal + newCalculatedBuildFee;
+
+        // Use ref if available, otherwise check URL
+        const urlBuildId = new URLSearchParams(window.location.search).get('buildId');
+        const existingBuildId = urlBuildId || draftBuildIdRef.current;
+        
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/custom-builds`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            buildId: existingBuildId || undefined,
+            name: `Custom Build Draft`,
+            baseProduct: baseProductId,
+            parts,
+            frontendSubtotal: newSubtotal,
+            frontendLaborFee: newCalculatedBuildFee,
+            frontendTotal: newTotalPrice
+          })
+        });
+        const buildData = await res.json();
+        if (buildData.customBuild && buildData.customBuild.buildId) {
+          draftBuildIdRef.current = buildData.customBuild.buildId;
+          // Update URL quietly
+          const url = new URL(window.location.href);
+          url.searchParams.set('buildId', buildData.customBuild.buildId);
+          window.history.replaceState({}, '', url);
+        }
+      } catch (err) {
+        console.error('Failed to save draft build:', err);
+      }
+    };
+
+    const promise = performSave();
+    pendingSavePromiseRef.current = promise;
+    try {
+      await promise;
+    } finally {
+      if (pendingSavePromiseRef.current === promise) {
+        pendingSavePromiseRef.current = null;
+      }
+    }
+  };
 
   const handleSelect = (categoryId: string, option: ComponentOption) => {
-    setSelectedComponents(prev => ({
-      ...prev,
-      [categoryId]: option
-    }));
+    if (categoryId === 'fans') {
+      handleFanChange(option, 1);
+    } else {
+      const next = { ...selectedComponents, [categoryId]: option };
+      
+      // Cascading compatibility clears
+      if (categoryId === 'cpu') {
+         const mobo = next.motherboard;
+         if (mobo && mobo.specs?.socket && option.specs?.socket && mobo.specs.socket !== option.specs.socket) {
+           delete next.motherboard;
+           // RAM might also need to be cleared, but usually it depends on motherboard's memoryType.
+           // Best to clear RAM as well to be safe, since new motherboard might have different DDR type.
+           delete next.ram;
+         }
+         const cooler = next.cooler;
+         if (cooler && cooler.specs?.socketSupport && option.specs?.socket) {
+           const ss = cooler.specs.socketSupport;
+           let supports = false;
+           if (Array.isArray(ss)) {
+             supports = ss.some((s: string) => s.toLowerCase() === option.specs.socket.toLowerCase());
+           } else if (typeof ss === 'string') {
+             supports = ss.toLowerCase().includes(option.specs.socket.toLowerCase());
+           }
+           if (!supports) delete next.cooler;
+         }
+      }
+
+      if (categoryId === 'motherboard') {
+         const ram = next.ram;
+         if (ram && ram.specs?.type && option.specs?.memoryType && ram.specs.type !== option.specs.memoryType) {
+           delete next.ram;
+         }
+      }
+      
+      setSelectedComponents(next);
+      saveDraftBuild(next);
+    }
+  };
+
+  const handleFanChange = (option: ComponentOption, delta: number) => {
+    const prev = { ...selectedComponents };
+    const currentFans = (prev.fans as ComponentOption[]) || [];
+    let newFans = [...currentFans];
+    
+    if (delta > 0) {
+      if (newFans.length < 2) {
+        newFans.push(option);
+      } else {
+        alert('You can only select up to 2 case fans total.');
+      }
+    } else if (delta < 0) {
+      const index = newFans.findIndex(f => f.id === option.id);
+      if (index !== -1) {
+        newFans.splice(index, 1);
+      }
+    }
+
+    const newState = { ...prev };
+    if (newFans.length > 0) {
+      newState.fans = newFans;
+    } else {
+      delete newState.fans;
+    }
+    
+    setSelectedComponents(newState);
+    saveDraftBuild(newState);
+  };
+
+  const handleShareBuild = async () => {
+    setIsSharing(true);
+    try {
+      const partsMap = new Map<string | number, { quantity: number; partType: string }>();
+      
+      Object.entries(selectedComponents).forEach(([catId, comp]) => {
+        const items = Array.isArray(comp) ? comp : [comp];
+        items.forEach(item => {
+          const existing = partsMap.get(item.id);
+          if (existing) {
+            existing.quantity += 1;
+          } else {
+            partsMap.set(item.id, { quantity: 1, partType: 'Component' });
+          }
+        });
+      });
+
+      const parts = Array.from(partsMap.entries()).map(([partId, data]) => ({
+        part: partId,
+        quantity: data.quantity,
+        partType: data.partType
+      }));
+      
+      parts.push({
+        part: selectedCase.id,
+        quantity: 1,
+        partType: 'Case'
+      });
+
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/custom-builds`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: `Custom Build`,
+          baseProduct: baseProductId,
+          parts,
+          frontendSubtotal: subtotal,
+          frontendLaborFee: calculatedBuildFee,
+          frontendTotal: totalPrice
+        })
+      });
+      const buildData = await res.json();
+      if (!buildData.customBuild) throw new Error('Failed to create build');
+      
+      const shareUrl = `${window.location.origin}/configurator?buildId=${buildData.customBuild.buildId}`;
+      await navigator.clipboard.writeText(shareUrl);
+      alert('Build link copied to clipboard!');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to generate share link.');
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   const handleNextStep = () => {
+    // Only allow proceeding if an item is selected for the current category, except for fans which are optional
+    const currentCategoryId = componentCategories[currentStep]?.id;
+    if (currentCategoryId !== 'fans' && !selectedComponents[currentCategoryId]) {
+      alert(`Please select a ${componentCategories[currentStep]?.name} to continue.`);
+      return;
+    }
+
     if (currentStep < componentCategories.length - 1) {
       setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
     } else {
       setShowReviewModal(true);
     }
@@ -94,516 +506,520 @@ const Configurator: React.FC<ConfiguratorProps> = ({ selectedCase }) => {
   const handlePrevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      window.scrollTo(0, 0);
     }
   };
 
   const handleStepClick = (stepIndex: number) => {
     setCurrentStep(stepIndex);
+    window.scrollTo(0, 0);
+  };
+
+  const renderComponentSummary = (categoryId: string, component: any, categoryName: string) => {
+    if (Array.isArray(component)) {
+      if (component.length === 0) return null;
+      // Group duplicates for summary
+      const counts = new Map<string | number, { comp: ComponentOption; count: number }>();
+      component.forEach(c => {
+        const existing = counts.get(c.id);
+        if (existing) existing.count += 1;
+        else counts.set(c.id, { comp: c, count: 1 });
+      });
+
+      return Array.from(counts.values()).map(({ comp, count }, idx) => (
+        <div key={`${categoryId}-${idx}`} className="flex justify-between items-start gap-4">
+          <div>
+            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{categoryName}</div>
+            <div className="text-sm text-gray-300 line-clamp-1">{count > 1 ? `${count}x ` : ''}{comp.name}</div>
+          </div>
+          <div className="text-sm text-white">${(comp.price * count).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+        </div>
+      ));
+    }
+
+    return (
+      <div key={categoryId} className="flex justify-between items-start gap-4">
+        <div>
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{categoryName}</div>
+          <div className="text-sm text-gray-300 line-clamp-1">{component.name}</div>
+        </div>
+        <div className="text-sm text-white">${component.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+      </div>
+    );
+  };
+  
+  const renderReviewSummary = (categoryId: string, component: any, categoryName: string) => {
+    if (Array.isArray(component)) {
+      if (component.length === 0) return null;
+      const counts = new Map<string | number, { comp: ComponentOption; count: number }>();
+      component.forEach(c => {
+        const existing = counts.get(c.id);
+        if (existing) existing.count += 1;
+        else counts.set(c.id, { comp: c, count: 1 });
+      });
+
+      return Array.from(counts.values()).map(({ comp, count }, idx) => (
+        <div key={`${categoryId}-${idx}`} className="flex justify-between items-center py-3 px-4 bg-[#1a1a1a] rounded-lg border border-white/5">
+          <div>
+            <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">{categoryName}</div>
+            <div className="text-sm text-gray-200 mt-1">{count > 1 ? `${count}x ` : ''}{comp.name}</div>
+          </div>
+          <div className="font-semibold text-white">${(comp.price * count).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+        </div>
+      ));
+    }
+
+    return (
+      <div key={categoryId} className="flex justify-between items-center py-3 px-4 bg-[#1a1a1a] rounded-lg border border-white/5">
+        <div>
+          <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">{categoryName}</div>
+          <div className="text-sm text-gray-200 mt-1">{component.name}</div>
+        </div>
+        <div className="font-semibold text-white">${component.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+      </div>
+    );
   };
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      {/* Configurator Header with Tabs */}
-      <section className="py-8 border-b border-gray-800/50 bg-gray-900/30">
-        <div className="container-narrow">
-          <div className="text-center mb-8">
-            <h1 className="heading-1 mb-4">Customize Your PC</h1>
-            <p className="body-large max-w-3xl mx-auto">
-              Select each component step by step to build your perfect gaming PC. All parts are compatible with your chosen case.
-            </p>
+    <div className="bg-gray-950 text-gray-200 pb-32">
+      {/* Subtle Top Promo Banner for Help */}
+      <div className="bg-gray-900 border-b border-gray-800">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <span className="text-sm text-gray-300 font-medium">Overwhelmed? Let our experts design the perfect system for you.</span>
           </div>
+          <button 
+            onClick={() => setIsBuildRequestModalOpen(true)}
+            className="text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-5 py-2.5 rounded-full transition-colors whitespace-nowrap"
+          >
+            Request Custom Build
+          </button>
+        </div>
+      </div>
 
-          {/* Progress Steps */}
-          <div className="flex flex-wrap justify-center gap-2 mb-6">
-            {componentCategories.map((category, index) => (
+      {/* Progress Steps Header */}
+      <section className="bg-gray-950 border-b border-gray-800 pt-12 pb-8 sticky top-[69px] z-30 hidden md:block">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 relative">
+          <div className="flex flex-wrap lg:flex-nowrap items-center gap-2 sm:gap-4 pb-2 w-full justify-center lg:justify-start">
+            {componentCategories.map((category, index) => {
+              // For fans, it's considered selected if there's an array with at least 1 item
+              let isCategorySelected = false;
+              if (category.id === 'fans') {
+                isCategorySelected = selectedComponents.fans && selectedComponents.fans.length > 0;
+              } else {
+                isCategorySelected = !!selectedComponents[category.id];
+              }
+
+              return (
               <button
                 key={category.id}
-                onClick={() => handleStepClick(index)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-lg border transition-all duration-200 ${
+                onClick={() => {
+                  // Only allow jumping to previous steps, or the next immediate unselected step if all prior steps are filled
+                  let canNavigate = index <= currentStep;
+                  if (index === currentStep + 1) {
+                     const prevCatId = componentCategories[currentStep]?.id;
+                     canNavigate = prevCatId === 'fans' || !!selectedComponents[prevCatId];
+                  }
+                  if (canNavigate) {
+                    handleStepClick(index);
+                  }
+                }}
+                className={`flex items-center gap-1 sm:gap-3 whitespace-nowrap pb-2 px-1 transition-colors relative shrink-0 ${
                   currentStep === index
-                    ? 'bg-gradient-to-r from-emerald-500 to-blue-500 text-white border-transparent'
-                    : index < currentStep
-                    ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
-                    : 'bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-gray-700/50'
+                    ? 'text-white'
+                    : isCategorySelected
+                    ? 'text-emerald-400 cursor-pointer'
+                    : index <= currentStep
+                    ? 'text-gray-300 cursor-pointer'
+                    : 'text-gray-600 cursor-not-allowed'
                 }`}
+                disabled={index > currentStep && !(componentCategories[currentStep]?.id === 'fans' || selectedComponents[componentCategories[currentStep]?.id])}
               >
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
+                <div className={`hidden lg:flex w-5 h-5 rounded-full items-center justify-center text-[10px] font-bold flex-shrink-0 ${
                   currentStep === index
-                    ? 'bg-white text-gray-900'
-                    : index < currentStep
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-gray-700 text-gray-300'
+                    ? 'bg-white text-black'
+                    : isCategorySelected
+                    ? 'bg-emerald-500/20 text-emerald-400'
+                    : 'bg-white/5 text-gray-500'
                 }`}>
-                  {index + 1}
+                  {isCategorySelected ? <FontAwesomeIcon icon={faCheck} className="w-[10px] h-[10px]" /> : index + 1}
                 </div>
-                <span className="font-medium">{category.name}</span>
-                {index < currentStep && (
-                  <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+                <span className="font-semibold text-[11px] md:text-xs tracking-wide uppercase whitespace-nowrap">{category.name}</span>
+                {currentStep === index && (
+                  <motion.div 
+                    layoutId="activeTab" 
+                    className="absolute -bottom-[9px] left-0 right-0 h-[2px] bg-white" 
+                  />
                 )}
               </button>
-            ))}
-          </div>
-
-          {/* Current Step Indicator */}
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800/50 rounded-full">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-lg">
-                {currentCategory.icon}
-              </div>
-              <span className="font-semibold text-white">Step {currentStep + 1} of {componentCategories.length}: {currentCategory.name}</span>
-            </div>
+            )})}
           </div>
         </div>
       </section>
 
-      {/* Configurator Layout */}
-      <div className="container-narrow py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Main Configurator Area */}
+      <div className="max-w-7xl mx-auto px-6 pt-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          
           {/* Component Selection */}
           <div className="lg:col-span-2">
             <motion.div
               key={currentCategory.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="category-section"
+              transition={{ duration: 0.3 }}
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-2xl">
-                  {currentCategory.icon}
+              {/* Mobile Steps Counter */}
+              <div className="md:hidden flex items-center justify-between mb-4 pb-4 border-b border-white/5">
+                <div className="text-sm font-semibold text-emerald-400">
+                  Step {currentStep + 1} of {componentCategories.length}
                 </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white">{currentCategory.name}</h2>
-                  <p className="text-gray-400">Select your preferred {currentCategory.name.toLowerCase()}</p>
+                <div className="text-xs text-gray-500 font-medium">
+                  {Math.round(((currentStep + 1) / componentCategories.length) * 100)}% Complete
                 </div>
               </div>
+              
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold text-white mb-2">{currentCategory.name}</h2>
+                <p className="text-gray-400 text-sm">Select the best {currentCategory.name.toLowerCase()} for your build.</p>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {currentCategory.options.map((option: any) => (
+              <div className="space-y-3">
+                {getFilteredOptions(currentCategory).map((option: any) => {
+                  const isFans = currentCategory.id === 'fans';
+                  const currentFans = (selectedComponents['fans'] as ComponentOption[]) || [];
+                  const fanCount = isFans ? currentFans.filter(f => f.id === option.id).length : 0;
+                  const isSelected = isFans ? fanCount > 0 : selectedComponents[currentCategory.id]?.id === option.id;
+
+                  return (
                   <div
                     key={option.id}
-                    className={`card cursor-pointer transition-all duration-300 ${
-                      selectedComponents[currentCategory.id]?.id === option.id
-                        ? 'ring-2 ring-emerald-500 bg-gray-800/50'
-                        : 'hover:bg-gray-800/30'
+                    onClick={() => !isFans && handleSelect(currentCategory.id, option)}
+                    className={`group cursor-pointer p-4 md:p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-4 ${
+                      isSelected
+                        ? 'bg-[#161616] border-white ring-1 ring-white/20 shadow-lg'
+                        : 'bg-[#111111] border-white/5 hover:border-white/20'
                     }`}
-                    onClick={() => handleSelect(currentCategory.id, option)}
                   >
-                    <div className="p-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <h3 className="text-lg font-semibold text-white">{option.name}</h3>
-                        <div className="text-xl font-bold text-gradient-neon">
-                          ${option.price}
+                    <div className="flex-1 min-w-0" onClick={() => isFans && handleSelect(currentCategory.id, option)}>
+                      <h3 className={`font-semibold mb-1 truncate ${
+                        isSelected ? 'text-white' : 'text-gray-200 group-hover:text-white'
+                      }`}>{option.name}</h3>
+                      <p className="text-gray-500 text-sm truncate">{option.description}</p>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="text-lg font-medium text-white">${option.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      
+                      {isFans ? (
+                        <div className="flex items-center gap-3 bg-black/50 rounded-full border border-white/10 px-2 py-1">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleFanChange(option, -1); }}
+                            className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+                          >-</button>
+                          <span className="text-sm font-bold w-4 text-center">{fanCount}</span>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleFanChange(option, 1); }}
+                            className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+                          >+</button>
                         </div>
-                      </div>
-                      <p className="text-gray-400 mb-6">{option.description}</p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className={`w-4 h-4 rounded-full mr-3 ${
-                            selectedComponents[currentCategory.id]?.id === option.id
-                              ? 'bg-emerald-500'
-                              : 'bg-gray-700'
-                          }`} />
-                          <span className="font-medium text-gray-300">
-                            {selectedComponents[currentCategory.id]?.id === option.id ? 'Selected' : 'Select this option'}
-                          </span>
+                      ) : (
+                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                          isSelected
+                            ? 'border-white bg-white'
+                            : 'border-gray-600 bg-transparent group-hover:border-gray-400'
+                        }`}>
+                          {isSelected && (
+                            <div className="w-2 h-2 rounded-full bg-black" />
+                          )}
                         </div>
-                        <svg 
-                          className={`w-6 h-6 transition-transform ${
-                            selectedComponents[currentCategory.id]?.id === option.id
-                              ? 'text-emerald-500 rotate-180'
-                              : 'text-gray-500'
-                          }`}
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
+                      )}
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
 
-              {/* Navigation Buttons */}
-              <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-800/50">
+              {/* Navigation Bar */}
+              <div className="flex items-center justify-between mt-12 pt-8 border-t border-white/5">
                 <button
                   onClick={handlePrevStep}
                   disabled={currentStep === 0}
-                  className={`btn btn-outline flex items-center gap-2 ${
-                    currentStep === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                  className={`text-sm font-bold flex items-center gap-2 px-6 py-3 rounded-full transition-colors ${
+                    currentStep === 0 
+                      ? 'text-gray-600 cursor-not-allowed' 
+                      : 'text-white hover:bg-white/10'
                   }`}
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
-                  Previous Step
+                  Back
                 </button>
-
-                <div className="text-center">
-                  <div className="text-sm text-gray-400 mb-1">
-                    Step {currentStep + 1} of {componentCategories.length}
-                  </div>
-                  <div className="w-48 h-2 bg-gray-800 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-emerald-500 to-blue-500 transition-all duration-300"
-                      style={{ width: `${((currentStep + 1) / componentCategories.length) * 100}%` }}
-                    />
-                  </div>
-                </div>
 
                 <button
                   onClick={handleNextStep}
-                  className="btn btn-primary flex items-center gap-2"
+                  className="bg-white text-black hover:bg-gray-200 px-8 py-3 rounded-full text-sm font-bold transition-colors flex items-center gap-2"
                 >
-                  {currentStep === componentCategories.length - 1 ? (
-                    <>
-                      Review Build
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </>
-                  ) : (
-                    <>
-                      Continue to {componentCategories[currentStep + 1]?.name}
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </>
-                  )}
-                </button>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="sticky top-24"
-            >
-              <div className="card-glow p-6">
-                <h2 className="text-xl font-bold text-white mb-6">Your Build Summary</h2>
-                
-                {/* Selected Case */}
-                <div className="mb-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
-                      <div className="text-lg">📦</div>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white">Selected Case</h3>
-                      <p className="text-gray-400 text-sm">{selectedCase.name}</p>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">{selectedCase.description}</span>
-                    <span className="font-bold text-white">${selectedCase.price}</span>
-                  </div>
-                </div>
-
-                {/* Components List */}
-                <div className="space-y-4 mb-6">
-                  <h4 className="font-semibold text-gray-300">Selected Components</h4>
-                  {Object.entries(selectedComponents).map(([categoryId, component]) => {
-                    const category = componentCategories.find(c => c.id === categoryId);
-                    return (
-                      <div key={categoryId} className="flex justify-between items-center py-2 border-b border-gray-800/50">
-                        <div>
-                          <div className="text-sm text-gray-300">{category?.name}</div>
-                          <div className="text-xs text-gray-500">{component.name}</div>
-                        </div>
-                        <div className="font-semibold text-white">${component.price}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Total */}
-                <div className="border-t border-gray-800/50 pt-6 mb-6">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="text-gray-300">Components Total</div>
-                    <div className="font-semibold text-white">${componentsTotal}</div>
-                  </div>
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="text-gray-300">Case</div>
-                    <div className="font-semibold text-white">${selectedCase.price}</div>
-                  </div>
-                  <div className="flex justify-between items-center text-lg font-bold pt-4 border-t border-gray-800/50">
-                    <div className="text-white">Total Price</div>
-                    <div className="text-gradient-neon">${totalPrice}</div>
-                  </div>
-                </div>
-
-                {/* Included Features */}
-                <div className="mb-6">
-                  <h4 className="font-semibold text-gray-300 mb-3">Included with Every Build</h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-sm text-gray-400">Professional assembly & cable management</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-sm text-gray-400">3-year comprehensive warranty</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-sm text-gray-400">Free insured shipping</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-sm text-gray-400">Lifetime technical support</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Continue Building Message */}
-                <div className="text-center p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
-                  <p className="text-gray-300 text-sm">
-                    Complete all steps to review your build and add to cart
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-
-      {/* Review Build Modal */}
-      {showReviewModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
-            className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-2xl border border-gray-700/50 shadow-2xl"
-          >
-            {/* Modal Header */}
-            <div className="sticky top-0 z-10 bg-gray-900/95 backdrop-blur-xl border-b border-gray-800/50 p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-2xl">
-                    🎉
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">Build Complete!</h2>
-                    <p className="text-gray-400">Review your custom PC configuration</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowReviewModal(false)}
-                  className="w-10 h-10 rounded-full bg-gray-800/50 hover:bg-gray-700/50 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  {currentStep === componentCategories.length - 1 ? 'Review Build' : (currentCategory.id === 'fans' && (!selectedComponents.fans || selectedComponents.fans.length === 0) ? 'Skip Fans' : 'Continue')}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
                 </button>
               </div>
-            </div>
+            </motion.div>
+          </div>
 
-            {/* Modal Content */}
-            <div className="p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Build Summary */}
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-4">Your Build Summary</h3>
-                  
-                  {/* Selected Case */}
-                  <div className="mb-6 p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
-                        <div className="text-lg">📦</div>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-white">Selected Case</h4>
-                        <p className="text-gray-400 text-sm">{selectedCase.name}</p>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300">{selectedCase.description}</span>
-                      <span className="font-bold text-white">${selectedCase.price}</span>
-                    </div>
+          {/* Right Sidebar Summary */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-48 space-y-6">
+              {/* Build Summary Card */}
+              <div className="bg-[#111111] rounded-3xl border border-white/5 p-6 overflow-hidden relative">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-400 opacity-50" />
+                
+                <h3 className="text-lg font-bold text-white mb-6">Build Summary</h3>
+                
+                {/* Selected Case */}
+                <div className="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-white/5">
+                  <div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Case</div>
+                    <div className="text-sm text-gray-200 line-clamp-2">{selectedCase.name}</div>
                   </div>
-
-                  {/* Components List */}
-                  <div className="space-y-3 mb-6">
-                    <h4 className="font-semibold text-gray-300">Selected Components</h4>
-                    {Object.entries(selectedComponents).map(([categoryId, component]) => {
-                      const category = componentCategories.find(c => c.id === categoryId);
-                      return (
-                        <div key={categoryId} className="flex justify-between items-center py-3 px-4 bg-gray-800/20 rounded-lg">
-                          <div>
-                            <div className="text-sm text-gray-300">{category?.name}</div>
-                            <div className="text-xs text-gray-500">{component.name}</div>
-                          </div>
-                          <div className="font-semibold text-white">${component.price}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Total Price */}
-                  <div className="p-4 bg-gradient-to-r from-gray-800/50 to-gray-900/50 rounded-lg border border-gray-700/50">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="text-gray-300">Components Total</div>
-                      <div className="font-semibold text-white">${componentsTotal}</div>
-                    </div>
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="text-gray-300">Case</div>
-                      <div className="font-semibold text-white">${selectedCase.price}</div>
-                    </div>
-                    <div className="flex justify-between items-center text-xl font-bold pt-4 border-t border-gray-700/50">
-                      <div className="text-white">Total Price</div>
-                      <div className="text-gradient-neon">${totalPrice}</div>
-                    </div>
-                  </div>
+                  <div className="text-sm font-medium text-white">${selectedCase.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
 
-                {/* Action Buttons & Features */}
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-4">Next Steps</h3>
-                  
-                  {/* Action Buttons */}
-                  <div className="space-y-3 mb-8">
-                    <button 
-                      className="btn btn-primary w-full"
-                      onClick={() => {
-                        const parts = Object.values(selectedComponents).map(comp => ({
-                          part: comp.id,
-                          quantity: 1,
-                          partType: 'Component'
-                        }));
-                        parts.push({
-                          part: selectedCase.id,
-                          quantity: 1,
-                          partType: 'Case'
-                        });
-
-                        fetch(`${process.env.REACT_APP_API_URL}/custom-builds`, {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            name: `Custom Build`,
-                            parts
-                          })
-                        })
-                        .then(res => res.json())
-                        .then(buildData => {
-                          if (!buildData.customBuild) throw new Error('Failed to create build');
-                          
-                          let sessionId = localStorage.getItem('cartSessionId');
-                          if (!sessionId) {
-                            sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
-                            localStorage.setItem('cartSessionId', sessionId);
-                          }
-                          
-                          return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
-                            .then(res => res.json())
-                            .then(cartData => {
-                              const existingItems = cartData.cart?.items || [];
-                              const mappedItems = existingItems.map((i: any) => ({
-                                product: i.product?._id || i.product,
-                                pcPart: i.pcPart?._id || i.pcPart,
-                                accessory: i.accessory?._id || i.accessory,
-                                customBuild: i.customBuild?._id || i.customBuild,
-                                quantity: i.quantity
-                              }));
-                              
-                              mappedItems.push({
-                                customBuild: buildData.customBuild._id,
-                                quantity: 1
-                              });
-                              
-                              return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
-                                method: 'PUT',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ items: mappedItems })
-                              });
-                            });
-                        })
-                        .then(() => {
-                          alert('Custom build added to cart!');
-                          window.location.href = '/cart';
-                        })
-                        .catch(err => console.error(err));
-                      }}
-                    >
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      Add to Cart
-                    </button>
-                    <button className="btn btn-outline w-full">
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                      </svg>
-                      Save Configuration
-                    </button>
-                    <button className="btn btn-text w-full">
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                      </svg>
-                      Share Build
-                    </button>
-                  </div>
-
-                  {/* Included Features */}
-                  <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
-                    <h4 className="font-semibold text-gray-300 mb-3">Included with Every Build</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span className="text-sm text-gray-400">Professional assembly & cable management</span>
+                  {/* Selected Components */}
+                  <div className="space-y-3 mb-6">
+                    {Object.entries(selectedComponents).length === 0 ? (
+                      <p className="text-sm text-gray-500 italic">No parts selected yet.</p>
+                    ) : (
+                      Object.entries(selectedComponents).map(([categoryId, component]) => {
+                        const category = componentCategories.find(c => c.id === categoryId);
+                        if (!category) return null;
+                        return renderComponentSummary(categoryId, component, category.name);
+                      })
+                    )}
+                    
+                    <div className="flex justify-between items-start gap-4">
+                      <div>
+                        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Service</div>
+                        <div className="text-sm text-gray-300 line-clamp-1">System Integration & Validation</div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span className="text-sm text-gray-400">3-year comprehensive warranty</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span className="text-sm text-gray-400">Free insured shipping</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span className="text-sm text-gray-400">Lifetime technical support</span>
-                      </div>
+                      <div className="text-sm text-white">${calculatedBuildFee.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                     </div>
                   </div>
 
-                  {/* Continue Building Option */}
-                  <div className="mt-6 text-center">
-                    <button
-                      onClick={() => setShowReviewModal(false)}
-                      className="text-emerald-400 hover:text-emerald-300 text-sm font-medium"
-                    >
-                      ← Continue customizing your build
-                    </button>
+                {/* Total */}
+                <div className="pt-4 border-t border-white/10">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Total Price</span>
+                    <span className="text-2xl font-bold text-white">${totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
               </div>
+
+              {/* Guarantees */}
+              <div className="bg-[#111111] rounded-3xl border border-white/5 p-6">
+                <h4 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">The Standard</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <FontAwesomeIcon icon={faCheck} className="text-emerald-500 mt-0.5 text-sm" />
+                    <span className="text-sm text-gray-400">Professional assembly & routing</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <FontAwesomeIcon icon={faCheck} className="text-emerald-500 mt-0.5 text-sm" />
+                    <span className="text-sm text-gray-400">3-year comprehensive warranty</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <FontAwesomeIcon icon={faCheck} className="text-emerald-500 mt-0.5 text-sm" />
+                    <span className="text-sm text-gray-400">Stress tested before shipping</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <BuildRequestModal 
+        isOpen={isBuildRequestModalOpen} 
+        onClose={() => setIsBuildRequestModalOpen(false)} 
+      />
+
+      {/* Review Build Modal */}
+      {showReviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="w-full max-w-xl max-h-[90vh] bg-[#111] rounded-3xl border border-white/10 shadow-2xl flex flex-col"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <h2 className="text-xl font-bold text-white">Your Custom Build</h2>
+              <button 
+                onClick={() => setShowReviewModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-400">Case</span>
+                <span className="font-medium text-white">{selectedCase.name}</span>
+              </div>
+
+              {Object.entries(selectedComponents).map(([categoryId, component]) => {
+                if (!component || (Array.isArray(component) && component.length === 0)) return null;
+                const category = componentCategories.find(c => c.id === categoryId);
+                const catName = category?.name || categoryId;
+                
+                if (Array.isArray(component)) {
+                  const counts = new Map<string | number, { comp: ComponentOption; count: number }>();
+                  component.forEach(c => {
+                    const existing = counts.get(c.id);
+                    if (existing) existing.count += 1;
+                    else counts.set(c.id, { comp: c, count: 1 });
+                  });
+                  return Array.from(counts.values()).map(({ comp, count }, idx) => (
+                    <div key={`${categoryId}-${idx}`} className="flex justify-between items-center text-sm">
+                      <span className="text-gray-400">{catName}</span>
+                      <span className="font-medium text-white">{count > 1 ? `${count}x ` : ''}{comp.name}</span>
+                    </div>
+                  ));
+                }
+                
+                return (
+                  <div key={categoryId} className="flex justify-between items-center text-sm">
+                    <span className="text-gray-400">{catName}</span>
+                    <span className="font-medium text-white">{component.name}</span>
+                  </div>
+                );
+              })}
+
+              <div className="flex justify-between items-center text-sm pt-4 border-t border-white/5">
+                <span className="text-gray-400">Build Service</span>
+                <span className="font-medium text-emerald-400">Included</span>
+              </div>
+              
+              <div className="flex justify-between items-center text-lg pt-4 border-t border-white/10 font-bold">
+                <span className="text-white">Total</span>
+                <span className="text-emerald-400">${totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="p-6 bg-white/5 border-t border-white/10 rounded-b-3xl space-y-3">
+              <button 
+                className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl transition-colors flex justify-center items-center gap-2"
+                onClick={() => {
+                  const partsMap = new Map<string | number, { quantity: number; partType: string }>();
+                  
+                  Object.entries(selectedComponents).forEach(([catId, comp]) => {
+                    const items = Array.isArray(comp) ? comp : [comp];
+                    items.forEach(item => {
+                      const existing = partsMap.get(item.id);
+                      if (existing) {
+                        existing.quantity += 1;
+                      } else {
+                        partsMap.set(item.id, { quantity: 1, partType: 'Component' });
+                      }
+                    });
+                  });
+
+                  const parts = Array.from(partsMap.entries()).map(([partId, data]) => ({
+                    part: partId,
+                    quantity: data.quantity,
+                    partType: data.partType
+                  }));
+                  
+                    parts.push({
+                      part: selectedCase.id,
+                      quantity: 1,
+                      partType: 'Case'
+                    });
+
+                    // We only need to trigger a save if we don't already have a valid buildId from the draft auto-saver
+                    // In 99% of cases, `saveDraftBuild` has already persisted the build and populated the URL.
+                    const finalBuildId = new URLSearchParams(window.location.search).get('buildId');
+
+                    fetch(`${process.env.REACT_APP_API_URL}/custom-builds`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        buildId: finalBuildId || undefined,
+                        name: `Custom Build`,
+                        baseProduct: baseProductId,
+                        parts,
+                        frontendSubtotal: subtotal,
+                        frontendLaborFee: calculatedBuildFee,
+                        frontendTotal: totalPrice
+                      })
+                    })
+                    .then(res => res.json())
+                  .then(buildData => {
+                    if (!buildData.customBuild) throw new Error('Failed to create build');
+                    
+                    let sessionId = localStorage.getItem('cartSessionId');
+                    if (!sessionId) {
+                      sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
+                      localStorage.setItem('cartSessionId', sessionId);
+                    }
+                    
+                    return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
+                      .then(res => res.json())
+                      .then(cartData => {
+                        const existingItems = cartData.cart?.items || [];
+                        const mappedItems = existingItems.map((i: any) => ({
+                          product: i.product?._id || i.product,
+                          pcPart: i.pcPart?._id || i.pcPart,
+                          accessory: i.accessory?._id || i.accessory,
+                          customBuild: i.customBuild?._id || i.customBuild,
+                          quantity: i.quantity
+                        }));
+                        
+                        mappedItems.push({
+                          customBuild: buildData.customBuild._id,
+                          quantity: 1
+                        });
+                        
+                        return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ items: mappedItems })
+                        });
+                      });
+                  })
+                  .then(() => {
+                    alert('Custom build added to cart!');
+                    window.location.href = '/cart';
+                  })
+                  .catch(err => console.error(err));
+                }}
+              >
+                Add to Cart
+              </button>
+              
+              <button 
+                onClick={handleShareBuild}
+                disabled={isSharing}
+                className="w-full py-3.5 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl transition-colors flex justify-center items-center gap-2 border border-white/10"
+              >
+                {isSharing ? (
+                  <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                ) : null}
+                {isSharing ? 'Generating Link...' : 'Share Build'}
+              </button>
             </div>
           </motion.div>
         </div>

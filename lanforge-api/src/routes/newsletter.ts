@@ -33,6 +33,15 @@ router.post(
       }
 
       await Newsletter.create({ email, source });
+
+      // Send notification
+      try {
+        const { sendNotification } = await import('../services/notificationService');
+        await sendNotification(`New Newsletter Subscriber: ${email}`);
+      } catch (notifErr) {
+        console.error('Failed to send notification:', notifErr);
+      }
+
       res.status(201).json({ message: 'Successfully subscribed!' });
     } catch (error) {
       res.status(500).json({ message: 'Server error' });

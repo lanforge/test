@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPersonDigging } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import '../App.css';
 
@@ -28,7 +30,7 @@ const PlaceholderPage: React.FC<PlaceholderPageProps> = ({ title, description })
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <div className="placeholder-card">
-            <div className="placeholder-icon">🚧</div>
+            <div className="placeholder-icon"><FontAwesomeIcon icon={faPersonDigging} /></div>
             <h2>Page Under Construction</h2>
             <p>This page is currently being developed. Please check back soon!</p>
             <div className="placeholder-actions">

@@ -1,9 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
+import { PageStatusContext } from '../App';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTwitter, faDiscord, faYoutube, faInstagram } from '@fortawesome/free-brands-svg-icons';
 
 const Footer: React.FC = () => {
+  const disabledPages = useContext(PageStatusContext);
+  const isEnabled = (path: string) => !disabledPages.some(p => p === path || (p !== '/' && path.startsWith(`${p}/`)));
+
   const [businessInfo, setBusinessInfo] = useState<any>(null);
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setStatus('loading');
+    setMessage('');
+    try {
+      const response = await api.post('/newsletter/subscribe', { email, source: 'footer' });
+      setStatus('success');
+      setMessage(response.data.message || 'Successfully subscribed!');
+      setEmail('');
+    } catch (err: any) {
+      setStatus('error');
+      setMessage(err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || 'Failed to subscribe');
+    }
+  };
 
   useEffect(() => {
     const fetchBusinessInfo = async () => {
@@ -25,10 +50,7 @@ const Footer: React.FC = () => {
       links: [
         { name: 'Pre‑built PCs', path: '/products' },
         { name: 'Custom Configurator', path: '/configurator' },
-        { name: 'Components', path: '/products' },
-        { name: 'Peripherals', path: '/products' },
-        { name: 'Special Deals', path: '/products' }
-      ]
+      ].filter(link => isEnabled(link.path))
     },
     {
       title: 'Support',
@@ -38,7 +60,7 @@ const Footer: React.FC = () => {
         { name: 'Warranty', path: '/warranty' },
         { name: 'Shipping & Returns', path: '/shipping' },
         { name: 'Build Guides', path: '/guides' }
-      ]
+      ].filter(link => isEnabled(link.path))
     },
     {
       title: 'Company',
@@ -46,16 +68,18 @@ const Footer: React.FC = () => {
         { name: 'Reviews', path: '/reviews' },
         { name: 'Careers', path: '/careers' },
         { name: 'Press', path: '/press' },
-        { name: 'Blog', path: '/blog' }
-      ]
+        { name: 'Blog', path: '/blog' },
+        { name: 'Dignitas Partnership', path: '/dignitas' },
+        { name: 'Tradeify Partnership', path: '/tradeify' }
+      ].filter(link => isEnabled(link.path))
     }
-  ];
+  ].filter(col => col.links.length > 0);
 
   const socialLinks = [
-    { icon: '🐦', label: 'Twitter', url: 'https://twitter.com/lanforge' },
-    { icon: '🎮', label: 'Discord', url: 'https://discord.gg/lanforge' },
-    { icon: '📺', label: 'YouTube', url: 'https://youtube.com/lanforge' },
-    { icon: '📸', label: 'Instagram', url: 'https://instagram.com/lanforge' }
+    { icon: faTwitter, label: 'Twitter', url: 'https://twitter.com/lanforge' },
+    { icon: faDiscord, label: 'Discord', url: 'https://discord.gg/lanforge' },
+    { icon: faYoutube, label: 'YouTube', url: 'https://youtube.com/lanforge' },
+    { icon: faInstagram, label: 'Instagram', url: 'https://instagram.com/lanforge' }
   ];
 
   return (
@@ -68,7 +92,7 @@ const Footer: React.FC = () => {
             <div className="flex-shrink-0">
               <Link to="/" className="inline-block">
                 <img 
-                  src="https://lanforge.co/cdn/shop/files/logo2.png?height=120&v=1763939118" 
+                  src="/logo-2.png" 
                   alt="LANForge" 
                   className="h-10 w-auto"
                 />
@@ -118,7 +142,7 @@ const Footer: React.FC = () => {
                       aria-label={social.label}
                       className="text-gray-400 hover:text-emerald-400 transition-colors duration-300 text-lg"
                     >
-                      {social.icon}
+                      <FontAwesomeIcon icon={social.icon} />
                     </a>
                   ))}
                 </div>
@@ -129,16 +153,28 @@ const Footer: React.FC = () => {
                 <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
                   Newsletter
                 </h3>
-                <div className="space-y-3">
+                <form onSubmit={handleSubscribe} className="space-y-3">
                   <input 
                     type="email" 
                     placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                     className="w-full px-3 py-2 text-sm rounded bg-gray-800/50 border border-gray-700/50 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-400/50"
                   />
-                  <button className="btn btn-primary text-sm py-2 w-full">
-                    Subscribe
+                  <button 
+                    type="submit" 
+                    disabled={status === 'loading'}
+                    className="btn btn-primary text-sm py-2 w-full disabled:opacity-50"
+                  >
+                    {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
                   </button>
-                </div>
+                  {message && (
+                    <div className={`text-xs mt-2 ${status === 'success' ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {message}
+                    </div>
+                  )}
+                </form>
               </div>
             </div>
           </div>
@@ -152,24 +188,30 @@ const Footer: React.FC = () => {
             </div>
             
             <div className="flex items-center gap-6">
+              {isEnabled('/privacy') && (
               <Link 
                 to="/privacy" 
                 className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
               >
                 Privacy Policy
               </Link>
+              )}
+              {isEnabled('/terms') && (
               <Link 
                 to="/terms" 
                 className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
               >
                 Terms of Service
               </Link>
+              )}
+              {isEnabled('/cookies') && (
               <Link 
                 to="/cookies" 
                 className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
               >
                 Cookie Policy
               </Link>
+              )}
             </div>
           </div>
         </div>

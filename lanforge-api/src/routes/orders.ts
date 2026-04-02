@@ -8,6 +8,9 @@ import CustomBuild from '../models/CustomBuild';
 import Customer from '../models/Customer';
 import Discount from '../models/Discount';
 import LoyaltyTransaction from '../models/LoyaltyTransaction';
+import DonationCause from '../models/DonationCause';
+import BusinessInfo from '../models/BusinessInfo';
+import Payment from '../models/Payment';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -31,7 +34,8 @@ router.post(
     }
 
     try {
-      const { items, shippingAddress, billingAddress, paymentMethod, discountCode, creatorCode, customerId, shippingAmount } = req.body;
+      console.log('req.body:', req.body);
+      const { items, shippingAddress, billingAddress, paymentMethod, discountCode, creatorCode, donationCause, donationAmount, customerId, shippingAmount, shippingRates, selectedShippingRate } = req.body;
 
       // Validate items and calculate subtotal
       let subtotal = 0;
@@ -62,7 +66,7 @@ router.post(
           subtotal += p.price * item.quantity;
           validatedItems.push({
             pcPart: p._id,
-            name: p.name,
+            name: `${p.brand} ${p.partModel}`,
             sku: p.sku,
             price: p.price,
             quantity: item.quantity,
@@ -121,10 +125,27 @@ router.post(
       // Shipping
       const shipping = typeof shippingAmount === 'number' ? shippingAmount : 29.99;
 
-      // Tax (8%)
-      const TAX_RATE = 0.08;
-      const tax = (subtotal - discount + shipping) * TAX_RATE;
-      const total = subtotal - discount + shipping + tax;
+      // Tax
+      const businessInfo = await BusinessInfo.findOne() || {
+        taxEnabled: true,
+        taxRate: 8.0
+      };
+      const isTaxEnabled = businessInfo.taxEnabled !== false;
+      const taxRateValue = (businessInfo.taxRate ?? 8.0) / 100;
+      
+      const tax = isTaxEnabled ? (subtotal - discount + shipping) * taxRateValue : 0;
+      const parsedDonationAmount = Number(donationAmount) || 0;
+      const total = subtotal - discount + shipping + tax + parsedDonationAmount;
+
+      let lanforgeDonationAmount = 0;
+      if (donationCause) {
+        const cause = await DonationCause.findById(donationCause);
+        if (cause) {
+          // Assume product and customBuild are PCs
+          const totalPCs = validatedItems.reduce((acc, item) => (item.product || item.customBuild) ? acc + item.quantity : acc, 0);
+          lanforgeDonationAmount = cause.lanforgeContributionPerPC * totalPCs;
+        }
+      }
 
       // Generate order number
       const orderNumber = `LF-${Date.now().toString(36).toUpperCase()}`;
@@ -140,16 +161,98 @@ router.post(
         }
       }
 
+      // Find or create customer based on email
+      let finalCustomerId = customerId;
+      if (shippingAddress?.email) {
+        const existingCustomer = await Customer.findOne({ email: shippingAddress.email.toLowerCase() });
+        if (existingCustomer) {
+          finalCustomerId = existingCustomer._id;
+          
+          let updated = false;
+          if (!existingCustomer.addresses) existingCustomer.addresses = [];
+          
+          const hasShipping = existingCustomer.addresses.some((a: any) => a.type === 'shipping' && a.street === shippingAddress.address);
+          if (!hasShipping) {
+            existingCustomer.addresses.push({
+              type: 'shipping',
+              firstName: shippingAddress.firstName,
+              lastName: shippingAddress.lastName,
+              street: shippingAddress.address || '',
+              city: shippingAddress.city || '',
+              state: shippingAddress.state || '',
+              zip: shippingAddress.zip || '',
+              country: shippingAddress.country || 'US',
+            });
+            updated = true;
+          }
+
+          const billingStreet = billingAddress.address || shippingAddress.address || '';
+          const hasBilling = existingCustomer.addresses.some((a: any) => a.type === 'billing' && a.street === billingStreet);
+          if (!hasBilling) {
+            existingCustomer.addresses.push({
+              type: 'billing',
+              firstName: billingAddress.firstName || shippingAddress.firstName,
+              lastName: billingAddress.lastName || shippingAddress.lastName,
+              street: billingStreet,
+              city: billingAddress.city || shippingAddress.city || '',
+              state: billingAddress.state || shippingAddress.state || '',
+              zip: billingAddress.zip || shippingAddress.zip || '',
+              country: billingAddress.country || shippingAddress.country || 'US',
+            });
+            updated = true;
+          }
+
+          if (updated) {
+            await existingCustomer.save();
+          }
+        } else {
+          // Create new customer
+          const newCustomer = await Customer.create({
+            firstName: shippingAddress.firstName,
+            lastName: shippingAddress.lastName,
+            email: shippingAddress.email.toLowerCase(),
+            phone: shippingAddress.phone || '',
+            addresses: [
+              {
+                type: 'shipping',
+                firstName: shippingAddress.firstName,
+                lastName: shippingAddress.lastName,
+                street: shippingAddress.address || '',
+                city: shippingAddress.city || '',
+                state: shippingAddress.state || '',
+                zip: shippingAddress.zip || '',
+                country: shippingAddress.country || 'US',
+              },
+              {
+                type: 'billing',
+                firstName: billingAddress.firstName || shippingAddress.firstName,
+                lastName: billingAddress.lastName || shippingAddress.lastName,
+                street: billingAddress.address || shippingAddress.address || '',
+                city: billingAddress.city || shippingAddress.city || '',
+                state: billingAddress.state || shippingAddress.state || '',
+                zip: billingAddress.zip || shippingAddress.zip || '',
+                country: billingAddress.country || shippingAddress.country || 'US',
+              }
+            ],
+            isActive: true,
+            totalSpent: 0,
+            totalOrders: 0,
+            loyaltyPoints: 0,
+          });
+          finalCustomerId = newCustomer._id;
+        }
+      }
+
       // Loyalty points (1 point per dollar)
       let loyaltyPointsEarned = 0;
-      if (customerId) {
+      if (finalCustomerId) {
         loyaltyPointsEarned = Math.floor(total);
       }
 
       const order = await Order.create({
         orderNumber,
-        customer: customerId || undefined,
-        guestEmail: !customerId ? shippingAddress.email : undefined,
+        customer: finalCustomerId || undefined,
+        guestEmail: !finalCustomerId ? shippingAddress.email : undefined,
         items: validatedItems,
         shippingAddress,
         billingAddress,
@@ -159,10 +262,23 @@ router.post(
         discount,
         discountCode: appliedCode,
         creatorCode: creatorCode ? creatorCode.toUpperCase() : undefined,
+        donationCause: donationCause || undefined,
+        donationAmount: parsedDonationAmount,
+        lanforgeDonationAmount,
         total: parseFloat(total.toFixed(2)),
         paymentMethod,
+        shippingRates: shippingRates || [],
+        selectedShippingRate: selectedShippingRate || null,
         loyaltyPointsEarned,
       });
+
+      // Send notification
+      try {
+        const { sendNotification } = await import('../services/notificationService');
+        await sendNotification(`New Order Created: ${orderNumber}\nTotal: $${total.toFixed(2)}\nCustomer: ${shippingAddress.firstName} ${shippingAddress.lastName} (${shippingAddress.email})\nPayment Method: ${paymentMethod}`);
+      } catch (notifErr) {
+        console.error('Failed to send notification:', notifErr);
+      }
 
       res.status(201).json({ order });
     } catch (error) {
@@ -319,25 +435,29 @@ router.put('/:id/status', protect, staffOrAdmin, async (req: AuthRequest, res: R
       return;
     }
 
-    // If delivered and has a customer, award loyalty points
-    if (status === 'delivered' && order.customer && order.loyaltyPointsEarned > 0) {
+    // If delivered and has a customer, update stats and award loyalty points
+    if (status === 'delivered' && order.customer) {
       const customer = await Customer.findById(order.customer);
       if (customer) {
         const before = customer.loyaltyPoints;
-        customer.loyaltyPoints += order.loyaltyPointsEarned;
+        if (order.loyaltyPointsEarned > 0) {
+          customer.loyaltyPoints += order.loyaltyPointsEarned;
+        }
         customer.totalSpent += order.total;
         customer.totalOrders += 1;
         await customer.save();
 
-        await LoyaltyTransaction.create({
-          customer: customer._id,
-          order: order._id,
-          points: order.loyaltyPointsEarned,
-          type: 'earn',
-          reason: `Order ${order.orderNumber} delivered`,
-          balanceBefore: before,
-          balanceAfter: customer.loyaltyPoints,
-        });
+        if (order.loyaltyPointsEarned > 0) {
+          await LoyaltyTransaction.create({
+            customer: customer._id,
+            order: order._id,
+            points: order.loyaltyPointsEarned,
+            type: 'earn',
+            reason: `Order ${order.orderNumber} delivered`,
+            balanceBefore: before,
+            balanceAfter: customer.loyaltyPoints,
+          });
+        }
       }
     }
 
@@ -405,6 +525,57 @@ router.put('/:id/notes', protect, staffOrAdmin, async (req: AuthRequest, res: Re
       return;
     }
     res.json({ order });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// PUT /api/orders/:id — admin/staff: update order details and items
+router.put('/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { items, shippingAddress, billingAddress, shipping, donationAmount } = req.body;
+
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      res.status(404).json({ message: 'Order not found' });
+      return;
+    }
+
+    if (shippingAddress) order.shippingAddress = shippingAddress;
+    if (billingAddress) order.billingAddress = billingAddress;
+    if (typeof shipping === 'number') order.shipping = shipping;
+    if (typeof donationAmount === 'number') order.donationAmount = donationAmount;
+
+    if (items && Array.isArray(items)) {
+      order.items = items;
+      
+      // Recalculate subtotal
+      let subtotal = 0;
+      for (const item of items) {
+        subtotal += (Number(item.price) || 0) * (Number(item.quantity) || 1);
+      }
+      order.subtotal = subtotal;
+
+      // Recalculate tax
+      const businessInfo = await BusinessInfo.findOne() || {
+        taxEnabled: true,
+        taxRate: 8.0
+      };
+      const isTaxEnabled = businessInfo.taxEnabled !== false;
+      const taxRateValue = (businessInfo.taxRate ?? 8.0) / 100;
+      
+      const tax = isTaxEnabled ? (subtotal - order.discount + order.shipping) * taxRateValue : 0;
+      order.tax = parseFloat(tax.toFixed(2));
+      
+      // Recalculate total
+      const total = subtotal - order.discount + order.shipping + order.tax + (order.donationAmount || 0);
+      order.total = parseFloat(total.toFixed(2));
+    }
+
+    await order.save();
+    
+    const updatedOrder = await Order.findById(req.params.id).populate('customer', 'firstName lastName email loyaltyPoints');
+    res.json({ order: updatedOrder });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

@@ -24,6 +24,15 @@ router.post(
 
     try {
       const application = await AffiliateApplication.create(req.body);
+
+      // Send notification
+      try {
+        const { sendNotification } = await import('../services/notificationService');
+        await sendNotification(`New Affiliate Application from ${application.name} (${application.email})\nAudience Size: ${application.audienceSize}`);
+      } catch (notifErr) {
+        console.error('Failed to send notification:', notifErr);
+      }
+
       res.status(201).json({ message: 'Application submitted successfully', application });
     } catch (error) {
       res.status(500).json({ message: 'Server error' });

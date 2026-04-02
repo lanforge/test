@@ -33,6 +33,30 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
   
   const [discountCode, setDiscountCode] = useState('');
   const [customDiscountAmount, setCustomDiscountAmount] = useState(0);
+  const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
+  const [discountError, setDiscountError] = useState('');
+
+  const handleApplyDiscount = async () => {
+    setDiscountError('');
+    if (!discountCode) return;
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/discounts/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: discountCode, orderTotal: calculateSubtotal() })
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setAppliedDiscount(data.discount);
+      } else {
+        setDiscountError(data.message || 'Invalid discount code');
+        setAppliedDiscount(null);
+      }
+    } catch (e) {
+      setDiscountError('Error validating discount code');
+      setAppliedDiscount(null);
+    }
+  };
   
   const [activeCauses, setActiveCauses] = useState<any[]>([]);
   const [selectedCauseId, setSelectedCauseId] = useState<string>('');
@@ -244,22 +268,41 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
   }, []);
 
   const calculateSubtotal = () => cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const getAppliedDiscountAmount = () => {
+    if (!appliedDiscount || appliedDiscount.type === 'free_shipping') return 0;
+    if (appliedDiscount.type === 'percentage') return calculateSubtotal() * (appliedDiscount.value / 100);
+    return Math.min(appliedDiscount.value, calculateSubtotal());
+  };
+
   const calculateTax = () => {
     if (!storeSettings.taxEnabled) return 0;
     const hasSelectedShippingMethod = completedSections.has('shippingMethod') || activeSection === 'donation' || activeSection === 'payment';
     const applicableShipping = hasSelectedShippingMethod ? calculateShipping() : 0;
-    return (calculateSubtotal() - customDiscountAmount + applicableShipping) * (storeSettings.taxRate / 100);
+    return Math.max(0, calculateSubtotal() - customDiscountAmount - getAppliedDiscountAmount() + applicableShipping) * (storeSettings.taxRate / 100);
   };
   const calculateShipping = () => {
+    let cost = shippingMethodCost;
+    let isGround = shippingMethod === 'standard';
+    
     if (shippoRates.length > 0) {
       const selectedRate = shippoRates.find(r => r.objectId === shippingMethod);
       if (selectedRate) {
-        return parseFloat(selectedRate.amount);
+        cost = parseFloat(selectedRate.amount);
+        const title = (selectedRate.title || selectedRate.displayName || selectedRate.provider || '').toLowerCase();
+        isGround = title.includes('ground') || title.includes('standard');
       }
     }
-    return shippingMethodCost;
+
+    if (appliedDiscount && appliedDiscount.type === 'free_shipping' && isGround) {
+      return 0;
+    }
+
+    return cost;
   };
-  const calculateInsurance = () => shippingInsurance ? 29.99 : 0;
+  const calculateInsurance = () => {
+    if (!shippingInsurance) return 0;
+    return Math.max(0, calculateSubtotal() - customDiscountAmount + calculateShipping()) * 0.0125;
+  };
   const calculateDonation = () => {
     switch (donationOption) {
       case 'roundup':
@@ -279,7 +322,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
   const hasSelectedDonation = completedSections.has('donation') || activeSection === 'payment';
   const displayDonation = hasSelectedDonation ? calculateDonation() : 0;
 
-  const calculateTotal = () => Math.max(0, calculateSubtotal() + calculateTax() + displayShipping + displayInsurance + displayDonation - customDiscountAmount);
+  const calculateTotal = () => Math.max(0, calculateSubtotal() + calculateTax() + displayShipping + displayInsurance + displayDonation - customDiscountAmount - getAppliedDiscountAmount());
 
   const stripe = useStripe();
   const elements = useElements();
@@ -350,6 +393,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
         paymentMethod: 'stripe',
         discountCode: discountCode || undefined,
         shippingAmount: calculateShipping(),
+        shippingRates: shippoRates,
+        selectedShippingRate: shippoRates.find(r => r.objectId === shippingMethod) || null,
         donationCause: selectedCauseId || undefined,
         donationAmount: calculateDonation(),
       };
@@ -552,38 +597,46 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
   const isSectionActive = (section: string) => activeSection === section;
 
   return (
-    <div className="checkout-page">
+    <div className="checkout-page relative">
       <div className="container">
+        <Link 
+          to="/cart" 
+          className="absolute left-4 top-4 md:left-8 md:top-8 text-sm font-medium text-gray-400 hover:text-emerald-400 transition-colors z-10"
+        >
+          ← Back to Cart
+        </Link>
         <motion.div className="checkout-header" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
           <h1>Checkout</h1>
-          <p className="checkout-subtitle">Complete your purchase securely</p>
         </motion.div>
 
         <form onSubmit={handleSubmit} className="checkout-form">
+          <div className="checkout-progress">
+            {['shipping', 'billing', 'shippingMethod', 'donation', 'payment'].map((section, index) => (
+              <div 
+                key={section} 
+                className={`progress-step ${isSectionCompleted(section) ? 'clickable' : ''}`}
+                onClick={() => {
+                  if (isSectionCompleted(section)) handleEditSection(section);
+                }}
+              >
+                <div className={`step-indicator ${isSectionCompleted(section) ? 'completed' : ''} ${isSectionActive(section) ? 'active' : ''}`}>
+                  {isSectionCompleted(section) ? <FontAwesomeIcon icon={faCheck} /> : index + 1}
+                </div>
+                <div className="step-info">
+                  <span className="step-title">
+                    {section === 'shipping' && 'Shipping'}
+                    {section === 'billing' && 'Billing'}
+                    {section === 'shippingMethod' && 'Shipping'}
+                    {section === 'donation' && 'Donation'}
+                    {section === 'payment' && 'Payment'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <div className="checkout-layout">
             <div className="checkout-forms">
-              <div className="checkout-progress">
-                {['shipping', 'billing', 'shippingMethod', 'donation', 'payment'].map((section, index) => (
-                  <div key={section} className="progress-step">
-                    <div className={`step-indicator ${isSectionCompleted(section) ? 'completed' : ''} ${isSectionActive(section) ? 'active' : ''}`}>
-                      {isSectionCompleted(section) ? <FontAwesomeIcon icon={faCheck} /> : index + 1}
-                    </div>
-                    <div className="step-info">
-                      <span className="step-title">
-                        {section === 'shipping' && 'Shipping Address'}
-                        {section === 'billing' && 'Billing Address'}
-                        {section === 'shippingMethod' && 'Shipping Method'}
-                        {section === 'donation' && 'Donation'}
-                        {section === 'payment' && 'Payment'}
-                      </span>
-                      {isSectionCompleted(section) && !isSectionActive(section) && (
-                        <button type="button" className="step-edit" onClick={() => handleEditSection(section)}>Edit</button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
               {isSectionActive('shipping') && (
                 <motion.div className="checkout-section" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>
                   <div className="section-header">
@@ -653,7 +706,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                   {isFetchingRates ? (
                     <div className="py-8 flex flex-col items-center justify-center">
                       <div className="w-10 h-10 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4"></div>
-                      <p className="text-gray-400">Calculating real-time shipping rates...</p>
+                      <p className="text-gray-400">Calculating shipping rates...</p>
                     </div>
                   ) : (
                     <div className="shipping-options">
@@ -665,14 +718,14 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                               name="shippingMethod" 
                               value={rate.objectId} 
                               checked={shippingMethod === rate.objectId} 
-                              onChange={(e) => setShippingMethod(e.target.value)} 
+                              onChange={(e) => { setShippingMethod(e.target.value); setShippingMethodCost(parseFloat(rate.amount)); }} 
                             />
                             <div className="option-content">
                               <div className="option-header">
                                 <span className="option-title">{rate.title || rate.displayName || `${rate.provider} ${rate.servicelevel?.name}`}</span>
                                 <span className="option-price">${parseFloat(rate.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                               </div>
-                              <p className="option-description">Estimated delivery: {rate.estimatedDays || '3-5'} {rate.estimatedDays === '1' ? 'business day' : 'business days'}</p>
+                              <p className="option-description">Estimated delivery: {rate.estimatedDays || '3-5'} {String(rate.estimatedDays) === '1' ? 'business day' : 'business days'}</p>
                             </div>
                           </label>
                         ))
@@ -705,11 +758,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                   )}
                   <label className="checkbox-label insurance-checkbox mb-4">
                     <input type="checkbox" checked={shippingInsurance} onChange={(e) => setShippingInsurance(e.target.checked)} />
-                    <div><span className="checkbox-title">Add Shipping Insurance</span><span className="checkbox-price">+ $29.99</span><p className="checkbox-description">Protect your order during shipping</p></div>
+                    <div><span className="checkbox-title">Add Shipping Insurance</span><span className="checkbox-price">+ ${(Math.max(0, calculateSubtotal() - customDiscountAmount + calculateShipping()) * 0.0125).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span><p className="checkbox-description">Protect your order during shipping</p></div>
                   </label>
                   
                   <div className="mt-4 p-3 bg-gray-900/50 border border-gray-800 rounded-lg text-xs text-gray-400">
-                    <span className="text-emerald-400 font-semibold">Note:</span> Estimated delivery timeline starts <em>after</em> LANForge has processed and shipped your order. Custom builds may require 5-10 business days for assembly and testing prior to shipping.
+                    <span className="text-emerald-400 font-semibold">Note:</span> Estimated delivery timeline starts <em>after</em> LANForge has processed and shipped your order.
                   </div>
                 </motion.div>
               )}
@@ -814,7 +867,19 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
               </div>
               <div className="discount-section">
                 <h3>Discount Code</h3>
-                <div className="discount-input"><input type="text" placeholder="Enter discount code" value={discountCode} onChange={(e) => setDiscountCode(e.target.value)} /><button type="button" className="btn btn-outline">Apply</button></div>
+                <div className="discount-input">
+                  <input type="text" placeholder="Enter discount code" value={discountCode} onChange={(e) => setDiscountCode(e.target.value)} />
+                  <button type="button" className="btn btn-outline" onClick={handleApplyDiscount}>Apply</button>
+                </div>
+                {discountError && <p className="text-red-500 text-xs mt-2">{discountError}</p>}
+                {appliedDiscount && (
+                  <div className="mt-2 text-emerald-400 text-sm flex justify-between items-center">
+                    <span>Discount '{appliedDiscount.code}' applied!</span>
+                    <button type="button" className="text-gray-400 hover:text-white" onClick={() => { setAppliedDiscount(null); setDiscountCode(''); }}>
+                      Remove
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="order-totals">
                 <div className="total-row"><span>Subtotal</span><span>${calculateSubtotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
@@ -843,6 +908,30 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                   </div>
                 );
               })()}
+              {appliedDiscount && appliedDiscount.type !== 'free_shipping' && (
+                <div className="total-row text-emerald-400">
+                  <span>Discount ({appliedDiscount.code})</span>
+                  <span>-${(appliedDiscount.type === 'percentage' ? calculateSubtotal() * (appliedDiscount.value / 100) : Math.min(appliedDiscount.value, calculateSubtotal())).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+              )}
+              {appliedDiscount && appliedDiscount.type === 'free_shipping' && (
+                <div className="total-row text-emerald-400">
+                  <span>Discount ({appliedDiscount.code})</span>
+                  <span>
+                    {(() => {
+                       let isGround = shippingMethod === 'standard';
+                       if (shippoRates.length > 0) {
+                         const selectedRate = shippoRates.find(r => r.objectId === shippingMethod);
+                         if (selectedRate) {
+                           const title = (selectedRate.title || selectedRate.displayName || selectedRate.provider || '').toLowerCase();
+                           isGround = title.includes('ground') || title.includes('standard');
+                         }
+                       }
+                       return isGround ? 'Free Ground Shipping' : 'Valid on Ground Only';
+                    })()}
+                  </span>
+                </div>
+              )}
               {customDiscountAmount > 0 && (
                 <div className="total-row text-emerald-400"><span>Custom Discount</span><span>-${customDiscountAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
               )}
@@ -853,15 +942,17 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                   {isProcessing ? 'Processing...' : `Place Order • $${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                 </button>
               )}
-              <div className="security-info">
-                <div className="security-item"><span className="security-icon"><FontAwesomeIcon icon={faLock} /></span><span>256-bit SSL encryption</span></div>
-                <div className="security-item"><span className="security-icon"><FontAwesomeIcon icon={faShieldHalved} /></span><span>PCI DSS compliant</span></div>
-                <div className="security-item"><span className="security-icon">↩️</span><span>14-day return policy</span></div>
-              </div>
-              <Link to="/cart" className="btn btn-text">← Back to Cart</Link>
             </motion.div>
           </div>
         </form>
+
+        <div className="mt-12 text-center text-gray-500 text-xs flex flex-row flex-wrap justify-center items-center gap-2 border-t border-gray-800 pt-6 pb-6">
+          <div className="flex items-center gap-1"><FontAwesomeIcon icon={faLock} className="text-emerald-500" /> <span>256-bit SSL Encryption</span></div>
+          <div className="text-gray-700">•</div>
+          <div className="flex items-center gap-1"><FontAwesomeIcon icon={faShieldHalved} className="text-emerald-500" /> <span>PCI DSS Compliant</span></div>
+          <div className="text-gray-700">•</div>
+          <div>&copy; {new Date().getFullYear()} LANForge, LLC.</div>
+        </div>
       </div>
     </div>
   );

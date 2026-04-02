@@ -1,10 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBolt, faShieldHalved, faTrophy } from '@fortawesome/free-solid-svg-icons';
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-950">
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gray-950 pb-12 pt-20">
       {/* Solid background */}
       <div className="absolute inset-0 bg-gray-950" />
       
@@ -33,7 +35,7 @@ const Hero: React.FC = () => {
               
               <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
                 Build Your Ultimate
-                <span className="block text-gradient-neon pt-2">Gaming Rig</span>
+                <span className="block text-gradient-neon pt-2 pb-2 leading-[1.2]">Gaming Rig</span>
               </h1>
               
               <p className="text-lg text-gray-400 leading-relaxed max-w-2xl">
@@ -44,22 +46,22 @@ const Hero: React.FC = () => {
 
             {/* Stats */}
             <motion.div 
-              className="grid grid-cols-3 gap-4"
+              className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               {[
-                { number: '5 Day', label: 'Build Time', icon: '⚡', color: 'text-emerald-400' },
-                { number: '1-Year', label: 'Warranty', icon: '🛡️', color: 'text-blue-400' },
-                { number: '100+', label: 'Systems Built', icon: '🏆', color: 'text-purple-400' }
+                { number: '5 day', label: 'build time', icon: faBolt, color: 'text-emerald-400' },
+                { number: '3 year', label: 'warranty', icon: faShieldHalved, color: 'text-blue-400' },
+                { number: '1000+', label: 'systems built', icon: faTrophy, color: 'text-purple-400' }
               ].map((stat, idx) => (
-                <div key={idx} className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl p-6 text-center shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                  <div className="text-2xl mb-2">{stat.icon}</div>
-                  <div className={`text-2xl font-bold ${stat.color} mb-1`}>
+                <div key={idx} className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl p-4 sm:p-6 text-center shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 flex flex-col items-center justify-center min-h-[160px]">
+                  <div className="text-3xl mb-3 text-white"><FontAwesomeIcon icon={stat.icon} /></div>
+                  <div className={`text-2xl sm:text-3xl font-bold ${stat.color} mb-2`}>
                     {stat.number}
                   </div>
-                  <div className="text-sm text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">{stat.label}</div>
+                  <div className="text-sm sm:text-base font-medium text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">{stat.label}</div>
                 </div>
               ))}
             </motion.div>
@@ -125,7 +127,7 @@ const Hero: React.FC = () => {
 
       {/* Scroll Indicator */}
       <motion.div 
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        className="absolute bottom-0 left-1/2 transform -translate-x-1/2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}

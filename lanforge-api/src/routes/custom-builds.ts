@@ -3,6 +3,7 @@ import { body, validationResult } from 'express-validator';
 import crypto from 'crypto';
 import CustomBuild from '../models/CustomBuild';
 import PCPart from '../models/PCPart';
+import BusinessInfo from '../models/BusinessInfo';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -26,7 +27,7 @@ router.post(
     }
 
     try {
-      const { parts, customer, guestEmail, name, notes } = req.body;
+      const { parts, customer, guestEmail, name, notes, baseProduct } = req.body;
 
       // Calculate totals and verify parts
       let subtotal = 0;
@@ -46,26 +47,86 @@ router.post(
         });
       }
 
-      const laborFee = 99.99; // Standard build fee
-      const total = subtotal + laborFee;
+      const businessInfo = await BusinessInfo.findOne();
+      const percentage = businessInfo?.buildFeePercentage ?? 10;
+      
+      let laborFee = subtotal * (percentage / 100);
+      
+      // Round up to nearest 4.99 or 9.99
+      if (laborFee > 0) {
+        const tens = Math.floor(laborFee / 10) * 10;
+        const opt1 = tens + 5.99;
+        const opt2 = tens + 9.99;
+        const opt3 = tens + 15.99;
+        
+        if (laborFee <= opt1) {
+          laborFee = opt1;
+        } else if (laborFee <= opt2) {
+          laborFee = opt2;
+        } else {
+          laborFee = opt3;
+        }
+      } else {
+        laborFee = 99.99; // Fallback minimum if subtotal is somehow 0
+      }
 
-      // Generate a short 8-character build ID for sharing
-      const buildId = crypto.randomBytes(4).toString('hex').toUpperCase();
+      // If the frontend passed in explicit prices, trust them to avoid rounding/mismatch edge cases,
+      // but ensure they roughly match our calculation to prevent price manipulation
+      let finalSubtotal = subtotal;
+      let finalLaborFee = laborFee;
+      let finalTotal = subtotal + laborFee;
 
-      const customBuild = await CustomBuild.create({
-        buildId,
-        name: name || 'My Custom Build',
-        customer: customer || undefined,
-        guestEmail,
-        parts: verifiedParts,
-        subtotal,
-        laborFee,
-        total,
-        status: 'saved',
-        notes,
-      });
+      if (req.body.frontendSubtotal !== undefined) {
+        const diff = Math.abs(req.body.frontendSubtotal - subtotal);
+        if (diff < 500) { // Increased tolerance to gracefully handle component overrides or pricing lag while prioritizing the customer's agreed price
+          finalSubtotal = req.body.frontendSubtotal;
+          finalLaborFee = req.body.frontendLaborFee ?? laborFee;
+          finalTotal = req.body.frontendTotal ?? (finalSubtotal + finalLaborFee);
+        }
+      }
 
-      res.status(201).json({ customBuild });
+      let customBuild;
+      const existingBuildId = req.body.buildId;
+
+      if (existingBuildId) {
+        customBuild = await CustomBuild.findOneAndUpdate(
+          { buildId: existingBuildId },
+          {
+            name: name || 'My Custom Build',
+            customer: customer || undefined,
+            guestEmail,
+            baseProduct: baseProduct || undefined,
+            parts: verifiedParts,
+            subtotal: finalSubtotal,
+            laborFee: finalLaborFee,
+            total: finalTotal,
+            status: 'saved',
+            notes,
+          },
+          { new: true }
+        );
+      }
+
+      if (!customBuild) {
+        // Generate a short 8-character build ID for sharing
+        const buildId = crypto.randomBytes(4).toString('hex').toUpperCase();
+
+        customBuild = await CustomBuild.create({
+          buildId,
+          name: name || 'My Custom Build',
+          customer: customer || undefined,
+          guestEmail,
+          baseProduct: baseProduct || undefined,
+          parts: verifiedParts,
+          subtotal: finalSubtotal,
+          laborFee: finalLaborFee,
+          total: finalTotal,
+          status: 'saved',
+          notes,
+        });
+      }
+
+      res.status(existingBuildId ? 200 : 201).json({ customBuild });
     } catch (error) {
       res.status(500).json({ message: 'Server error saving custom build' });
     }

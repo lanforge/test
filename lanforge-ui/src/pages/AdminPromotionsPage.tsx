@@ -36,6 +36,15 @@ const AdminPromotionsPage: React.FC = () => {
   const [memberTier, setMemberTier] = useState('all');
   
   const [isLoading, setIsLoading] = useState(true);
+  const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
+  const [newDiscount, setNewDiscount] = useState({
+    code: '',
+    type: 'percentage' as 'percentage' | 'fixed' | 'free_shipping',
+    value: 0,
+    minOrder: 0,
+    usageLimit: 100,
+    expiresAt: ''
+  });
 
   const fetchDiscounts = async () => {
     setIsLoading(true);
@@ -70,6 +79,25 @@ const AdminPromotionsPage: React.FC = () => {
     }
   }, [activeTab, discountStatus, memberTier]);
 
+  const handleCreateDiscount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.post('/discounts', newDiscount);
+      setIsDiscountModalOpen(false);
+      setNewDiscount({
+        code: '',
+        type: 'percentage',
+        value: 0,
+        minOrder: 0,
+        usageLimit: 100,
+        expiresAt: ''
+      });
+      fetchDiscounts();
+    } catch (e: any) {
+      alert(e.response?.data?.message || 'Error creating discount');
+    }
+  };
+
   const getTierColor = (tier: string = '') => {
     switch (tier.toLowerCase()) {
       case 'platinum': return 'bg-purple-500/10 text-purple-400 border-purple-500/30';
@@ -89,7 +117,10 @@ const AdminPromotionsPage: React.FC = () => {
           <p className="text-gray-400 mt-1">Manage discounts and customer rewards</p>
         </div>
         <div className="flex items-center space-x-4">
-          <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium">
+          <button 
+            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium"
+            onClick={() => activeTab === 'discounts' ? setIsDiscountModalOpen(true) : null}
+          >
             {activeTab === 'discounts' ? '+ Create Discount' : '+ Adjust Points'}
           </button>
         </div>
@@ -207,6 +238,99 @@ const AdminPromotionsPage: React.FC = () => {
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {isDiscountModalOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 animate-in fade-in">
+          <div className="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-md overflow-hidden">
+            <div className="p-4 border-b border-gray-800 flex justify-between items-center bg-gray-900/50">
+              <h2 className="text-lg font-bold text-white">Create Discount</h2>
+              <button onClick={() => setIsDiscountModalOpen(false)} className="text-gray-400 hover:text-white transition-colors">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <form onSubmit={handleCreateDiscount} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Code</label>
+                <input 
+                  type="text" 
+                  value={newDiscount.code}
+                  onChange={(e) => setNewDiscount({...newDiscount, code: e.target.value.toUpperCase()})}
+                  className="input w-full"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Type</label>
+                  <select 
+                    value={newDiscount.type}
+                    onChange={(e) => setNewDiscount({...newDiscount, type: e.target.value as any})}
+                    className="input w-full"
+                    required
+                  >
+                    <option value="percentage">Percentage</option>
+                    <option value="fixed">Fixed Amount</option>
+                    <option value="free_shipping">Free Shipping</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">
+                    {newDiscount.type === 'percentage' ? 'Percentage %' : newDiscount.type === 'fixed' ? 'Amount $' : 'Value (N/A)'}
+                  </label>
+                  <input 
+                    type="number" 
+                    value={newDiscount.value}
+                    onChange={(e) => setNewDiscount({...newDiscount, value: parseFloat(e.target.value)})}
+                    className="input w-full"
+                    min="0"
+                    disabled={newDiscount.type === 'free_shipping'}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Min Order $</label>
+                  <input 
+                    type="number" 
+                    value={newDiscount.minOrder}
+                    onChange={(e) => setNewDiscount({...newDiscount, minOrder: parseFloat(e.target.value)})}
+                    className="input w-full"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Usage Limit</label>
+                  <input 
+                    type="number" 
+                    value={newDiscount.usageLimit}
+                    onChange={(e) => setNewDiscount({...newDiscount, usageLimit: parseInt(e.target.value)})}
+                    className="input w-full"
+                    min="1"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Expires At</label>
+                <input 
+                  type="date" 
+                  value={newDiscount.expiresAt}
+                  onChange={(e) => setNewDiscount({...newDiscount, expiresAt: e.target.value})}
+                  className="input w-full"
+                  required
+                />
+              </div>
+              <div className="pt-4 flex space-x-3">
+                <button type="button" onClick={() => setIsDiscountModalOpen(false)} className="flex-1 py-2 px-4 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-800 transition-colors">
+                  Cancel
+                </button>
+                <button type="submit" className="flex-1 py-2 px-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium">
+                  Create
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

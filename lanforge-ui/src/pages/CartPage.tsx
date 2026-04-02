@@ -14,11 +14,13 @@ interface CartItem {
   image: string;
   category: string;
   rawItem: any; // Keep the original reference to pass back to API
+  fee?: number;
 }
 
 const CartPage: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [customDiscount, setCustomDiscount] = useState<number>(0);
+  const [storeSettings, setStoreSettings] = useState<{ taxRate: number, taxEnabled: boolean }>({ taxRate: 8, taxEnabled: true });
 
   const fetchCart = () => {
     let sessionId = localStorage.getItem('cartSessionId');
@@ -36,26 +38,51 @@ const CartPage: React.FC = () => {
             const customBuild = item.customBuild;
             
             if (customBuild) {
+              let buildImage = '/logo-2.png';
+              
+              if (customBuild.parts && customBuild.parts.length > 0) {
+                // Find the case part to use as the image
+                const casePart = customBuild.parts.find((p: any) => 
+                  p.partType === 'case' || p.partType === 'Case' || (p.part && (p.part.type === 'Case' || p.part.type === 'case'))
+                );
+                
+                if (casePart && casePart.part && casePart.part.images && casePart.part.images.length > 0) {
+                  buildImage = casePart.part.images[0];
+                }
+              }
+
+              // Deduplicate logic locally in case cart API returns raw parts vs merged. Wait, Cart handles it.
               return {
                 id: customBuild._id || index.toString(),
                 name: customBuild.name || 'Custom Build',
                 description: `Custom PC Build (${customBuild.parts?.length || 0} parts)`,
-                price: item.price || customBuild.total || 0,
+                price: customBuild.total || 0,
                 quantity: item.quantity || 1,
-                image: 'https://lanforge.co/cdn/shop/files/logo2.png?height=120&v=1763939118',
+                image: buildImage,
                 category: 'Custom PC',
-                rawItem: { customBuild: customBuild._id || customBuild }
+                rawItem: { customBuild: customBuild._id || customBuild },
+                fee: customBuild.laborFee || 0
               };
             }
             
+            // Determine category
+            let itemCategory = 'Component';
+            if (item.product) {
+              itemCategory = product?.subcategory || product?.category || product?.type || 'PC';
+            } else if (item.accessory) {
+              itemCategory = product?.category || 'Accessory';
+            } else if (item.pcPart) {
+              itemCategory = product?.type || 'Component';
+            }
+
             return {
               id: product?._id || index.toString(),
               name: product?.name || 'Item',
-              description: product?.brand ? `${product.brand} - ${product.type}` : 'Component',
+              description: product?.brand ? `${product.brand} - ${product.type || itemCategory}` : itemCategory,
               price: item.price || product?.price || 0,
               quantity: item.quantity || 1,
-              image: product?.images?.[0] || 'https://lanforge.co/cdn/shop/files/logo2.png?height=120&v=1763939118',
-              category: product?.type || 'Component',
+              image: product?.images?.[0] || '/logo-2.png',
+              category: itemCategory,
               rawItem: { 
                 product: item.product?._id || item.product,
                 pcPart: item.pcPart?._id || item.pcPart,
@@ -70,23 +97,80 @@ const CartPage: React.FC = () => {
       .catch(err => console.error(err));
   };
 
+  const fetchSettings = () => {
+    fetch(`${process.env.REACT_APP_API_URL}/settings/public`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.settings) {
+          setStoreSettings({
+            taxRate: data.settings.taxRate !== undefined && data.settings.taxRate !== null ? data.settings.taxRate : 8.0,
+            taxEnabled: data.settings.taxEnabled !== false
+          });
+        }
+      })
+      .catch(err => console.error(err));
+  };
+
   React.useEffect(() => {
     fetchCart();
-    // Auto update cart from backend every 5 seconds to catch admin changes
-    const interval = setInterval(() => {
-      fetchCart();
-    }, 5000);
-    return () => clearInterval(interval);
+    fetchSettings();
+    
+    // Auto update cart from backend via Server-Sent Events to catch admin changes
+    // Add timeout to ensure fetchCart has completed storing the sessionId
+    const sseTimeout = setTimeout(() => {
+      const sessionId = localStorage.getItem('cartSessionId');
+      
+      if (sessionId) {
+        eventSource = new EventSource(`${process.env.REACT_APP_API_URL}/carts/stream/${sessionId}`);
+        
+        eventSource.addEventListener('cart_update', (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'update') {
+              console.log('SSE: Cart update received, refetching...');
+              fetchCart();
+              fetchSettings();
+            }
+          } catch (e) {
+            console.error('Error parsing SSE data', e);
+          }
+        });
+
+        eventSource.onerror = (error) => {
+          console.error('SSE Error', error);
+          if (eventSource && eventSource.readyState === EventSource.CLOSED) {
+            eventSource.close();
+          }
+        };
+      }
+    }, 100);
+
+    let eventSource: EventSource | null = null;
+
+    return () => {
+      clearTimeout(sseTimeout);
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
   }, []);
 
   const syncCartWithApi = (items: CartItem[], options: { clearDiscount?: boolean } = {}) => {
     const sessionId = localStorage.getItem('cartSessionId');
     if (!sessionId) return;
     
-    const mappedItems = items.map(i => ({
-      ...i.rawItem,
-      quantity: i.quantity
-    }));
+    // Group identical items
+    const mergedItemsMap = new Map<string, any>();
+    items.forEach(i => {
+      const key = i.rawItem.customBuild || i.rawItem.product || i.rawItem.pcPart || i.rawItem.accessory;
+      if (mergedItemsMap.has(key)) {
+        mergedItemsMap.get(key).quantity += i.quantity;
+      } else {
+        mergedItemsMap.set(key, { ...i.rawItem, quantity: i.quantity });
+      }
+    });
+
+    const mappedItems = Array.from(mergedItemsMap.values());
     
     fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
       method: 'PUT',
@@ -123,16 +207,17 @@ const CartPage: React.FC = () => {
     return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
-  const calculateTax = () => {
-    return Math.max(0, calculateSubtotal() - customDiscount) * 0.08; // 8% tax on discounted amount
+  const calculateTotalFee = () => {
+    return cartItems.reduce((total, item) => total + ((item.fee || 0) * item.quantity), 0);
   };
 
-  const calculateShipping = () => {
-    return cartItems.length > 0 ? 49.99 : 0; // Flat rate shipping
+  const calculateTax = () => {
+    if (!storeSettings.taxEnabled) return 0;
+    return Math.max(0, calculateSubtotal() - customDiscount) * (storeSettings.taxRate / 100);
   };
 
   const calculateTotal = () => {
-    return Math.max(0, calculateSubtotal() - customDiscount + calculateTax() + calculateShipping());
+    return Math.max(0, calculateSubtotal() - customDiscount);
   };
 
   const handleCheckout = () => {
@@ -200,6 +285,11 @@ const CartPage: React.FC = () => {
                         <span className="cart-item-category">{item.category}</span>
                       </div>
                       <p className="cart-item-description">{item.description}</p>
+                      {item.fee !== undefined && item.fee > 0 && (
+                        <p className="text-sm text-emerald-400 mt-1 mb-2 font-medium">
+                          Includes ${item.fee.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} System Integration & Validation fee
+                        </p>
+                      )}
                       <div className="cart-item-actions">
                         <div className="quantity-selector">
                           <button 
@@ -225,8 +315,8 @@ const CartPage: React.FC = () => {
                       </div>
                     </div>
                     <div className="cart-item-price">
-                      <div className="price-amount">${(item.price * item.quantity).toFixed(2)}</div>
-                      <div className="price-unit">${item.price.toFixed(2)} each</div>
+                      <div className="price-amount">${(item.price * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="price-unit">${item.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} each</div>
                     </div>
                   </motion.div>
                 ))}
@@ -242,28 +332,27 @@ const CartPage: React.FC = () => {
           >
             <h2>Order Summary</h2>
             
-            <div className="summary-details">
-              <div className="summary-row">
-                <span>Subtotal</span>
-                <span>${calculateSubtotal().toFixed(2)}</span>
+            <div className="summary-details space-y-3 mb-6">
+              <div className="flex justify-between items-center text-gray-400">
+                <span>Items Subtotal</span>
+                <span>${(calculateSubtotal() - calculateTotalFee()).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
-              <div className="summary-row">
-                <span>Shipping</span>
-                <span>${calculateShipping().toFixed(2)}</span>
-              </div>
-              <div className="summary-row">
-                <span>Tax (8%)</span>
-                <span>${calculateTax().toFixed(2)}</span>
-              </div>
-              {customDiscount > 0 && (
-                <div className="summary-row text-emerald-400">
-                  <span>Custom Discount</span>
-                  <span>-${customDiscount.toFixed(2)}</span>
+              {calculateTotalFee() > 0 && (
+                <div className="flex justify-between items-center text-gray-400">
+                  <span>Build Services</span>
+                  <span>${calculateTotalFee().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               )}
-              <div className="summary-row total">
+              {customDiscount > 0 && (
+                <div className="flex justify-between items-center text-emerald-400">
+                  <span>Discount</span>
+                  <span>-${customDiscount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+              )}
+              <div className="h-px bg-white/10 my-4" />
+              <div className="flex justify-between items-center text-xl font-bold text-white">
                 <span>Total</span>
-                <span>${calculateTotal().toFixed(2)}</span>
+                <span>${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
             </div>
 
@@ -302,14 +391,14 @@ const CartPage: React.FC = () => {
               <div className="feature">
                 <span className="feature-icon"><FontAwesomeIcon icon={faShieldAlt} /></span>
                 <div>
-                  <h4>1-Year Warranty</h4>
+                  <h4>3-Year Warranty</h4>
                   <p>All systems include warranty</p>
                 </div>
               </div>
               <div className="feature">
                 <span className="feature-icon"><FontAwesomeIcon icon={faUndo} /></span>
                 <div>
-                  <h4>30-Day Returns</h4>
+                  <h4>14-Day Returns</h4>
                   <p>Hassle-free returns</p>
                 </div>
               </div>

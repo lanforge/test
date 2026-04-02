@@ -156,7 +156,6 @@ export type PCPartSpecs =
 
 export interface IPCPart extends Document {
   type: PCPartType;
-  name: string;
   slug: string;
   brand: string;
   partModel: string;
@@ -191,7 +190,6 @@ const PCPartSchema = new Schema<IPCPart>(
       required: true,
       index: true,
     },
-    name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true },
     brand: { type: String, required: true, trim: true },
     partModel: { type: String, required: true, trim: true },
@@ -220,7 +218,7 @@ const PCPartSchema = new Schema<IPCPart>(
 );
 
 PCPartSchema.index({ serialNumbers: 1 }, { unique: true, partialFilterExpression: { serialNumbers: { $exists: true, $type: 'array', $ne: [] } } });
-PCPartSchema.index({ name: 'text', brand: 'text', partModel: 'text', tags: 'text' });
+PCPartSchema.index({ brand: 'text', partModel: 'text', tags: 'text' });
 PCPartSchema.index({ type: 1, isActive: 1 });
 PCPartSchema.index({ slug: 1 });
 PCPartSchema.index({ 'specs.socket': 1 }); // CPU / Motherboard / Cooler compatibility

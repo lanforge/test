@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface FAQItem {
@@ -87,58 +89,6 @@ const FAQPage: React.FC = () => {
               Find answers to common questions about ordering, products, warranty, and more
             </p>
             
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-12">
-              <div className="card p-6 text-center">
-                <div className="text-3xl font-bold text-gradient-neon mb-2">5</div>
-                <div className="text-gray-400">Categories</div>
-              </div>
-              <div className="card p-6 text-center">
-                <div className="text-3xl font-bold text-gradient-neon mb-2">20</div>
-                <div className="text-gray-400">Questions</div>
-              </div>
-              <div className="card p-6 text-center">
-                <div className="text-3xl font-bold text-gradient-neon mb-2">24/7</div>
-                <div className="text-gray-400">Support</div>
-              </div>
-              <div className="card p-6 text-center">
-                <div className="text-3xl font-bold text-gradient-neon mb-2">3</div>
-                <div className="text-gray-400">Year Warranty</div>
-              </div>
-            </div>
-
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto mb-12">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search for answers..."
-                  className="input w-full pl-12 pr-4 py-4 text-lg"
-                />
-                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-              {searchQuery && (
-                <p className="text-gray-400 text-sm mt-2">
-                  Found {filteredCategories.reduce((total, cat) => total + cat.items.length, 0)} results
-                </p>
-              )}
-            </div>
           </motion.div>
         </div>
       </section>
@@ -256,7 +206,7 @@ const FAQPage: React.FC = () => {
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-xl">
-                      📧
+                      <FontAwesomeIcon icon={faEnvelope} />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-2">Email Support</h3>
@@ -267,7 +217,7 @@ const FAQPage: React.FC = () => {
 
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-xl">
-                      📞
+                      <FontAwesomeIcon icon={faPhone} />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-2">Phone Support</h3>
@@ -282,7 +232,7 @@ const FAQPage: React.FC = () => {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-2">Live Chat</h3>
-                      <p className="text-white">Available via Intercom widget</p>
+                      <p className="text-white">Available via Live Chat widget</p>
                       <p className="text-gray-400 text-sm">Bottom right corner of every page</p>
                     </div>
                   </div>

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar, faLaptop, faCheck, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 
 const TechSupportPage: React.FC = () => {
@@ -148,7 +150,7 @@ const TechSupportPage: React.FC = () => {
             >
               <div className="card-glow p-8 md:p-12 max-w-2xl mx-auto">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-r from-emerald-500 to-blue-500 flex items-center justify-center text-3xl text-white mx-auto mb-6">
-                  ✓
+                  <FontAwesomeIcon icon={faCheck} />
                 </div>
                 <h1 className="heading-1 mb-4">Support Session Booked!</h1>
                 <p className="body-large mb-8">
@@ -226,7 +228,7 @@ const TechSupportPage: React.FC = () => {
                 <div className="text-gray-400">Availability</div>
               </div>
               <div className="card p-6 text-center">
-                <div className="text-3xl font-bold text-gradient-neon mb-2">4.9★</div>
+                <div className="text-3xl font-bold text-gradient-neon mb-2">4.9<FontAwesomeIcon icon={faStar} /></div>
                 <div className="text-gray-400">Support Rating</div>
               </div>
               <div className="card p-6 text-center">
@@ -529,7 +531,7 @@ const TechSupportPage: React.FC = () => {
 
             <div className="card p-8 text-center">
               <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-2xl mx-auto mb-6">
-                💻
+                <FontAwesomeIcon icon={faLaptop} />
               </div>
               <h3 className="text-xl font-bold text-white mb-4">Remote Support</h3>
               <p className="text-gray-400">Screen sharing and remote assistance for hands-on help</p>
@@ -537,7 +539,7 @@ const TechSupportPage: React.FC = () => {
 
             <div className="card p-8 text-center">
               <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-2xl mx-auto mb-6">
-                📧
+                <FontAwesomeIcon icon={faEnvelope} />
               </div>
               <h3 className="text-xl font-bold text-white mb-4">Email Confirmation</h3>
               <p className="text-gray-400">Meeting link and details sent before your session</p>

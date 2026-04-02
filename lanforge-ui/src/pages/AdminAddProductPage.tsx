@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../utils/api';
 
 interface PCPart {
   _id: string;
-  name: string;
+  partModel: string;
   type: string;
   brand: string;
   cost: number;
@@ -299,7 +301,7 @@ const AdminAddProductPage: React.FC = () => {
                   <option value="">-- None --</option>
                   {availableParts.filter(p => p.type === category.id).map(part => (
                     <option key={part._id} value={part._id}>
-                      {part.name} (${(part.cost || part.price || 0).toFixed(2)})
+                      {part.brand} {part.partModel} (${(part.cost || part.price || 0).toFixed(2)})
                     </option>
                   ))}
                 </select>
@@ -319,7 +321,7 @@ const AdminAddProductPage: React.FC = () => {
                     onChange={() => toggleFan(part._id)}
                   />
                   <div className="flex-1 truncate">
-                    <span className="text-white text-sm font-medium truncate block">{part.name}</span>
+                    <span className="text-white text-sm font-medium truncate block">{part.brand} {part.partModel}</span>
                   </div>
                   <span className="text-gray-400 text-xs">${(part.cost || part.price || 0).toFixed(2)}</span>
                 </label>
@@ -452,6 +454,8 @@ const AdminAddProductPage: React.FC = () => {
                 <option value="LANForge Series">LANForge Series</option>
                 <option value="LANForge Mini Series">LANForge Mini Series</option>
                 <option value="Pre Configured">Pre Configured</option>
+                <option value="dignitas">Dignitas</option>
+                <option value="tradeify">Tradeify</option>
               </select>
             </div>
 
@@ -486,7 +490,7 @@ const AdminAddProductPage: React.FC = () => {
                     <div className="absolute top-2 right-2 flex space-x-1">
                       {idx !== 0 && (
                         <button type="button" onClick={() => setPrimaryImage(idx)} className="p-1 bg-gray-900/80 text-emerald-400 hover:text-emerald-300 rounded" title="Set as Primary">
-                          ★
+                          <FontAwesomeIcon icon={faStar} />
                         </button>
                       )}
                       <button type="button" onClick={() => removeImage(idx)} className="p-1 bg-gray-900/80 text-red-400 hover:text-red-300 rounded" title="Remove">

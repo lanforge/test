@@ -6,8 +6,7 @@ interface PCPart {
   _id: string;
   type: string;
   brand: string;
-  model: string;
-  name: string;
+  partModel: string;
   sku: string;
   price: number;
   cost?: number;
@@ -40,7 +39,7 @@ const AdminPartsPage: React.FC = () => {
   const fetchParts = async () => {
     setIsLoading(true);
     try {
-      const response = await api.get('/pc-parts', {
+      const response = await api.get('/pc-parts/admin/all', {
         params: { search: searchTerm, type: typeFilter !== 'all' ? typeFilter : undefined, page, limit: 20 }
       });
       setParts(response.data.parts || []);
@@ -139,7 +138,6 @@ const AdminPartsPage: React.FC = () => {
         
         if (details && details.name) {
           const payload = {
-            name: details.name,
             type: bulkCategory,
             brand: details.brand || 'Unknown',
             model: details.model || details.name,
@@ -396,7 +394,7 @@ const AdminPartsPage: React.FC = () => {
                           checked={selectedParts.includes(part._id)}
                           onChange={() => handleSelectPart(part._id)}
                         />
-                        <p className="text-white font-medium">{part.name || `${part.brand} ${part.model}`}</p>
+                        <p className="text-white font-medium">{`${part.brand} ${part.partModel}`}</p>
                       </div>
                       <p className="text-gray-400 text-sm font-mono mt-1">{part.sku}</p>
                       {(part as any).productUrl && (

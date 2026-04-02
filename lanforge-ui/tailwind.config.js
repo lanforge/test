@@ -50,8 +50,8 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        display: ['Clash Display', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['lato', 'sans-serif'],
+        display: ['lato', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       fontSize: {

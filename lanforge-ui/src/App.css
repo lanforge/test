@@ -772,34 +772,56 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1rem;
   padding: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+.checkout-progress::before {
+  content: '';
+  position: absolute;
+  top: 2.75rem;
+  left: 3rem;
+  right: 3rem;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 0;
 }
 
 .progress-step {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 0.5rem;
+  z-index: 1;
+  width: 100px;
+  transition: opacity 0.2s ease;
 }
 
-.progress-step:last-child {
-  border-bottom: none;
+.progress-step.clickable {
+  cursor: pointer;
+}
+
+.progress-step.clickable:hover {
+  opacity: 0.8;
 }
 
 .step-indicator {
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #1a1a22;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.6);
   flex-shrink: 0;
+  margin-bottom: 0.25rem;
 }
 
 .step-indicator.active {
@@ -809,22 +831,23 @@
 }
 
 .step-indicator.completed {
-  background: rgba(0, 255, 157, 0.1);
+  background: #1a1a22;
   color: #00ff9d;
-  border-color: rgba(0, 255, 157, 0.2);
+  border-color: #00ff9d;
 }
 
 .step-info {
-  flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.25rem;
 }
 
 .step-title {
   font-size: 0.875rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
+  text-align: center;
 }
 
 .step-edit {
@@ -834,7 +857,7 @@
   font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 0.25rem;
   transition: all 0.2s ease;
 }
@@ -1348,6 +1371,30 @@
   .checkout-summary {
     padding: 1rem;
   }
+
+  .checkout-progress {
+    overflow-x: auto;
+    padding: 1rem;
+    gap: 1rem;
+    justify-content: flex-start;
+  }
+
+  .checkout-progress::before {
+    left: 1.5rem;
+    right: 1.5rem;
+    top: 2.25rem;
+    min-width: 400px;
+    width: calc(100% - 3rem);
+  }
+
+  .progress-step {
+    flex-shrink: 0;
+    width: 80px;
+  }
+
+  .step-title {
+    font-size: 0.75rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1371,18 +1418,15 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-dark);
   color: var(--text-primary);
+  font-family: 'lato', sans-serif;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 /* Input styles */

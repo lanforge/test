@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDesktop } from '@fortawesome/free-solid-svg-icons';
 
 interface Product {
   id: number;
@@ -35,7 +37,10 @@ const ProductShowcase: React.FC = () => {
                   p.parts.find((part: any) => part.type === 'cpu'),
                   p.parts.find((part: any) => part.type === 'gpu'),
                   p.parts.find((part: any) => part.type === 'ram')
-                ].filter(Boolean).map((part: any) => `${part.type.toUpperCase()}: ${part.brand} ${part.name}`)
+                ].filter(Boolean).map((part: any) => {
+                  const modelStr = part.partModel || part.model || (part.name ? part.name.replace(new RegExp(`^${part.brand}\\s*`, 'i'), '') : '');
+                  return `${part.type.toUpperCase()}: ${part.brand} ${modelStr}`.trim();
+                })
               : (p.specs ? Object.entries(p.specs).map(([k, v]) => `${k}: ${v}`).slice(0, 3) : []),
             imageColor: '#3a86ff',
             series: p.subcategory || p.category || 'LANForge Series',
@@ -49,29 +54,27 @@ const ProductShowcase: React.FC = () => {
       .catch(err => console.error(err));
   }, []);
 
-  const seriesOrder = ['LANForge Series', 'LANForge Mini Series', 'Pre Configured'];
+  const seriesOrder = [
+    { label: 'LANForge Series', tag: 'lanforge series' },
+    { label: 'LANForge Mini Series', tag: 'mini series' },
+    { label: 'Pre Configured', tag: 'preconfig' }
+  ];
 
   // Group products by tags matching the seriesOrder
   const seriesGroups = products.reduce((groups, product) => {
-    let matched = false;
-    seriesOrder.forEach(targetTag => {
-      // Provide fallback checks for specific strings if the tags happen to be empty
-      if (product.tags?.includes(targetTag) || product.series === targetTag) {
-        if (!groups[targetTag]) {
-          groups[targetTag] = [];
+    const productTagsLower = product.tags?.map(t => t.toLowerCase()) || [];
+    const productSeriesLower = product.series?.toLowerCase() || '';
+
+    seriesOrder.forEach(target => {
+      const isMatch = productTagsLower.includes(target.tag) || productSeriesLower === target.tag || productTagsLower.includes(target.label.toLowerCase()) || productSeriesLower === target.label.toLowerCase();
+      if (isMatch) {
+        if (!groups[target.label]) {
+          groups[target.label] = [];
         }
-        groups[targetTag].push(product);
-        matched = true;
+        groups[target.label].push(product);
       }
     });
     
-    // Fallback if no tags match anything
-    if (!matched) {
-      if (!groups['LANForge Series']) {
-        groups['LANForge Series'] = [];
-      }
-      groups['LANForge Series'].push(product);
-    }
     return groups;
   }, {} as Record<string, Product[]>);
 
@@ -108,7 +111,8 @@ const ProductShowcase: React.FC = () => {
           </p>
         </motion.div>
         
-        {seriesOrder.map((series, seriesIndex) => {
+        {seriesOrder.map((seriesObj, seriesIndex) => {
+          const series = seriesObj.label;
           const seriesProducts = seriesGroups[series];
           if (!seriesProducts) return null;
           
@@ -164,7 +168,7 @@ const ProductShowcase: React.FC = () => {
                               className="w-full h-full object-cover relative z-10"
                             />
                           ) : (
-                            <div className="text-6xl opacity-30 relative z-10">🖥️</div>
+                            <div className="text-6xl opacity-30 relative z-10"><FontAwesomeIcon icon={faDesktop} /></div>
                           )}
                           <div 
                             className="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-20 blur-xl"
@@ -202,13 +206,55 @@ const ProductShowcase: React.FC = () => {
                         
                         {/* Actions */}
                         <div className="flex items-center justify-between pt-4 border-t border-gray-800/50">
-                          <Link to={`/configurator?model=${product.id}`}>
-                            <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                              <button className="skew-x-[10deg] px-6 py-2 text-sm font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
-                                Customize
-                              </button>
-                            </div>
-                          </Link>
+                          <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+                            <button 
+                              id={`showcase-add-btn-${product.id}`}
+                              className="skew-x-[10deg] px-6 py-2 text-sm font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300"
+                              onClick={() => {
+                                let sessionId = localStorage.getItem('cartSessionId');
+                                if (!sessionId) {
+                                  sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
+                                  localStorage.setItem('cartSessionId', sessionId);
+                                }
+                                fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
+                                  .then(res => res.json())
+                                  .then(data => {
+                                    const existingItems = data.cart?.items || [];
+                                    const mappedItems = existingItems.map((i: any) => ({
+                                      product: i.product?._id || i.product,
+                                      pcPart: i.pcPart?._id || i.pcPart,
+                                      accessory: i.accessory?._id || i.accessory,
+                                      customBuild: i.customBuild?._id || i.customBuild,
+                                      quantity: i.quantity
+                                    }));
+                                    mappedItems.push({
+                                      product: product.id,
+                                      quantity: 1
+                                    });
+                                    return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
+                                      method: 'PUT',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ items: mappedItems })
+                                    });
+                                  })
+                                  .then(() => {
+                                    const btn = document.getElementById(`showcase-add-btn-${product.id}`);
+                                    if (btn) {
+                                      btn.innerHTML = 'Added!';
+                                      btn.classList.add('!text-emerald-400', 'from-emerald-400', 'to-emerald-400');
+                                      setTimeout(() => {
+                                        window.location.href = '/cart';
+                                      }, 500);
+                                    } else {
+                                      window.location.href = '/cart';
+                                    }
+                                  })
+                                  .catch(err => console.error(err));
+                              }}
+                            >
+                              Add to Cart
+                            </button>
+                          </div>
                           <Link to={`/products/${product.id}`}>
                             <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
                               <button className="skew-x-[10deg] px-6 py-2 text-sm font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">

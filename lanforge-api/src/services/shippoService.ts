@@ -4,13 +4,49 @@ const shippo = new Shippo({ apiKeyHeader: process.env.SHIPPO_API_TOKEN || '' });
 
 export const createShipment = async (addressFrom: any, addressTo: any, parcels: any[]) => {
   try {
-    return await shippo.shipments.create({
-      addressFrom: addressFrom,
-      addressTo: addressTo,
-      parcels: parcels,
-      carrierAccounts: ['f5af2b1f4fe54476b103493f3e76c27b'],
-      async: false,
+    const response = await fetch('https://api.goshippo.com/shipments/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `ShippoToken ${process.env.SHIPPO_API_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        address_from: {
+          name: "LANForge",
+          street1: "88 Sabal Creek Trl",
+          city: "Ponte Vedra",
+          state: "FL",
+          zip: "32081",
+          country: "US"
+        },
+        address_to: addressTo,
+        parcels: parcels.map(p => {
+          const parcelData = {
+            length: String(p.length || p.length_in || "5"),
+            width: String(p.width || p.width_in || "5"),
+            height: String(p.height || p.height_in || "5"),
+            distance_unit: String(p.distance_unit || p.distanceUnit || "in"),
+            weight: String(p.weight || "2"),
+            mass_unit: String(p.mass_unit || p.massUnit || "lb")
+          };
+          console.log("Shippo Sending Parcel Data:", JSON.stringify(parcelData, null, 2));
+          return parcelData;
+        }),
+        carrier_accounts: [
+          "f5af2b1f4fe54476b103493f3e76c27b"
+        ],
+        async: false
+      })
     });
+
+    const dataText = await response.text();
+    console.log("Shippo Response:", dataText);
+
+    if (!response.ok) {
+      throw new Error(`Shippo API Error: ${dataText}`);
+    }
+
+    return JSON.parse(dataText);
   } catch (error: any) {
     throw new Error(`Failed to create shipment: ${error.message}`);
   }

@@ -16,14 +16,13 @@ export interface IBusinessInfo extends Document {
   currency: string;
   flatShippingRate: number;
   freeShippingThreshold: number;
+  buildFeePercentage: number;
   socialLinks?: {
     facebook?: string;
     twitter?: string;
     instagram?: string;
     youtube?: string;
   };
-  comingSoonMode?: boolean;
-  comingSoonDate?: Date;
   updatedAt: Date;
 }
 
@@ -44,14 +43,13 @@ const BusinessInfoSchema = new Schema<IBusinessInfo>(
     currency: { type: String, default: 'USD' },
     flatShippingRate: { type: Number, default: 29.99 },
     freeShippingThreshold: { type: Number, default: 500 },
+    buildFeePercentage: { type: Number, default: 10 },
     socialLinks: {
       facebook: String,
       twitter: String,
       instagram: String,
       youtube: String,
-    },
-    comingSoonMode: { type: Boolean, default: false },
-    comingSoonDate: { type: Date }
+    }
   },
   { timestamps: true }
 );

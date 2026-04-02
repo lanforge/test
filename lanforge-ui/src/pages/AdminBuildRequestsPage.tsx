@@ -8,6 +8,16 @@ interface BuildRequest {
   phone?: string;
   budget?: string;
   details: string;
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
+  };
+  usage?: string;
+  preferredBrands?: string;
+  timeline?: string;
   status: 'pending' | 'reviewed' | 'contacted' | 'completed';
   createdAt: string;
 }
@@ -71,7 +81,7 @@ const AdminBuildRequestsPage: React.FC = () => {
               <tr className="bg-gray-800/50 border-b border-gray-800">
                 <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Date</th>
                 <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Name / Contact</th>
-                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Budget</th>
+                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Budget / Use</th>
                 <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Details</th>
                 <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
                 <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
@@ -96,12 +106,24 @@ const AdminBuildRequestsPage: React.FC = () => {
                       {request.phone && <div className="text-xs text-gray-400">{request.phone}</div>}
                     </td>
                     <td className="py-4 px-6 text-sm text-gray-300 whitespace-nowrap">
-                      {request.budget || 'Not specified'}
+                      <div>{request.budget || 'No budget'}</div>
+                      <div className="text-xs text-gray-400 mt-1">{request.usage || 'Usage not specified'}</div>
                     </td>
                     <td className="py-4 px-6">
-                      <p className="text-sm text-gray-300 max-w-xs truncate" title={request.details}>
+                      <div className="text-sm text-gray-300 max-w-xs truncate" title={request.details}>
                         {request.details}
-                      </p>
+                      </div>
+                      {(request.preferredBrands || request.timeline) && (
+                        <div className="text-xs text-gray-400 mt-1 flex gap-2">
+                          {request.preferredBrands && <span>Brands: {request.preferredBrands}</span>}
+                          {request.timeline && <span>Timeline: {request.timeline}</span>}
+                        </div>
+                      )}
+                      {request.address && request.address.city && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          Loc: {request.address.city}, {request.address.state}
+                        </div>
+                      )}
                     </td>
                     <td className="py-4 px-6">
                       <select

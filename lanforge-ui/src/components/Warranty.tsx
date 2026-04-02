@@ -1,19 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShieldHalved, faTruckFast, faWrench } from '@fortawesome/free-solid-svg-icons';
 
 const warrantyFeatures = [
   {
-    icon: '🛡️',
+    icon: faShieldHalved,
     title: '3‑Year Comprehensive Warranty',
     description: 'Covers all components against defects. Includes technical support and troubleshooting.'
   },
   {
-    icon: '🚚',
+    icon: faTruckFast,
     title: 'Free Shipping & Returns',
     description: 'Free shipping within the continental US. 14‑day return policy for any reason.'
   },
   {
-    icon: '🔧',
+    icon: faWrench,
     title: 'Lifetime Build Support',
     description: 'Our experts are available to help with upgrades, troubleshooting, and optimization for life.'
   }
@@ -60,8 +63,8 @@ const Warranty: React.FC = () => {
               className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl overflow-hidden text-center shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 group"
             >
               <div className="p-6 text-center">
-                <div className="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
+                <div className="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300 text-white">
+                  <FontAwesomeIcon icon={feature.icon} />
                 </div>
                 <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 mb-3">
                   {feature.title}
@@ -86,16 +89,20 @@ const Warranty: React.FC = () => {
               <strong className="text-cyan-400">Note:</strong> Longer warranty plans available at checkout.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                <button className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
-                  View Full Warranty Terms
-                </button>
-              </div>
-              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                <button className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
-                  Contact Support
-                </button>
-              </div>
+              <Link to="/warranty">
+                <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 inline-block">
+                  <button className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+                    View Full Warranty Terms
+                  </button>
+                </div>
+              </Link>
+              <Link to="/contact">
+                <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 inline-block">
+                  <button className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+                    Contact Support
+                  </button>
+                </div>
+              </Link>
             </div>
           </div>
         </motion.div>

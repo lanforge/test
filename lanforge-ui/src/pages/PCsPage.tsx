@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDesktop, faBolt, faShieldHalved, faTruckFast, faWrench } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -37,7 +39,10 @@ const PCsPage: React.FC = () => {
                   p.parts.find((part: any) => part.type === 'cpu'),
                   p.parts.find((part: any) => part.type === 'gpu'),
                   p.parts.find((part: any) => part.type === 'ram')
-                ].filter(Boolean).map((part: any) => `${part.type.toUpperCase()}: ${part.brand} ${part.name}`)
+                ].filter(Boolean).map((part: any) => {
+                  const modelStr = part.partModel || part.model || (part.name ? part.name.replace(new RegExp(`^${part.brand}\\s*`, 'i'), '') : '');
+                  return `${part.type.toUpperCase()}: ${part.brand} ${modelStr}`.trim();
+                })
               : (p.specs ? Object.entries(p.specs).map(([k, v]) => `${k}: ${v}`).slice(0, 3) : []),
             imageColor: '#10b981', // Fallback color
             tags: p.tags || []
@@ -55,8 +60,12 @@ const PCsPage: React.FC = () => {
     }));
   };
 
-  const seriesOrder = ['LANForge Series', 'LANForge Mini Series', 'Pre Configured'];
-  const allSeries = ['All', ...seriesOrder];
+  const seriesOrder = [
+    { label: 'LANForge Series', tag: 'lanforge series' },
+    { label: 'LANForge Mini Series', tag: 'mini series' },
+    { label: 'Pre Configured', tag: 'preconfig' }
+  ];
+  const allSeries = ['All', ...seriesOrder.map(s => s.label)];
 
   // Filter and sort products
   const sortedProducts = [...products].sort((a, b) => {
@@ -74,24 +83,18 @@ const PCsPage: React.FC = () => {
 
   // Group by series for display
   const productsBySeries = sortedProducts.reduce((groups, product) => {
-    let matched = false;
-    seriesOrder.forEach(targetTag => {
-      // Use fallback properties as tags might not be fully migrated
-      if ((product.tags?.includes(targetTag) || (product as any).series === targetTag) && (selectedSeries === 'All' || selectedSeries === targetTag)) {
-        if (!groups[targetTag]) {
-          groups[targetTag] = [];
+    const productTagsLower = product.tags?.map(t => t.toLowerCase()) || [];
+    const productSeriesLower = (product as any).series?.toLowerCase() || '';
+
+    seriesOrder.forEach(target => {
+      const isMatch = productTagsLower.includes(target.tag) || productSeriesLower === target.tag || productTagsLower.includes(target.label.toLowerCase()) || productSeriesLower === target.label.toLowerCase();
+      if (isMatch && (selectedSeries === 'All' || selectedSeries === target.label)) {
+        if (!groups[target.label]) {
+          groups[target.label] = [];
         }
-        groups[targetTag].push(product);
-        matched = true;
+        groups[target.label].push(product);
       }
     });
-
-    if (!matched && (selectedSeries === 'All' || selectedSeries === 'LANForge Series')) {
-      if (!groups['LANForge Series']) {
-        groups['LANForge Series'] = [];
-      }
-      groups['LANForge Series'].push(product);
-    }
     
     return groups;
   }, {} as Record<string, Product[]>);
@@ -116,21 +119,6 @@ const PCsPage: React.FC = () => {
               stunning visuals, and seamless gameplay. Every system is hand-built and tested for excellence.
             </p>
             
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
-              <div className="card p-6 text-center">
-                <div className="text-3xl font-bold text-gradient-neon mb-2">8+</div>
-                <div className="text-gray-400">PC Models</div>
-              </div>
-              <div className="card p-6 text-center">
-                <div className="text-3xl font-bold text-gradient-neon mb-2">24/7</div>
-                <div className="text-gray-400">Support</div>
-              </div>
-              <div className="card p-6 text-center">
-                <div className="text-3xl font-bold text-gradient-neon mb-2">3-Year</div>
-                <div className="text-gray-400">Warranty</div>
-              </div>
-            </div>
           </motion.div>
         </div>
       </section>
@@ -138,7 +126,8 @@ const PCsPage: React.FC = () => {
       {/* Products Grid */}
       <section className="section">
         <div className="container-narrow">
-          {seriesOrder.map((series, seriesIndex) => {
+          {seriesOrder.map((seriesObj, seriesIndex) => {
+            const series = seriesObj.label;
             const seriesProducts = productsBySeries[series];
             if (!seriesProducts || seriesProducts.length === 0) return null;
             
@@ -190,12 +179,12 @@ const PCsPage: React.FC = () => {
                               />
                             ) : (
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="text-6xl opacity-30">🖥️</div>
+                                <div className="text-6xl opacity-30"><FontAwesomeIcon icon={faDesktop} /></div>
                               </div>
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                             <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2">
-                              {product.tags.filter(t => seriesOrder.includes(t)).map(tag => (
+                              {product.tags.filter(t => seriesOrder.some(s => s.label.toLowerCase() === t.toLowerCase() || s.tag === t.toLowerCase())).map(tag => (
                                 <div key={tag} className="badge-accent inline-block">
                                   {tag === 'Pre Configured' ? 'Preconfigured' : tag}
                                 </div>
@@ -239,66 +228,76 @@ const PCsPage: React.FC = () => {
                             </ul>
                           </div>
 
-                          {/* Actions */}
-                          <div className="flex flex-col gap-3">
-                            <Link 
-                              to={`/products/${product.id}`}
-                              className="btn btn-primary w-full"
-                            >
-                              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                              </svg>
-                              View Details
-                            </Link>
-                            <button className="btn btn-outline w-full">
-                              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                              </svg>
-                              Customize
-                            </button>
-                            <button 
-                              className="btn btn-secondary w-full"
-                              onClick={() => {
-                                let sessionId = localStorage.getItem('cartSessionId');
-                                if (!sessionId) {
-                                  sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
-                                  localStorage.setItem('cartSessionId', sessionId);
-                                }
-                                fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
-                                  .then(res => res.json())
-                                  .then(data => {
-                                    const existingItems = data.cart?.items || [];
-                                    const mappedItems = existingItems.map((i: any) => ({
-                                      product: i.product?._id || i.product,
-                                      pcPart: i.pcPart?._id || i.pcPart,
-                                      accessory: i.accessory?._id || i.accessory,
-                                      customBuild: i.customBuild?._id || i.customBuild,
-                                      quantity: i.quantity
-                                    }));
-                                    mappedItems.push({
-                                      product: product.id,
-                                      quantity: 1
-                                    });
-                                    return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
-                                      method: 'PUT',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ items: mappedItems })
-                                    });
-                                  })
-                                  .then(() => {
-                                    alert('Added to cart!');
-                                    window.location.href = '/cart';
-                                  })
-                                  .catch(err => console.error(err));
-                              }}
-                            >
-                              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                              </svg>
-                              Add to Cart
-                            </button>
-                          </div>
+                  {/* Actions */}
+                  <div className="flex flex-col gap-3">
+                    <Link 
+                      to={`/products/${product.id}`}
+                      className="btn btn-primary w-full"
+                    >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      View Details
+                    </Link>
+                    <button className="btn btn-outline w-full">
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Customize
+                    </button>
+                    <button 
+                      id={`add-btn-${product.id}`}
+                      className="btn btn-secondary w-full transition-all duration-300"
+                      onClick={() => {
+                        let sessionId = localStorage.getItem('cartSessionId');
+                        if (!sessionId) {
+                          sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
+                          localStorage.setItem('cartSessionId', sessionId);
+                        }
+                        fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
+                          .then(res => res.json())
+                          .then(data => {
+                            const existingItems = data.cart?.items || [];
+                            const mappedItems = existingItems.map((i: any) => ({
+                              product: i.product?._id || i.product,
+                              pcPart: i.pcPart?._id || i.pcPart,
+                              accessory: i.accessory?._id || i.accessory,
+                              customBuild: i.customBuild?._id || i.customBuild,
+                              quantity: i.quantity
+                            }));
+                            mappedItems.push({
+                              product: product.id,
+                              quantity: 1
+                            });
+                            return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
+                              method: 'PUT',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ items: mappedItems })
+                            });
+                          })
+                          .then(() => {
+                            const btn = document.getElementById(`add-btn-${product.id}`);
+                            if (btn) {
+                              const originalText = btn.innerHTML;
+                              btn.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Added!';
+                              btn.classList.add('bg-emerald-600', 'text-white');
+                              setTimeout(() => {
+                                window.location.href = '/cart';
+                              }, 500);
+                            } else {
+                              window.location.href = '/cart';
+                            }
+                          })
+                          .catch(err => console.error(err));
+                      }}
+                    >
+                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                      Add to Cart
+                    </button>
+                  </div>
                         </div>
                       </div>
                     </motion.div>
@@ -323,7 +322,7 @@ const PCsPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="card p-6 text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
-                <div className="text-2xl">🔧</div>
+                <div className="text-2xl"><FontAwesomeIcon icon={faWrench} /></div>
               </div>
               <h3 className="text-lg font-bold text-white mb-3">Hand-Built Quality</h3>
               <p className="text-gray-400 text-sm">
@@ -333,7 +332,7 @@ const PCsPage: React.FC = () => {
 
             <div className="card p-6 text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
-                <div className="text-2xl">⚡</div>
+                <div className="text-2xl"><FontAwesomeIcon icon={faBolt} /></div>
               </div>
               <h3 className="text-lg font-bold text-white mb-3">Performance Optimized</h3>
               <p className="text-gray-400 text-sm">
@@ -343,21 +342,11 @@ const PCsPage: React.FC = () => {
 
             <div className="card p-6 text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
-                <div className="text-2xl">🛡️</div>
+                <div className="text-2xl"><FontAwesomeIcon icon={faShieldHalved} /></div>
               </div>
               <h3 className="text-lg font-bold text-white mb-3">3-Year Warranty</h3>
               <p className="text-gray-400 text-sm">
                 Comprehensive coverage including parts, labor, and lifetime technical support.
-              </p>
-            </div>
-
-            <div className="card p-6 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
-                <div className="text-2xl">🚚</div>
-              </div>
-              <h3 className="text-lg font-bold text-white mb-3">Free Shipping</h3>
-              <p className="text-gray-400 text-sm">
-                Free insured shipping with 2-5 day delivery across the continental United States.
               </p>
             </div>
           </div>

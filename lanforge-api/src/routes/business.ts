@@ -12,6 +12,7 @@ router.get('/public', async (_req: Request, res: Response): Promise<void> => {
     if (!businessInfo) {
       businessInfo = await BusinessInfo.create({});
     }
+
     res.json({ businessInfo });
   } catch (error) {
     res.status(500).json({ message: 'Server error retrieving business info' });
@@ -25,6 +26,7 @@ router.get('/', protect, staffOrAdmin, async (_req: AuthRequest, res: Response):
     if (!businessInfo) {
       businessInfo = await BusinessInfo.create({});
     }
+
     res.json({ businessInfo });
   } catch (error) {
     res.status(500).json({ message: 'Server error retrieving business info' });
@@ -42,22 +44,11 @@ router.put(
       
       const updateData = { ...req.body };
       
-      if (updateData.comingSoonDate === '') {
-        updateData.comingSoonDate = null;
-      }
-      
       if (!businessInfo) {
         businessInfo = await BusinessInfo.create(updateData);
       } else {
         // Force the schema fields into the document by using set
         businessInfo.set(updateData);
-        // Specifically force the fields to avoid mongoose filtering
-        if (req.body.comingSoonMode !== undefined) {
-          businessInfo.comingSoonMode = req.body.comingSoonMode;
-        }
-        if (req.body.comingSoonDate !== undefined) {
-          businessInfo.comingSoonDate = req.body.comingSoonDate || null;
-        }
         await businessInfo.save();
       }
 

@@ -7,6 +7,7 @@ import CustomBuild from '../models/CustomBuild';
 import Discount from '../models/Discount';
 import Partner from '../models/Partner';
 import Customer from '../models/Customer';
+import BusinessInfo from '../models/BusinessInfo';
 
 const router = Router();
 
@@ -37,8 +38,8 @@ router.post(
           subtotal += p.price * item.quantity;
         } else if (item.pcPart) {
           const p = await PCPart.findById(item.pcPart);
-          if (!p || !p.isActive) { issues.push(`Part unavailable: ${p?.name || item.pcPart}`); continue; }
-          if (p.stock - p.reserved < item.quantity) issues.push(`Insufficient stock for ${p.name}`);
+          if (!p || !p.isActive) { issues.push(`Part unavailable: ${p ? `${p.brand} ${p.partModel}` : item.pcPart}`); continue; }
+          if (p.stock - p.reserved < item.quantity) issues.push(`Insufficient stock for ${p.brand} ${p.partModel}`);
           subtotal += p.price * item.quantity;
         } else if (item.accessory) {
           const a = await Accessory.findById(item.accessory);
@@ -48,7 +49,11 @@ router.post(
         } else if (item.customBuild) {
           const cb = await CustomBuild.findById(item.customBuild);
           if (!cb) { issues.push(`Custom build not found: ${item.customBuild}`); continue; }
-          // Optional: re-verify the internal parts of the custom build here
+          // Ensure we only add the subtotal from the custom build, because total includes labor fee 
+          // which should be preserved but not double-counted or misrepresented.
+          // Wait, actually, the user pays the TOTAL for a custom build. The CartPage shows Items Subtotal as `total - laborFee`.
+          // We should just add the entire `cb.total` to subtotal, because `cb.total` is what the user pays.
+          // The issue was that the `CustomBuild` was being saved with total = 1900 instead of 2100 due to backend overwriting it.
           subtotal += cb.total * item.quantity;
         }
       }
@@ -96,10 +101,22 @@ router.post(
         return;
       }
 
-      const FREE_SHIPPING_THRESHOLD = 500;
-      const FLAT_RATE = 29.99;
+      // Fetch dynamic settings from database
+      const businessInfo = await BusinessInfo.findOne() || {
+        freeShippingThreshold: 500,
+        flatShippingRate: 29.99,
+        taxEnabled: true,
+        taxRate: 8.0
+      };
+
+      const FREE_SHIPPING_THRESHOLD = businessInfo.freeShippingThreshold || 500;
+      const FLAT_RATE = businessInfo.flatShippingRate ?? 29.99;
       const shipping = (subtotal - discountAmount >= FREE_SHIPPING_THRESHOLD) ? 0 : FLAT_RATE;
-      const tax = (subtotal - discountAmount + shipping) * 0.08;
+      
+      const isTaxEnabled = businessInfo.taxEnabled !== false;
+      const taxRateValue = (businessInfo.taxRate ?? 8.0) / 100; // Convert 8.0 to 0.08
+      
+      const tax = isTaxEnabled ? (subtotal - discountAmount + shipping) * taxRateValue : 0;
       const total = subtotal - discountAmount + shipping + tax;
 
       res.json({

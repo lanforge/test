@@ -1,4 +1,6 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHandshake, faNewspaper } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 
 interface OrganizationPartner {
@@ -300,11 +302,11 @@ const PartnersPage: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href="/contact" className="btn btn-primary">
-                <span className="mr-2">🤝</span>
+                <span className="mr-2"><FontAwesomeIcon icon={faHandshake} /></span>
                 Partner Inquiry
               </a>
               <a href="/press" className="btn btn-outline">
-                <span className="mr-2">📰</span>
+                <span className="mr-2"><FontAwesomeIcon icon={faNewspaper} /></span>
                 Media Kit
               </a>
             </div>

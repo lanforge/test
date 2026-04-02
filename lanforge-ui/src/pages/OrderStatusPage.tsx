@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBox, faCheck, faEnvelope, faTruckFast, faCheckCircle, faWrench, faChartBar, faHouse, faXmark, faCalendar, faHeart, faMobileScreen, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import '../App.css';
@@ -66,18 +68,18 @@ const OrderStatusPage: React.FC = () => {
     return descriptions[status];
   };
 
-  const getStatusIcon = (status: OrderStatus): string => {
-    const icons: Record<OrderStatus, string> = {
-      'Order Confirmed': '✅',
-      'Building': '🔧',
-      'Benchmarking': '📊',
-      'Shipped': '🚚',
-      'Out for Delivery': '📦',
-      'Delivered': '🏠',
+  const getStatusIcon = (status: OrderStatus): React.ReactNode => {
+    const icons: Record<OrderStatus, React.ReactNode> = {
+      'Order Confirmed': <FontAwesomeIcon icon={faCheckCircle} />,
+      'Building': <FontAwesomeIcon icon={faWrench} />,
+      'Benchmarking': <FontAwesomeIcon icon={faChartBar} />,
+      'Shipped': <FontAwesomeIcon icon={faTruckFast} />,
+      'Out for Delivery': <FontAwesomeIcon icon={faBox} />,
+      'Delivered': <FontAwesomeIcon icon={faHouse} />,
       'Returned': '↩️',
-      'Cancelled': '❌'
+      'Cancelled': <FontAwesomeIcon icon={faXmark} />
     };
-    return icons[status];
+    return icons[status] as React.ReactNode;
   };
 
   const getEstimatedTime = (status: OrderStatus): string => {
@@ -99,6 +101,7 @@ const OrderStatusPage: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [taxCost, setTaxCost] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
+  const [activeDonationCauses, setActiveDonationCauses] = useState<any[]>([]);
 
   React.useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -142,6 +145,22 @@ const OrderStatusPage: React.FC = () => {
           if (statusMap[backendStatus]) {
             setOrderStatus(statusMap[backendStatus]);
           }
+
+          // Fetch donation causes and filter based on order creation date
+          const orderDate = new Date(data.order.createdAt || Date.now());
+          fetch(`${process.env.REACT_APP_API_URL}/donation-causes`)
+            .then(res => res.json())
+            .then(causes => {
+              if (Array.isArray(causes)) {
+                const activeForOrder = causes.filter(cause => {
+                  const causeCreated = new Date(cause.createdAt);
+                  const causeEnd = cause.endDate ? new Date(cause.endDate) : null;
+                  return causeCreated <= orderDate && (!causeEnd || causeEnd >= orderDate);
+                });
+                setActiveDonationCauses(activeForOrder);
+              }
+            })
+            .catch(err => console.error('Error fetching donation causes:', err));
         }
       })
       .catch(err => console.error(err));
@@ -149,7 +168,7 @@ const OrderStatusPage: React.FC = () => {
 
   const calculateTotal = () => {
     if (totalCost > 0) return totalCost;
-    return orderItems.reduce((total, item) => total + (item.price * item.quantity), 0) * 1.08 + shippingCost;
+    return orderItems.reduce((total, item) => total + (item.price * item.quantity), 0) + taxCost + shippingCost;
   };
 
   return (
@@ -209,7 +228,7 @@ const OrderStatusPage: React.FC = () => {
                             borderColor: isCurrent ? getStatusColor(orderStatus) : 'rgba(255, 255, 255, 0.2)'
                           }}
                         >
-                          {isCompleted ? '✓' : index + 1}
+                          {isCompleted ? <FontAwesomeIcon icon={faCheck} /> : index + 1}
                         </div>
                         <div className="level-info">
                           <span className="level-title">{level}</span>
@@ -235,7 +254,7 @@ const OrderStatusPage: React.FC = () => {
                   <h3>Current Status: {orderStatus}</h3>
                   <p>{getStatusDescription(orderStatus)}</p>
                   <div className="status-meta">
-                    <span className="meta-item">📅 Estimated Delivery: {estimatedDelivery}</span>
+                    <span className="meta-item"><FontAwesomeIcon icon={faCalendar} /> Estimated Delivery: {estimatedDelivery}</span>
                     <span className="meta-item">⏱️ Next Update: {getEstimatedTime(orderStatus)}</span>
                   </div>
                 </div>
@@ -282,15 +301,34 @@ const OrderStatusPage: React.FC = () => {
                 <span>Shipping Insurance</span>
                 <span>$29.99</span>
               </div>
-              <div className="total-row">
-                <span>Tax (8%)</span>
-                <span>${(orderItems.reduce((total, item) => total + (item.price * item.quantity), 0) * 0.08).toFixed(2)}</span>
-              </div>
+              {taxCost > 0 && (
+                <div className="total-row">
+                  <span>Tax</span>
+                  <span>${taxCost.toFixed(2)}</span>
+                </div>
+              )}
               <div className="total-row grand-total">
                 <span>Total</span>
                 <span>${calculateTotal().toFixed(2)}</span>
               </div>
             </div>
+
+            {activeDonationCauses.length > 0 && (
+              <div className="donation-info" style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: 'rgba(0, 255, 157, 0.05)', borderRadius: '12px', border: '1px solid rgba(0, 255, 157, 0.2)' }}>
+                <h3 style={{ color: '#00ff9d', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span><FontAwesomeIcon icon={faHeart} /></span> Impact with Your Order
+                </h3>
+                {activeDonationCauses.map(cause => (
+                  <div key={cause._id} className="donation-cause" style={{ marginBottom: '1rem' }}>
+                    <h4 style={{ margin: '0 0 0.5rem 0', color: 'white' }}>{cause.name}</h4>
+                    {cause.description && <p style={{ margin: 0, fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.7)' }}>{cause.description}</p>}
+                    <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', fontWeight: 600, color: '#00ff9d' }}>
+                      A portion of this order's proceeds supports this cause.
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className="shipping-info">
               <h3>Shipping Information</h3>
@@ -300,13 +338,13 @@ const OrderStatusPage: React.FC = () => {
                     <p><strong>{customerInfo.firstName} {customerInfo.lastName}</strong></p>
                     {customerInfo.address && (
                       <>
-                        <p>{customerInfo.address.street1} {customerInfo.address.street2}</p>
+                        <p>{customerInfo.address.address}</p>
                         <p>{customerInfo.address.city}, {customerInfo.address.state} {customerInfo.address.zip}</p>
                         <p>{customerInfo.address.country || 'United States'}</p>
                       </>
                     )}
-                    <p>📧 {customerInfo.email}</p>
-                    {customerInfo.phone && <p>📱 {customerInfo.phone}</p>}
+                    <p><FontAwesomeIcon icon={faEnvelope} /> {customerInfo.email}</p>
+                    {customerInfo.phone && <p><FontAwesomeIcon icon={faMobileScreen} /> {customerInfo.phone}</p>}
                   </>
                 ) : (
                   <p>Loading shipping info...</p>
@@ -318,7 +356,7 @@ const OrderStatusPage: React.FC = () => {
               <h3>Need Help?</h3>
               <div className="support-options">
                 <div className="support-option">
-                  <span className="option-icon">📞</span>
+                  <span className="option-icon"><FontAwesomeIcon icon={faPhone} /></span>
                   <div>
                     <h4>Call Support</h4>
                     <p>1-800-LAN-FORGE</p>
@@ -332,7 +370,7 @@ const OrderStatusPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="support-option">
-                  <span className="option-icon">📧</span>
+                  <span className="option-icon"><FontAwesomeIcon icon={faEnvelope} /></span>
                   <div>
                     <h4>Email</h4>
                     <p>support@lanforge.co</p>

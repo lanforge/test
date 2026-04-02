@@ -5,13 +5,16 @@ export interface ICustomer extends Document {
   lastName: string;
   email: string;
   phone?: string;
-  address?: {
+  addresses: {
+    type: 'shipping' | 'billing' | 'both';
+    firstName?: string;
+    lastName?: string;
     street: string;
     city: string;
     state: string;
     zip: string;
     country: string;
-  };
+  }[];
   loyaltyPoints: number;
   loyaltyTier: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
   totalSpent: number;
@@ -31,13 +34,18 @@ const CustomerSchema = new Schema<ICustomer>(
     lastName: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true },
     phone: { type: String },
-    address: {
-      street: String,
-      city: String,
-      state: String,
-      zip: String,
-      country: { type: String, default: 'US' },
-    },
+    addresses: [
+      {
+        type: { type: String, enum: ['shipping', 'billing', 'both'], required: true },
+        firstName: String,
+        lastName: String,
+        street: String,
+        city: String,
+        state: String,
+        zip: String,
+        country: { type: String, default: 'US' },
+      },
+    ],
     loyaltyPoints: { type: Number, default: 0 },
     loyaltyTier: {
       type: String,

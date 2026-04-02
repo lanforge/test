@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Intercom from '@intercom/messenger-js-sdk';
+import api from './utils/api';
 import './App.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -18,6 +19,9 @@ import ContactPage from './pages/ContactPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderStatusPage from './pages/OrderStatusPage';
+import InvoicePage from './pages/InvoicePage';
+import DignitasPage from './pages/DignitasPage';
+import TradeifyPage from './pages/TradeifyPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 import AccessoriesPage from './pages/AccessoriesPage';
 import ShippingReturnsPage from './pages/ShippingReturnsPage';
@@ -28,12 +32,14 @@ import TechSupportPage from './pages/TechSupportPage';
 import PCServicesPage from './pages/PCServicesPage';
 import PartnersPage from './pages/PartnersPage';
 import AffiliateApplicationPage from './pages/AffiliateApplicationPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 // Admin Pages
 import AdminLayout from './components/AdminLayout';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
+import AdminOrderDetailsPage from './pages/AdminOrderDetailsPage';
 import AdminProductsPage from './pages/AdminProductsPage';
 import AdminAddProductPage from './pages/AdminAddProductPage';
 import AdminInventoryPage from './pages/AdminInventoryPage';
@@ -50,38 +56,175 @@ import AdminCartsPage from './pages/AdminCartsPage';
 import AdminCustomBuildsPage from './pages/AdminCustomBuildsPage';
 import AdminBuildRequestsPage from './pages/AdminBuildRequestsPage';
 import AdminReviewsPage from './pages/AdminReviewsPage';
-import ComingSoonPage from './pages/ComingSoonPage';
-import { useLocation } from 'react-router-dom';
-import api from './utils/api';
+import AdminPagesPage from './pages/AdminPagesPage';
+import AdminInvoicesPage from './pages/AdminInvoicesPage';
 
-const AppContent = ({ children }: { children: React.ReactNode }) => {
-  const [settings, setSettings] = React.useState<any>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const location = useLocation();
+export const PageStatusContext = React.createContext<string[]>([]);
+
+const MaintenancePage = ({ reopenAt }: { reopenAt?: string | Date }) => {
+  const [timeLeft, setTimeLeft] = useState<{days: number, hours: number, minutes: number, seconds: number} | null>(null);
 
   useEffect(() => {
+    if (!reopenAt) return;
+
+    const calculateTimeLeft = () => {
+      const difference = new Date(reopenAt).getTime() - new Date().getTime();
+      
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60)
+        });
+      } else {
+        setTimeLeft(null);
+        window.location.reload();
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(timer);
+  }, [reopenAt]);
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center p-4">
+      <div className="max-w-md w-full text-center space-y-8">
+        <img src="/logo-2.png" alt="LANForge" className="h-16 mx-auto mb-8" />
+        <h1 className="text-4xl font-bold text-white">We'll be back soon!</h1>
+        <p className="text-gray-400 text-lg">
+          We're currently performing some scheduled maintenance.
+          Our team is working hard to get everything back up and running.
+        </p>
+        
+        {timeLeft && (
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 mt-8">
+            <p className="text-sm font-medium text-emerald-500 uppercase tracking-wider mb-4">Estimated Time Remaining</p>
+            <div className="grid grid-cols-4 gap-4 text-center">
+              <div className="bg-black/50 rounded-lg p-3 border border-gray-800">
+                <div className="text-3xl font-bold text-white">{timeLeft.days}</div>
+                <div className="text-xs text-gray-500 uppercase mt-1">Days</div>
+              </div>
+              <div className="bg-black/50 rounded-lg p-3 border border-gray-800">
+                <div className="text-3xl font-bold text-white">{timeLeft.hours}</div>
+                <div className="text-xs text-gray-500 uppercase mt-1">Hours</div>
+              </div>
+              <div className="bg-black/50 rounded-lg p-3 border border-gray-800">
+                <div className="text-3xl font-bold text-white">{timeLeft.minutes}</div>
+                <div className="text-xs text-gray-500 uppercase mt-1">Mins</div>
+              </div>
+              <div className="bg-black/50 rounded-lg p-3 border border-gray-800">
+                <div className="text-3xl font-bold text-white">{timeLeft.seconds}</div>
+                <div className="text-xs text-gray-500 uppercase mt-1">Secs</div>
+              </div>
+            </div>
+            
+            <p className="text-sm text-gray-500 mt-6">
+              Reopening at: {new Date(reopenAt as string | Date).toLocaleString('en-US', { timeZone: 'America/New_York', timeZoneName: 'short' })}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const AppContent = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+  const [loading, setLoading] = useState(true);
+  const [maintenance, setMaintenance] = useState<{enabled: boolean, reopenAt?: Date} | null>(null);
+  const [disabledPages, setDisabledPages] = useState<string[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Check local storage for token to see if maybe admin
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.role === 'admin' || user.role === 'staff') {
+          setIsAdmin(true);
+        }
+      } catch (e) {}
+    }
+
     const fetchSettings = async () => {
       try {
-        const response = await api.get('/business/public');
-        setSettings(response.data.businessInfo);
+        const response = await api.get('/page-status/public');
+        if (response.data.pages) {
+          const maintenancePage = response.data.pages.find((p: any) => p.path === 'maintenance_mode');
+          if (maintenancePage) {
+            setMaintenance({ enabled: maintenancePage.enabled, reopenAt: maintenancePage.reopenAt });
+          }
+          
+          const disabled = response.data.pages
+            .filter((p: any) => p.path !== 'maintenance_mode' && !p.enabled)
+            .map((p: any) => p.path);
+          setDisabledPages(disabled);
+        }
       } catch (error) {
-        console.error('Error fetching settings', error);
+        console.error('Failed to fetch settings', error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
     fetchSettings();
   }, [location.pathname]);
 
-  if (isLoading) {
-    return null;
+  // auto reopen logic
+  useEffect(() => {
+    if (maintenance?.enabled && maintenance.reopenAt) {
+      const reopenTime = new Date(maintenance.reopenAt as string | Date).getTime();
+      const now = new Date().getTime();
+      
+      if (now >= reopenTime) {
+        setMaintenance(null);
+      } else {
+        const timeUntilReopen = reopenTime - now;
+        const timer = setTimeout(() => {
+          setMaintenance(null);
+        }, timeUntilReopen);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [maintenance]);
+
+  if (loading) {
+    return <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div></div>;
   }
 
-  if (settings?.comingSoonMode && !location.pathname.startsWith('/admin')) {
-    return <ComingSoonPage />;
+  // Allow admin routes unconditionally
+  if (location.pathname.startsWith('/admin')) {
+    return <>{children}</>;
   }
 
-  return <>{children}</>;
+  // Maintenance mode block
+  if (!isAdmin && maintenance?.enabled) {
+    const isPastReopen = maintenance.reopenAt ? new Date().getTime() >= new Date(maintenance.reopenAt as string | Date).getTime() : false;
+    if (!isPastReopen) {
+      return <MaintenancePage reopenAt={maintenance.reopenAt} />;
+    }
+  }
+
+  // Disabled page block
+  const isPageDisabled = disabledPages.some(page => 
+    location.pathname === page || (page !== '/' && location.pathname.startsWith(`${page}/`))
+  );
+
+  if (!isAdmin && isPageDisabled) {
+    return (
+      <PageStatusContext.Provider value={disabledPages}>
+        <div className="App">
+          <Header />
+          <NotFoundPage />
+          <Footer />
+        </div>
+      </PageStatusContext.Provider>
+    );
+  }
+
+  return <PageStatusContext.Provider value={disabledPages}>{children}</PageStatusContext.Provider>;
 };
 
 function App() {
@@ -170,7 +313,8 @@ function App() {
             </>
           } />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/order-status" element={<OrderStatusPage />} />
+              <Route path="/order-status" element={<OrderStatusPage />} />
+              <Route path="/invoice" element={<InvoicePage />} />
           <Route path="/accessories" element={
             <>
               <Header />
@@ -196,6 +340,20 @@ function App() {
             <>
               <Header />
               <PlaceholderPage title="Build Guides" description="Step-by-step guides for building your PC" />
+              <Footer />
+            </>
+          } />
+          <Route path="/dignitas" element={
+            <>
+              <Header />
+              <DignitasPage />
+              <Footer />
+            </>
+          } />
+          <Route path="/tradeify" element={
+            <>
+              <Header />
+              <TradeifyPage />
               <Footer />
             </>
           } />
@@ -275,6 +433,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboardPage />} />
             <Route path="/admin/orders" element={<AdminOrdersPage />} />
             <Route path="/admin/orders/add" element={<AdminAddOrderPage />} />
+            <Route path="/admin/orders/:id" element={<AdminOrderDetailsPage />} />
             <Route path="/admin/products" element={<AdminProductsPage />} />
             <Route path="/admin/products/add" element={<AdminAddProductPage />} />
             <Route path="/admin/products/edit/:id" element={<AdminAddProductPage />} />
@@ -291,8 +450,19 @@ function App() {
             <Route path="/admin/custom-builds" element={<AdminCustomBuildsPage />} />
             <Route path="/admin/build-requests" element={<AdminBuildRequestsPage />} />
             <Route path="/admin/reviews" element={<AdminReviewsPage />} />
+            <Route path="/admin/invoices" element={<AdminInvoicesPage />} />
             <Route path="/admin/settings" element={<AdminSettingsPage />} />
+            <Route path="/admin/pages" element={<AdminPagesPage />} />
           </Route>
+
+          {/* 404 Not Found Route */}
+          <Route path="*" element={
+            <>
+              <Header />
+              <NotFoundPage />
+              <Footer />
+            </>
+          } />
         </Routes>
         </div>
       </AppContent>

@@ -15,6 +15,7 @@ export interface ICart extends Document {
   discountCode?: string;
   customDiscountAmount?: number;
   creatorCode?: string;
+  donationCause?: mongoose.Types.ObjectId;
   status: 'active' | 'abandoned' | 'converted';
   expiresAt: Date;
   createdAt: Date;
@@ -37,6 +38,7 @@ const CartSchema = new Schema<ICart>(
     discountCode: { type: String },
     customDiscountAmount: { type: Number, default: 0 },
     creatorCode: { type: String },
+    donationCause: { type: Schema.Types.ObjectId, ref: 'DonationCause' },
     status: {
       type: String,
       enum: ['active', 'abandoned', 'converted'],

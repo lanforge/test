@@ -68,6 +68,14 @@ router.post(
         isApproved: false // Needs manual approval
       });
 
+      // Send notification
+      try {
+        const { sendNotification } = await import('../services/notificationService');
+        await sendNotification(`New Review from ${customerName} (${rating}/5 stars)\nTitle: ${title}\nNeeds approval in admin dashboard.`);
+      } catch (notifErr) {
+        console.error('Failed to send notification:', notifErr);
+      }
+
       res.status(201).json({ message: 'Review submitted and pending approval', review });
     } catch (error) {
       res.status(500).json({ message: 'Server error' });

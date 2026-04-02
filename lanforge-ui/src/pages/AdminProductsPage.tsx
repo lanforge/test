@@ -139,6 +139,21 @@ const AdminProductsPage: React.FC = () => {
         </div>
         <div className="flex items-center space-x-4">
           <button 
+            onClick={async () => {
+              if (!window.confirm('Are you sure you want to recalculate all products? This will update cost based on parts and apply markup to price.')) return;
+              try {
+                const res = await api.post('/products/recalculate');
+                alert(res.data.message);
+                fetchProducts();
+              } catch (e: any) {
+                alert('Failed to recalculate products: ' + (e.response?.data?.message || e.message));
+              }
+            }}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors font-medium"
+          >
+            Recalculate Pricing
+          </button>
+          <button 
             onClick={() => window.location.href = '/admin/products/add'}
             className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium"
           >

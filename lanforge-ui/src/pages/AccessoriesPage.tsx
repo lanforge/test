@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar, faComputerMouse, faDesktop, faHeadphones, faKeyboard } from '@fortawesome/free-solid-svg-icons';
 
 interface Accessory {
   id: number;
@@ -80,16 +82,16 @@ const AccessoriesPage: React.FC = () => {
     const hasHalfStar = rating % 1 >= 0.5;
     
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={i} className="text-yellow-400">★</span>);
+      stars.push(<span key={i} className="text-yellow-400"><FontAwesomeIcon icon={faStar} /></span>);
     }
     
     if (hasHalfStar) {
-      stars.push(<span key="half" className="text-yellow-400">★</span>);
+      stars.push(<span key="half" className="text-yellow-400"><FontAwesomeIcon icon={faStar} /></span>);
     }
     
     const emptyStars = 5 - stars.length;
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<span key={`empty-${i}`} className="text-gray-600">★</span>);
+      stars.push(<span key={`empty-${i}`} className="text-gray-600"><FontAwesomeIcon icon={faStar} /></span>);
     }
     
     return stars;
@@ -126,7 +128,7 @@ const AccessoriesPage: React.FC = () => {
                 <div className="text-gray-400">Products</div>
               </div>
               <div className="card p-6 text-center">
-                <div className="text-3xl font-bold text-gradient-neon mb-2">4.7★</div>
+                <div className="text-3xl font-bold text-gradient-neon mb-2">4.7<FontAwesomeIcon icon={faStar} className="text-xl ml-1" /></div>
                 <div className="text-gray-400">Avg Rating</div>
               </div>
               <div className="card p-6 text-center">
@@ -290,8 +292,17 @@ const AccessoriesPage: React.FC = () => {
                                 });
                               })
                               .then(() => {
-                                alert('Added to cart!');
-                                window.location.href = '/cart';
+                                const btn = document.getElementById(`add-icon-btn-${accessory.id}`);
+                                if (btn) {
+                                  // const originalHtml = btn.innerHTML;
+                                  btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                                  btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+                                  setTimeout(() => {
+                                    window.location.href = '/cart';
+                                  }, 500);
+                                } else {
+                                  window.location.href = '/cart';
+                                }
                               })
                               .catch(err => console.error(err));
                           }}
@@ -326,8 +337,8 @@ const AccessoriesPage: React.FC = () => {
               onClick={() => setSelectedCategory('Keyboard')}
             >
               <div className="p-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-3xl mx-auto mb-4">
-                  ⌨️
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-3xl mx-auto mb-4 text-emerald-400">
+                  <FontAwesomeIcon icon={faKeyboard} />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">Keyboards</h3>
                 <p className="text-gray-400 text-sm">Mechanical, wireless, and RGB keyboards</p>
@@ -339,8 +350,8 @@ const AccessoriesPage: React.FC = () => {
               onClick={() => setSelectedCategory('Mouse')}
             >
               <div className="p-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-3xl mx-auto mb-4">
-                  🖱️
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-3xl mx-auto mb-4 text-emerald-400">
+                  <FontAwesomeIcon icon={faComputerMouse} />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">Mice</h3>
                 <p className="text-gray-400 text-sm">Precision gaming mice and accessories</p>
@@ -352,8 +363,8 @@ const AccessoriesPage: React.FC = () => {
               onClick={() => setSelectedCategory('Monitor')}
             >
               <div className="p-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-3xl mx-auto mb-4">
-                  🖥️
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-3xl mx-auto mb-4 text-emerald-400">
+                  <FontAwesomeIcon icon={faDesktop} />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">Monitors</h3>
                 <p className="text-gray-400 text-sm">High refresh rate gaming displays</p>
@@ -365,8 +376,8 @@ const AccessoriesPage: React.FC = () => {
               onClick={() => setSelectedCategory('Audio')}
             >
               <div className="p-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-3xl mx-auto mb-4">
-                  🎧
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-3xl mx-auto mb-4 text-emerald-400">
+                  <FontAwesomeIcon icon={faHeadphones} />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">Audio</h3>
                 <p className="text-gray-400 text-sm">Headsets, speakers, and microphones</p>
@@ -455,7 +466,8 @@ const AccessoriesPage: React.FC = () => {
                   {/* Actions */}
                   <div className="flex gap-4">
                     <button 
-                      className="btn btn-primary flex-1"
+                      id="modal-add-btn"
+                      className="btn btn-primary flex-1 transition-all duration-300"
                       onClick={() => {
                         let sessionId = localStorage.getItem('cartSessionId');
                         if (!sessionId) {
@@ -484,8 +496,16 @@ const AccessoriesPage: React.FC = () => {
                             });
                           })
                           .then(() => {
-                            alert('Added to cart!');
-                            window.location.href = '/cart';
+                            const btn = document.getElementById('modal-add-btn');
+                            if (btn) {
+                              btn.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Added!';
+                              btn.classList.add('bg-emerald-600', 'text-white');
+                              setTimeout(() => {
+                                window.location.href = '/cart';
+                              }, 500);
+                            } else {
+                              window.location.href = '/cart';
+                            }
                           })
                           .catch(err => console.error(err));
                       }}

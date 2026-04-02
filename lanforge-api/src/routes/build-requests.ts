@@ -7,15 +7,25 @@ const router = Router();
 // POST /api/build-requests - Create a new build request
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { name, email, phone, budget, details } = req.body;
+    const { name, email, phone, budget, details, address, usage, preferredBrands, timeline } = req.body;
     
     if (!name || !email || !details) {
       res.status(400).json({ error: 'Name, email, and details are required' });
       return;
     }
 
-    const newRequest = new BuildRequest({ name, email, phone, budget, details });
+    const newRequest = new BuildRequest({ 
+      name, email, phone, budget, details, address, usage, preferredBrands, timeline 
+    });
     await newRequest.save();
+
+    // Send notification
+    try {
+      const { sendNotification } = await import('../services/notificationService');
+      await sendNotification(`New Build Request from ${name} (${email})\nBudget: ${budget || 'N/A'}\nUsage: ${usage || 'N/A'}\nDetails: ${details}`);
+    } catch (notifErr) {
+      console.error('Failed to send notification:', notifErr);
+    }
 
     res.status(201).json({ message: 'Build request submitted successfully' });
   } catch (error) {

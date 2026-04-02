@@ -33,7 +33,7 @@ router.post(
           sku: 'PC-BUILD-1',
           title: 'Custom PC Build',
           total_price: '1000.00',
-          weight: '20',
+          weight: '50',
           weight_unit: 'lb'
         }
       ];
@@ -43,15 +43,28 @@ router.post(
       const parcels = [{
         length: '24',
         width: '16',
-        height: '25',
+        height: '24',
+        distance_unit: 'in',
         distanceUnit: 'in',
         weight: '50',
+        mass_unit: 'lb',
         massUnit: 'lb'
       }];
 
+      // Sanitize addressTo to prevent Shippo from silently failing due to invalid phone or email formats
+      const cleanAddressTo = {
+        name: addressTo.name,
+        street1: addressTo.street1,
+        street2: addressTo.street2 || '',
+        city: addressTo.city,
+        state: addressTo.state,
+        zip: addressTo.zip,
+        country: addressTo.country,
+      };
+
       const shipment: any = await createShipment(
         { ...defaultLineItems[0], name: 'LANForge', street1: '88 Sabal Creek Trl', city: 'Ponte Vedra', state: 'FL', zip: '32081', country: 'US' },
-        addressTo,
+        cleanAddressTo,
         parcels
       );
       const rates = shipment.rates || [];
@@ -65,17 +78,17 @@ router.post(
 
       for (const rate of rates) {
         let displayTitle = '';
-        let estimatedDays = rate.estimated_days;
+        let estimatedDays: string = String(rate.estimated_days);
         const nameToMatch = (rate.title || rate.servicelevel?.name || '').toLowerCase();
 
         if (nameToMatch.includes('ground')) {
-          displayTitle = 'Ground';
+          displayTitle = 'UPS Ground';
           estimatedDays = '3-5';
         } else if (nameToMatch.includes('2nd day') || nameToMatch.includes('2 day')) {
-          displayTitle = '2 Day Air';
+          displayTitle = 'UPS 2 Day Air';
           estimatedDays = '2';
         } else if (nameToMatch.includes('next day')) {
-          displayTitle = 'Next Day Air';
+          displayTitle = 'UPS Next Day Air';
           estimatedDays = '1';
         } else {
           continue; // Filter out other methods
@@ -86,11 +99,14 @@ router.post(
 
         // Keep the cheapest rate for each category if there are duplicates
         if (!existingRate || parseFloat(existingRate.amount) > currentAmount) {
+          // Explicitly assign the correct estimatedDays regardless of what Shippo returns
+          const finalEstimatedDays = displayTitle.includes('Ground') ? '3-5' : displayTitle.includes('2 Day') ? '2' : '1';
+
           rateCategories.set(displayTitle, {
             ...rate,
             objectId: rate.object_id || rate.objectId || rate.title || `live_rate_${rateCategories.size}`,
             title: displayTitle,
-            estimatedDays,
+            estimatedDays: finalEstimatedDays,
             amount: currentAmount
           });
         }

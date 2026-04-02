@@ -1,4 +1,4 @@
-import { Router, Response } from 'express';
+import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import Customer from '../models/Customer';
 import Order from '../models/Order';
@@ -63,6 +63,81 @@ router.get('/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response
     res.json({ customer, orders, loyaltyHistory });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /api/customers/checkout-init
+router.post('/checkout-init', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { shippingAddress, billingAddress } = req.body;
+    
+    if (!shippingAddress || !shippingAddress.email) {
+      res.status(400).json({ message: 'Shipping email is required' });
+      return;
+    }
+    
+    const email = shippingAddress.email.toLowerCase();
+    let customer = await Customer.findOne({ email });
+    
+      const shippingAddrObj: any = {
+        type: 'shipping',
+        firstName: shippingAddress.firstName,
+        lastName: shippingAddress.lastName,
+        street: shippingAddress.address || '',
+        city: shippingAddress.city || '',
+        state: shippingAddress.state || '',
+        zip: shippingAddress.zip || '',
+        country: shippingAddress.country || 'US',
+      };
+      
+      const billingStreet = billingAddress?.address || shippingAddress.address || '';
+      const billingAddrObj: any = {
+        type: 'billing',
+        firstName: billingAddress?.firstName || shippingAddress.firstName,
+        lastName: billingAddress?.lastName || shippingAddress.lastName,
+        street: billingStreet,
+        city: billingAddress?.city || shippingAddress.city || '',
+        state: billingAddress?.state || shippingAddress.state || '',
+        zip: billingAddress?.zip || shippingAddress.zip || '',
+        country: billingAddress?.country || shippingAddress.country || 'US',
+      };
+
+    if (customer) {
+      let updated = false;
+      if (!customer.addresses) customer.addresses = [];
+      
+      const hasShipping = customer.addresses.some((a: any) => a.type === 'shipping' && a.street === shippingAddress.address);
+      if (!hasShipping) {
+        customer.addresses.push(shippingAddrObj);
+        updated = true;
+      }
+
+      const hasBilling = customer.addresses.some((a: any) => a.type === 'billing' && a.street === billingStreet);
+      if (!hasBilling) {
+        customer.addresses.push(billingAddrObj);
+        updated = true;
+      }
+
+      if (updated) {
+        await customer.save();
+      }
+    } else {
+      customer = await Customer.create({
+        firstName: shippingAddress.firstName,
+        lastName: shippingAddress.lastName,
+        email: email,
+        phone: shippingAddress.phone || '',
+        addresses: [shippingAddrObj, billingAddrObj],
+        isActive: true,
+        totalSpent: 0,
+        totalOrders: 0,
+        loyaltyPoints: 0,
+      });
+    }
+    
+    res.json({ customer });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 });
 

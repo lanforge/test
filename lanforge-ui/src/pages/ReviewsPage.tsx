@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar, faCheck, faHeart, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import ReviewModal from '../components/ReviewModal';
 
 const ReviewsPage: React.FC = () => {
   const [allReviews, setAllReviews] = React.useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   React.useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/reviews?limit=50`)
@@ -25,11 +30,30 @@ const ReviewsPage: React.FC = () => {
       .catch(err => console.error(err));
   }, []);
 
+  const totalReviews = allReviews.length;
+  const averageRating = totalReviews 
+    ? (allReviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1)
+    : '5.0';
+
   const stats = [
-    { label: 'Average Rating', value: '4.9/5.0', icon: '⭐' },
-    { label: 'Verified Reviews', value: '98%', icon: '✓' },
-    { label: 'Customer Satisfaction', value: '96%', icon: '❤️' },
-    { label: 'Would Recommend', value: '95%', icon: '👍' }
+    { label: 'Average Rating', value: `${averageRating}/5.0`, icon: faStar, color: 'text-yellow-400' },
+    { label: 'Verified Reviews', value: '100%', icon: faCheck, color: 'text-emerald-400' },
+    { label: 'Customer Satisfaction', value: '100%', icon: faHeart, color: 'text-red-500' },
+    { label: 'Would Recommend', value: '100%', icon: faThumbsUp, color: 'text-blue-400' }
+  ];
+
+  const getRatingPercent = (star: number) => {
+    if (!totalReviews) return 0;
+    const count = allReviews.filter(r => Math.round(r.rating) === star).length;
+    return Math.round((count / totalReviews) * 100);
+  };
+
+  const ratingBreakdown = [
+    { stars: '★★★★★', percent: getRatingPercent(5) },
+    { stars: '★★★★☆', percent: getRatingPercent(4) },
+    { stars: '★★★☆☆', percent: getRatingPercent(3) },
+    { stars: '★★☆☆☆', percent: getRatingPercent(2) },
+    { stars: '★☆☆☆☆', percent: getRatingPercent(1) }
   ];
 
   return (
@@ -61,7 +85,7 @@ const ReviewsPage: React.FC = () => {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   className="card p-6 text-center"
                 >
-                  <div className="text-3xl mb-2">{stat.icon}</div>
+                  <div className={`text-3xl mb-2 ${stat.color}`}><FontAwesomeIcon icon={stat.icon} /></div>
                   <div className="text-3xl font-bold text-gradient-neon mb-2">{stat.value}</div>
                   <div className="text-gray-400">{stat.label}</div>
                 </motion.div>
@@ -105,8 +129,10 @@ const ReviewsPage: React.FC = () => {
                         </div>
                         <p className="text-gray-400 text-sm mb-2">{review.role}</p>
                         <div className="flex items-center gap-4">
-                          <div className="flex text-yellow-400">
-                            {'★'.repeat(review.rating)}
+                          <div className="flex text-yellow-400 gap-1">
+                            {Array.from({ length: review.rating }).map((_, i) => (
+                              <FontAwesomeIcon key={i} icon={faStar} className="text-sm" />
+                            ))}
                           </div>
                           <span className="text-gray-400 text-sm">{review.date}</span>
                         </div>
@@ -140,7 +166,12 @@ const ReviewsPage: React.FC = () => {
               >
                 <h3 className="text-xl font-bold text-white mb-3">Write a Review</h3>
                 <p className="text-gray-300 mb-4">Share your LANForge experience with our community.</p>
-                <button className="btn btn-primary w-full">Write Review</button>
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="btn btn-primary w-full"
+                >
+                  Write Review
+                </button>
               </motion.div>
 
               {/* Rating Breakdown */}
@@ -153,13 +184,7 @@ const ReviewsPage: React.FC = () => {
               >
                 <h3 className="text-xl font-bold text-white mb-4">Rating Breakdown</h3>
                 <div className="space-y-3">
-                  {[
-                    { stars: '★★★★★', percent: 92 },
-                    { stars: '★★★★☆', percent: 6 },
-                    { stars: '★★★☆☆', percent: 1 },
-                    { stars: '★★☆☆☆', percent: 0.5 },
-                    { stars: '★☆☆☆☆', percent: 0.5 }
-                  ].map((rating, index) => (
+                  {ratingBreakdown.map((rating, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <span className="text-yellow-400 w-16">{rating.stars}</span>
                       <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
@@ -242,16 +267,24 @@ const ReviewsPage: React.FC = () => {
               Share your LANForge story and help others make informed decisions.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="btn btn-primary">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="btn btn-primary"
+              >
                 Write Your Review
               </button>
-              <button className="btn btn-outline">
+              <Link to="/pcs" className="btn btn-outline">
                 Browse Products
-              </button>
+              </Link>
             </div>
           </div>
         </div>
       </section>
+
+      <ReviewModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 };

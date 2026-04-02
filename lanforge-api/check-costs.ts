@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import PCPart from './src/models/PCPart';
 
 dotenv.config();
@@ -15,7 +15,7 @@ async function run() {
   for (const part of parts) {
     if (!part.cost || part.cost === 0) {
       missingCostCount++;
-      console.log(`Part missing cost: [${part.type}] ${part.name} - Retail Price: $${part.price}`);
+      console.log(`Part missing cost: [${part.type}] ${part.brand} ${part.partModel} - Retail Price: $${part.price}`);
       
       if (part.price && part.price > 0) {
         // If it has a retail price but no cost, we can reverse-engineer the cost

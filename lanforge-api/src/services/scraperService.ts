@@ -76,7 +76,7 @@ export const scrapeDetailsFromUrl = async (url: string): Promise<any> => {
         result.brand = result.brand.replace(/^Visit the\s+/i, '').replace(/\s+Store$/i, '').trim();
       }
 
-      const priceString = data.pricing || data.list_price || (data.product_information && data.product_information.pricing);
+      const priceString = data.pricing || data.price || data.list_price || (data.product_information && data.product_information.pricing);
       const unitCost = data.UnitCost; 
       
       if (unitCost !== undefined) {
@@ -178,7 +178,7 @@ export const scrapeSinglePart = async (part: any): Promise<boolean> => {
     
     const response = await fetch(scraperUrl);
     if (!response.ok) {
-       console.error(`[Scraper] Failed to fetch data for ${part.name} (Status: ${response.status})`);
+       console.error(`[Scraper] Failed to fetch data for ${part.brand} ${part.partModel} (Status: ${response.status})`);
        return false;
     }
     
@@ -188,7 +188,7 @@ export const scrapeSinglePart = async (part: any): Promise<boolean> => {
     try {
       // If it's Amazon or an autoparsed site, it will be JSON
       const data = JSON.parse(text);
-      const priceString = data.pricing || data.list_price || (data.product_information && data.product_information.pricing);
+      const priceString = data.pricing || data.price || data.list_price || (data.product_information && data.product_information.pricing);
       const unitCost = data.UnitCost; 
       
       if (unitCost !== undefined) {
@@ -227,7 +227,7 @@ export const scrapeSinglePart = async (part: any): Promise<boolean> => {
       part.cost = cost;
       part.price = retailPrice;
       await part.save();
-      console.log(`[Scraper] Successfully updated ${part.name}: New Cost: $${cost}, New Price: $${retailPrice}`);
+      console.log(`[Scraper] Successfully updated ${part.brand} ${part.partModel}: New Cost: $${cost}, New Price: $${retailPrice}`);
 
       // Find all Products (PCs) that contain this part
       const affectedProducts = await Product.find({ parts: part._id }).populate('parts');
@@ -250,10 +250,10 @@ export const scrapeSinglePart = async (part: any): Promise<boolean> => {
 
       return true;
     } else {
-      console.error(`[Scraper] Could not parse a valid price for ${part.name}. ScraperAPI might have returned a captcha or unsupported format.`);
+      console.error(`[Scraper] Could not parse a valid price for ${part.brand} ${part.partModel}. ScraperAPI might have returned a captcha or unsupported format.`);
     }
   } catch (err) {
-     console.error(`[Scraper] Error processing part ${part.name}:`, err);
+     console.error(`[Scraper] Error processing part ${part.brand} ${part.partModel}:`, err);
   }
   
   return false;

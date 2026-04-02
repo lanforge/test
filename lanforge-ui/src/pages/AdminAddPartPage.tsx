@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../utils/api';
 
@@ -10,7 +12,6 @@ const AdminAddPartPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    name: '',
     category: 'cpu',
     brand: '',
     model: '',
@@ -33,10 +34,9 @@ const AdminAddPartPage: React.FC = () => {
         .then(res => {
           const part = res.data.part;
           setFormData({
-            name: part.name || '',
             category: part.type || 'cpu',
             brand: part.brand || '',
-            model: part.partModel || '',
+            model: part.partModel || part.model || '',
             sku: part.sku || '',
             price: part.price ? part.price.toString() : '0',
             cost: part.cost ? part.cost.toString() : '0',
@@ -131,9 +131,8 @@ const AdminAddPartPage: React.FC = () => {
       if (details) {
         setFormData(prev => ({
           ...prev,
-          name: details.name || prev.name,
           brand: details.brand || prev.brand,
-          model: details.model || prev.model,
+          model: details.model || details.name || prev.model,
           price: details.price ? details.price.toString() : prev.price,
           cost: details.cost ? details.cost.toString() : prev.cost,
         }));
@@ -166,10 +165,9 @@ const AdminAddPartPage: React.FC = () => {
 
     try {
       const payload = {
-        name: formData.name,
         type: formData.category,
         brand: formData.brand,
-        model: formData.model || formData.name, // backend validator checks for 'model', then maps to partModel internally
+        model: formData.model, // backend validator checks for 'model', then maps to partModel internally
         sku: formData.sku,
         price: parseFloat(formData.price),
         cost: parseFloat(formData.cost) || 0,
@@ -424,26 +422,14 @@ const AdminAddPartPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Model (Optional)</label>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Model *</label>
               <input
                 type="text"
                 name="model"
+                required
                 placeholder="e.g. Ryzen 9 7950X"
                 className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.model}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-400 mb-2">Display Name *</label>
-              <input
-                type="text"
-                name="name"
-                required
-                placeholder="e.g. AMD Ryzen 9 7950X 16-Core"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
-                value={formData.name}
                 onChange={handleChange}
               />
             </div>
@@ -530,7 +516,7 @@ const AdminAddPartPage: React.FC = () => {
                   )}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-2">Paste a URL and click Auto-fill to instantly populate the Name, Brand, Model, and Price.</p>
+              <p className="text-xs text-gray-500 mt-2">Paste a URL and click Auto-fill to instantly populate the Brand, Model, and Price.</p>
             </div>
 
             <div className="md:col-span-2">
@@ -542,7 +528,7 @@ const AdminAddPartPage: React.FC = () => {
                     <div className="absolute top-2 right-2 flex space-x-1">
                       {idx !== 0 && (
                         <button type="button" onClick={() => setPrimaryImage(idx)} className="p-1 bg-gray-900/80 text-emerald-400 hover:text-emerald-300 rounded" title="Set as Primary">
-                          ★
+                          <FontAwesomeIcon icon={faStar} />
                         </button>
                       )}
                       <button type="button" onClick={() => removeImage(idx)} className="p-1 bg-gray-900/80 text-red-400 hover:text-red-300 rounded" title="Remove">

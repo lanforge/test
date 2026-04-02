@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBox, faScrewdriverWrench } from '@fortawesome/free-solid-svg-icons';
 import api from '../utils/api';
 
 interface Cart {
@@ -220,7 +222,7 @@ const AdminCartsPage: React.FC = () => {
                       <div key={idx} className="flex items-center justify-between bg-gray-900/50 p-4 rounded-xl border border-gray-800">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400">
-                            {item.product ? '📦' : '🛠️'}
+                            {item.product ? <FontAwesomeIcon icon={faBox} /> : <FontAwesomeIcon icon={faScrewdriverWrench} />}
                           </div>
                           <div>
                             <div className="font-medium text-white">{itemName}</div>

@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar, faHeart, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
+import ReviewModal from './ReviewModal';
 
 const Reviews: React.FC = () => {
-  const [reviews, setReviews] = React.useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   React.useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/reviews?limit=3`)
@@ -79,8 +84,10 @@ const Reviews: React.FC = () => {
                         <h4 className="font-bold text-white">{review.name}</h4>
                         <p className="text-sm text-gray-400">{review.role}</p>
                       </div>
-                      <div className="flex text-yellow-400">
-                        {'★'.repeat(review.rating)}
+                      <div className="flex text-yellow-400 gap-1">
+                        {Array.from({ length: review.rating }).map((_, i) => (
+                          <FontAwesomeIcon key={i} icon={faStar} className="text-sm" />
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -111,12 +118,12 @@ const Reviews: React.FC = () => {
         >
           <div className="grid grid-cols-3 gap-6">
             {[
-              { number: '4.9/5', label: 'Average Rating', icon: '⭐' },
-              { number: '98%', label: 'Satisfaction Rate', icon: '❤️' },
-              { number: '24/7', label: 'Support Available', icon: '🛡️' }
+              { number: '4.9/5', label: 'Average Rating', icon: faStar, color: 'text-yellow-400' },
+              { number: '98%', label: 'Satisfaction Rate', icon: faHeart, color: 'text-red-500' },
+              { number: '24/7', label: 'Support Available', icon: faShieldHalved, color: 'text-blue-400' }
             ].map((stat, idx) => (
               <div key={idx} className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl text-center p-6 shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                <div className="text-2xl mb-3">{stat.icon}</div>
+                <div className={`text-2xl mb-3 ${stat.color}`}><FontAwesomeIcon icon={stat.icon} /></div>
                 <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 mb-2">{stat.number}</div>
                 <div className="text-sm text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">{stat.label}</div>
               </div>
@@ -133,19 +140,29 @@ const Reviews: React.FC = () => {
           className="mt-16 text-center"
         >
           <div className="inline-flex items-center gap-4">
+            <Link to="/reviews">
+              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 inline-block">
+                <button className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+                  Read More Reviews
+                </button>
+              </div>
+            </Link>
             <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-              <button className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
-                Read More Reviews
-              </button>
-            </div>
-            <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-              <button className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300"
+              >
                 Write a Review
               </button>
             </div>
           </div>
         </motion.div>
       </div>
+
+      <ReviewModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </section>
   );
 };

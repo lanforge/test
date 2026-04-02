@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
+import mongoSanitize from 'express-mongo-sanitize';
 import connectDB from './config/db';
 import { startPriceScrapingJob } from './services/scraperService';
 
@@ -40,8 +41,16 @@ import rmaRoutes from './routes/rma';
 import giftCardRoutes from './routes/giftcards';
 import businessRoutes from './routes/business';
 import buildRequestRoutes from './routes/build-requests';
+import donationCausesRoutes from './routes/donation-causes';
+import pageStatusRoutes from './routes/page-status';
+import settingsRoutes from './routes/settings';
+import invoicesRoutes from './routes/invoices';
 
 const app = express();
+
+// Disable ETags to prevent 304 Not Modified responses
+app.set('etag', false);
+
 const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB
@@ -54,6 +63,9 @@ app.set('trust proxy', 1);
 app.use(
   helmet({
     crossOriginResourcePolicy: false,
+    contentSecurityPolicy: false, // In production, this should be configured strictly
+    xXssProtection: true,
+    xFrameOptions: { action: 'deny' },
   })
 );
 app.use(
@@ -66,7 +78,7 @@ app.use(
 // Rate limiting — general
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+  max: 300, // Increase max slightly to allow normal app usage but prevent abuse
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -75,7 +87,7 @@ app.use('/api/', limiter);
 // Stricter rate limit for auth login
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 20, // 20 attempts per 15 minutes
   message: 'Too many login attempts, please try again later.',
 });
 app.use('/api/auth/login', authLimiter);
@@ -87,6 +99,9 @@ app.use('/api/payments/webhook/stripe', express.raw({ type: 'application/json' }
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Sanitize data
+app.use(mongoSanitize());
+
 // HTTP request logging (dev only)
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -94,35 +109,6 @@ if (process.env.NODE_ENV === 'development') {
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
-
-// ── Coming Soon Middleware ──────────────────────────────────────────────────
-app.use(async (req, res, next) => {
-  try {
-    // Only check if it's an API route that isn't admin, auth, settings, or build-requests
-    if (
-      req.path.startsWith('/api/') &&
-      !req.path.startsWith('/api/admin') &&
-      !req.path.startsWith('/api/auth') &&
-      !req.path.startsWith('/api/settings/public') &&
-      !req.path.startsWith('/api/business/public') &&
-      !req.path.startsWith('/api/build-requests') &&
-      !req.path.startsWith('/api/newsletter')
-    ) {
-      const mongoose = require('mongoose');
-      if (mongoose.connection.readyState === 1) {
-        const BusinessInfo = require('./models/BusinessInfo').default;
-        const businessInfo = await BusinessInfo.findOne();
-        if (businessInfo && businessInfo.comingSoonMode === true) {
-          res.status(503).json({ error: 'Service Unavailable - Coming Soon Mode is active' });
-          return;
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error in coming soon middleware:', error);
-  }
-  next();
-});
 
 // ── API Routes ────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
@@ -154,6 +140,10 @@ app.use('/api/rma', rmaRoutes);
 app.use('/api/giftcards', giftCardRoutes);
 app.use('/api/business', businessRoutes);
 app.use('/api/build-requests', buildRequestRoutes);
+app.use('/api/donation-causes', donationCausesRoutes);
+app.use('/api/page-status', pageStatusRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/invoices', invoicesRoutes);
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {

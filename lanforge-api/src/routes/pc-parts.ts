@@ -42,13 +42,14 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
       if (!isNaN(maxPrice)) filter.price.$lte = maxPrice;
     }
     if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { brand: { $regex: search, $options: 'i' } },
-        { model: { $regex: search, $options: 'i' } },
-        { sku: { $regex: search, $options: 'i' } },
-        { tags: { $regex: search, $options: 'i' } },
-      ];
+      const searchTerms = search.trim().split(/\s+/);
+      filter.$and = searchTerms.map(term => ({
+        $or: [
+          { brand: { $regex: term, $options: 'i' } },
+          { partModel: { $regex: term, $options: 'i' } },
+          { sku: { $regex: term, $options: 'i' } }
+        ]
+      }));
     }
 
     const sortObj: any = {};
@@ -190,7 +191,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       _id: { $ne: part._id },
       isActive: true,
     })
-      .select('name slug brand model price compareAtPrice images ratings stock type')
+      .select('slug brand partModel price compareAtPrice images ratings stock type')
       .limit(6);
 
     res.json({ part, related });
@@ -207,21 +208,28 @@ router.get('/admin/all', protect, staffOrAdmin, async (req: AuthRequest, res: Re
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 50;
     const skip = (page - 1) * limit;
-    const type = req.query.type as PCPartType;
+    const type = req.query.type as string;
     const search = req.query.search as string;
 
     const filter: any = {};
-    if (type) filter.type = type;
+    if (type) {
+      // The frontend uses capitalized types (e.g. "Case", "CPU") in the dropdown,
+      // but the database stores them as lowercase ("case", "cpu")
+      filter.type = type.toLowerCase() as PCPartType;
+    }
     if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { brand: { $regex: search, $options: 'i' } },
-        { sku: { $regex: search, $options: 'i' } },
-      ];
+      const searchTerms = search.trim().split(/\s+/);
+      filter.$and = searchTerms.map(term => ({
+        $or: [
+          { brand: { $regex: term, $options: 'i' } },
+          { partModel: { $regex: term, $options: 'i' } },
+          { sku: { $regex: term, $options: 'i' } }
+        ]
+      }));
     }
 
     const [parts, total] = await Promise.all([
-      PCPart.find(filter).sort({ type: 1, brand: 1, name: 1 }).skip(skip).limit(limit),
+      PCPart.find(filter).sort({ type: 1, brand: 1, partModel: 1 }).skip(skip).limit(limit),
       PCPart.countDocuments(filter),
     ]);
 
@@ -238,7 +246,6 @@ router.post(
   staffOrAdmin,
   [
     body('type').isIn(VALID_TYPES).withMessage(`type must be one of: ${VALID_TYPES.join(', ')}`),
-    body('name').notEmpty().withMessage('Name is required'),
     body('brand').notEmpty().withMessage('Brand is required'),
     body('model').notEmpty().withMessage('Model is required'),
     body('sku').notEmpty().withMessage('SKU is required'),
@@ -254,7 +261,7 @@ router.post(
     }
 
     try {
-      const slugBase = req.body.name || `${req.body.brand}-${req.body.model}`;
+      const slugBase = `${req.body.brand}-${req.body.model}`;
       const slug =
         req.body.slug ||
         slugBase
@@ -282,7 +289,17 @@ router.post(
 // PUT /api/pc-parts/:id — admin/staff: update
 router.put('/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const part = await PCPart.findByIdAndUpdate(req.params.id, req.body, {
+    const { model, ...rest } = req.body;
+    const updateData = model ? { ...rest, partModel: model } : req.body;
+    
+    // Ensure slug doesn't conflict if updated implicitly
+    let finalUpdateData = { ...updateData };
+    if (finalUpdateData.brand && finalUpdateData.partModel && !finalUpdateData.slug) {
+      const slugBase = `${finalUpdateData.brand}-${finalUpdateData.partModel}`;
+      finalUpdateData.slug = slugBase.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+
+    const part = await PCPart.findByIdAndUpdate(req.params.id, finalUpdateData, {
       new: true,
       runValidators: true,
     });

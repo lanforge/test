@@ -12,6 +12,7 @@ export interface ICustomBuild extends Document {
   name?: string;
   customer?: mongoose.Types.ObjectId;
   guestEmail?: string;
+  baseProduct?: mongoose.Types.ObjectId;
   parts: IBuildPart[];
   subtotal: number;
   laborFee: number;
@@ -40,6 +41,7 @@ const CustomBuildSchema = new Schema<ICustomBuild>(
     name: { type: String, default: 'Custom Build' },
     customer: { type: Schema.Types.ObjectId, ref: 'Customer' },
     guestEmail: { type: String },
+    baseProduct: { type: Schema.Types.ObjectId, ref: 'Product' },
     parts: [BuildPartSchema],
     subtotal: { type: Number, required: true, default: 0 },
     laborFee: { type: Number, required: true, default: 99.99 },

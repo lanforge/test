@@ -6,8 +6,8 @@ interface CustomBuild {
   buildId: string;
   customer?: { firstName: string; lastName: string; email: string };
   status: 'draft' | 'saved' | 'ordered' | 'completed';
-  totalPrice: number;
-  totalCost: number;
+  total: number;
+  totalCost?: number;
   parts: any[];
   updatedAt: string;
 }
@@ -153,8 +153,8 @@ const AdminCustomBuildsPage: React.FC = () => {
               ) : builds.length === 0 ? (
                 <tr><td colSpan={7} className="px-6 py-4 text-center text-gray-400">No custom builds found.</td></tr>
               ) : builds.map(build => {
-                const margin = build.totalPrice - (build.totalCost || 0);
-                const marginPct = build.totalPrice > 0 ? (margin / build.totalPrice) * 100 : 0;
+                const margin = build.total - (build.totalCost || 0);
+                const marginPct = build.total > 0 ? (margin / build.total) * 100 : 0;
 
                 return (
                   <tr key={build._id} className="hover:bg-gray-800/30 transition-colors">
@@ -166,7 +166,7 @@ const AdminCustomBuildsPage: React.FC = () => {
                       {build.customer && <p className="text-gray-400 text-xs">{build.customer.email}</p>}
                     </td>
                     <td className="py-4 px-6 text-right text-white font-medium">
-                      {formatCurrency(build.totalPrice)}
+                      {formatCurrency(build.total)}
                     </td>
                     <td className="py-4 px-6 text-right">
                       <p className={`font-medium ${margin > 0 ? 'text-emerald-400' : 'text-gray-400'}`}>{formatCurrency(margin)}</p>
