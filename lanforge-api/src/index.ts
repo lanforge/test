@@ -10,6 +10,7 @@ import path from 'path';
 import mongoSanitize from 'express-mongo-sanitize';
 import connectDB from './config/db';
 import { startPriceScrapingJob } from './services/scraperService';
+import { AppError } from './utils/AppError';
 
 // Routes
 import authRoutes from './routes/auth';
@@ -48,8 +49,8 @@ import invoicesRoutes from './routes/invoices';
 
 const app = express();
 
-// Disable ETags to prevent 304 Not Modified responses
-app.set('etag', false);
+// Enable ETags for caching performance
+app.set('etag', 'weak');
 
 const PORT = process.env.PORT || 5000;
 
@@ -63,14 +64,14 @@ app.set('trust proxy', 1);
 app.use(
   helmet({
     crossOriginResourcePolicy: false,
-    contentSecurityPolicy: false, // In production, this should be configured strictly
+    contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
     xXssProtection: true,
     xFrameOptions: { action: 'deny' },
   })
 );
 app.use(
   cors({
-    origin: (origin, callback) => callback(null, true),
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true,
   })
 );
@@ -157,9 +158,10 @@ app.use((_req: Request, res: Response) => {
 
 // Global error handler (must have 4 params for Express to recognise it)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+app.use((err: AppError | Error | any, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err.stack);
-  res.status(err.statusCode ?? 500).json({
+  const statusCode = err instanceof AppError ? err.statusCode : err.statusCode ?? 500;
+  res.status(statusCode).json({
     message: err.message || 'Internal server error',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });

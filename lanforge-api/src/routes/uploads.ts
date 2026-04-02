@@ -1,6 +1,7 @@
 import { Router, Response, NextFunction } from 'express';
 import multer from 'multer';
 import path from 'path';
+import crypto from 'crypto';
 import { Storage } from '@google-cloud/storage';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
@@ -27,8 +28,9 @@ const bucketName = process.env.GCS_BUCKET_NAME || 'cdn.lanforge.co';
 const bucket = storageClient.bucket(bucketName);
 
 const uploadBufferToGCS = async (buffer: Buffer, originalname: string, mimetype: string, folder: string): Promise<string> => {
-  const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(originalname).toLowerCase()}`;
-  const destination = folder ? `${folder}/${uniqueName}` : uniqueName;
+  const uniqueName = `${crypto.randomUUID()}${path.extname(originalname).toLowerCase()}`;
+  const safeFolder = folder.replace(/[^a-zA-Z0-9-_]/g, '') || 'misc';
+  const destination = `${safeFolder}/${uniqueName}`;
   const file = bucket.file(destination);
 
   await file.save(buffer, {
@@ -64,7 +66,7 @@ router.post('/image', protect, staffOrAdmin, upload.single('image'), async (req:
       return;
     }
     
-    const folder = req.body.folder || 'misc';
+    const folder = typeof req.body.folder === 'string' ? req.body.folder : 'misc';
     const url = await uploadBufferToGCS(req.file.buffer, req.file.originalname, req.file.mimetype, folder);
     
     res.json({ url });
@@ -81,7 +83,7 @@ router.post('/images', protect, staffOrAdmin, upload.array('images', 10), async 
       return;
     }
     
-    const folder = req.body.folder || 'misc';
+    const folder = typeof req.body.folder === 'string' ? req.body.folder : 'misc';
     const urls = await Promise.all(
       (req.files as Express.Multer.File[]).map((f) => 
         uploadBufferToGCS(f.buffer, f.originalname, f.mimetype, folder)

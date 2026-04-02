@@ -1,6 +1,10 @@
 import fetch from 'node-fetch';
 import PCPart from '../models/PCPart';
 import Product from '../models/Product';
+import { Agenda } from 'agenda';
+
+// @ts-ignore
+const agenda = new Agenda({ db: { address: process.env.MONGODB_URI || 'mongodb://localhost:27017/lanforge' } });
 
 const extractPrice = (priceStr: any): number => {
   if (typeof priceStr === 'number') return priceStr;
@@ -47,8 +51,10 @@ export const scrapeDetailsFromUrl = async (url: string): Promise<any> => {
   if (!url) return null;
 
   try {
+    const apiKey = process.env.SCRAPER_API_KEY;
+    if (!apiKey) throw new Error('Scraper API key is missing');
     const encodedUrl = encodeURIComponent(url);
-    const scraperUrl = `https://api.scraperapi.com/?api_key=b5009ca3c5200be803a72cc263a83744&url=${encodedUrl}&retry_404=true&output_format=json&autoparse=true`;
+    const scraperUrl = `https://api.scraperapi.com/?api_key=${apiKey}&url=${encodedUrl}&retry_404=true&output_format=json&autoparse=true`;
     
     const response = await fetch(scraperUrl);
     if (!response.ok) {
@@ -173,8 +179,10 @@ export const scrapeSinglePart = async (part: any): Promise<boolean> => {
   if (!part.productUrl) return false;
   
   try {
+    const apiKey = process.env.SCRAPER_API_KEY;
+    if (!apiKey) throw new Error('Scraper API key is missing');
     const encodedUrl = encodeURIComponent(part.productUrl);
-    const scraperUrl = `https://api.scraperapi.com/?api_key=b5009ca3c5200be803a72cc263a83744&url=${encodedUrl}&retry_404=true&output_format=json&autoparse=true`;
+    const scraperUrl = `https://api.scraperapi.com/?api_key=${apiKey}&url=${encodedUrl}&retry_404=true&output_format=json&autoparse=true`;
     
     const response = await fetch(scraperUrl);
     if (!response.ok) {
@@ -232,20 +240,26 @@ export const scrapeSinglePart = async (part: any): Promise<boolean> => {
       // Find all Products (PCs) that contain this part
       const affectedProducts = await Product.find({ parts: part._id }).populate('parts');
       
-      for (const product of affectedProducts) {
-        // Recalculate cost for the product
+      const bulkOps = affectedProducts.map((product) => {
         let newProductCost = 0;
         for (const p of product.parts as any[]) {
           newProductCost += p.cost || 0;
         }
         
-        // Set the product's new cost and apply 20% markup to nearest 49.99 or 99.99
-        product.cost = newProductCost;
         const prodMarkupCost = newProductCost * 1.20;
-        product.price = Math.round(prodMarkupCost / 50) * 50 - 0.01;
+        const newPrice = Math.round(prodMarkupCost / 50) * 50 - 0.01;
         
-        await product.save();
-        console.log(`[Scraper] Synchronized Product ${product.name}: New Cost: $${newProductCost}, New Price: $${product.price}`);
+        return {
+          updateOne: {
+            filter: { _id: product._id },
+            update: { $set: { cost: newProductCost, price: newPrice } }
+          }
+        };
+      });
+
+      if (bulkOps.length > 0) {
+        await Product.bulkWrite(bulkOps);
+        console.log(`[Scraper] Synchronized ${bulkOps.length} products with new part cost.`);
       }
 
       return true;
@@ -259,52 +273,33 @@ export const scrapeSinglePart = async (part: any): Promise<boolean> => {
   return false;
 };
 
-export const startPriceScrapingJob = () => {
-  const CYCLE_TIME_MS = 12 * 60 * 60 * 1000; // 12 hours
-
-  const scheduleNextScrape = async () => {
-    try {
-      // Find all parts that have a product URL
-      const parts = await PCPart.find({ productUrl: { $exists: true, $ne: '' } });
-      const totalParts = parts.length;
-      
-      if (totalParts === 0) {
-        // No parts to scrape, check again in 1 hour
-        setTimeout(scheduleNextScrape, 60 * 60 * 1000);
-        return;
-      }
-      
-      console.log(`[Scraper] Scheduling ${totalParts} parts to be scraped evenly over the next 12 hours...`);
-      
-      // Spread the scrapes evenly across the 12-hour period
-      const intervalMs = Math.floor(CYCLE_TIME_MS / totalParts);
-      
-      let currentIndex = 0;
-      
-      const scrapeNext = async () => {
-        if (currentIndex < parts.length) {
-          const part = parts[currentIndex];
-          await scrapeSinglePart(part);
-          currentIndex++;
-          
-          // Always wait intervalMs before proceeding to the next part or restarting the cycle
-          setTimeout(scrapeNext, intervalMs);
-        } else {
-          // Cycle complete, fetch updated parts list and restart
-          scheduleNextScrape();
-        }
-      };
-      
-      // Start the first one
-      scrapeNext();
-      
-    } catch (error) {
-      console.error('[Scraper] Failed to schedule scraping job:', error);
-      // Try again in 1 hour if DB fails
-      setTimeout(scheduleNextScrape, 60 * 60 * 1000);
+export const startPriceScrapingJob = async () => {
+  agenda.define('scrape pc parts scheduler', async () => {
+    const parts = await PCPart.find({ productUrl: { $exists: true, $ne: '' } });
+    const totalParts = parts.length;
+    
+    if (totalParts === 0) return;
+    
+    console.log(`[Scraper] Scheduling ${totalParts} parts to be scraped evenly over the next 12 hours...`);
+    
+    const CYCLE_TIME_MS = 12 * 60 * 60 * 1000;
+    const intervalMs = Math.floor(CYCLE_TIME_MS / totalParts);
+    
+    for (let i = 0; i < parts.length; i++) {
+      await agenda.schedule(new Date(Date.now() + i * intervalMs), 'scrape single part', { partId: parts[i]._id });
     }
-  };
+  });
 
-  // Start the continuous scraping cycle
-  scheduleNextScrape();
+  agenda.define('scrape single part', async (job) => {
+    const { partId } = job.attrs.data as any;
+    const part = await PCPart.findById(partId);
+    if (part) {
+      await scrapeSinglePart(part);
+    }
+  });
+
+  await agenda.start();
+  
+  // Ensure the scheduler runs every 12 hours
+  await agenda.every('12 hours', 'scrape pc parts scheduler');
 };
