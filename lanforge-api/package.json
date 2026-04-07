@@ -7,7 +7,8 @@
     "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "seed": "ts-node src/scripts/seed.ts"
+    "seed": "ts-node src/scripts/seed.ts",
+    "stress-test": "ts-node src/scripts/stress-test.ts"
   },
   "dependencies": {
     "@agendajs/mongo-backend": "^4.0.1",

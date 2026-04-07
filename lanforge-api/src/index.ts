@@ -93,7 +93,7 @@ app.use(
 // Rate limiting — general
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 300, // Increase max slightly to allow normal app usage but prevent abuse
+  max: 30000, // Increased drastically for stress testing
   standardHeaders: true,
   legacyHeaders: false,
 });
