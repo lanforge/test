@@ -3,6 +3,7 @@ import { body, validationResult } from 'express-validator';
 import Customer from '../models/Customer';
 import Order from '../models/Order';
 import LoyaltyTransaction from '../models/LoyaltyTransaction';
+import Payment from '../models/Payment';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -52,15 +53,16 @@ router.get('/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response
       return;
     }
 
-    const [orders, loyaltyHistory] = await Promise.all([
+    const [orders, loyaltyHistory, payments] = await Promise.all([
       Order.find({ customer: customer._id })
         .sort({ createdAt: -1 })
         .limit(10)
         .select('orderNumber status paymentStatus total createdAt trackingNumber'),
       LoyaltyTransaction.find({ customer: customer._id }).sort({ createdAt: -1 }).limit(20),
+      Payment.find({ customer: customer._id }).sort({ createdAt: -1 }).limit(10)
     ]);
 
-    res.json({ customer, orders, loyaltyHistory });
+    res.json({ customer, orders, loyaltyHistory, payments });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

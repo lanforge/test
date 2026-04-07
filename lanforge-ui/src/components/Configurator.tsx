@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faBox } from '@fortawesome/free-solid-svg-icons';
 import BuildRequestModal from './BuildRequestModal';
+import Toast, { ToastType } from './Toast';
 
 interface ComponentOption {
   id: string | number;
@@ -39,8 +40,13 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
   const [isBuildRequestModalOpen, setIsBuildRequestModalOpen] = useState<boolean>(false);
   const [buildFeePercentage, setBuildFeePercentage] = useState<number>(10);
   const [isSharing, setIsSharing] = useState<boolean>(false);
+  const [toast, setToast] = useState<{message: string, type: ToastType, isVisible: boolean, duration?: number}>({ message: '', type: 'info', isVisible: false });
   const draftBuildIdRef = React.useRef<string | null>(null);
   const pendingSavePromiseRef = React.useRef<Promise<any> | null>(null);
+
+  const showToast = (message: string, type: ToastType = 'info', duration: number = 3000) => {
+    setToast({ message, type, isVisible: true, duration });
+  };
 
   React.useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/business/public`)
@@ -52,7 +58,7 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
       })
       .catch(err => console.error('Failed to fetch business info:', err));
 
-    window.scrollTo(0, 0);
+    setTimeout(() => window.scrollTo(0, 0), 10);
   }, []);
 
   React.useEffect(() => {
@@ -282,7 +288,7 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
             if (existing) {
               existing.quantity += 1;
             } else {
-              partsMap.set(item.id, { quantity: 1, partType: 'Component' });
+              partsMap.set(item.id, { quantity: 1, partType: catId });
             }
           });
         });
@@ -412,7 +418,7 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
       if (newFans.length < 2) {
         newFans.push(option);
       } else {
-        alert('You can only select up to 2 case fans total.');
+        showToast('You can only select up to 2 case fans total.', 'error');
       }
     } else if (delta < 0) {
       const index = newFans.findIndex(f => f.id === option.id);
@@ -435,53 +441,59 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
   const handleShareBuild = async () => {
     setIsSharing(true);
     try {
-      const partsMap = new Map<string | number, { quantity: number; partType: string }>();
+      // Ensure any pending draft save finishes so the backend has the latest data
+      if (pendingSavePromiseRef.current) {
+        await pendingSavePromiseRef.current;
+      }
       
-      Object.entries(selectedComponents).forEach(([catId, comp]) => {
-        const items = Array.isArray(comp) ? comp : [comp];
-        items.forEach(item => {
-          const existing = partsMap.get(item.id);
-          if (existing) {
-            existing.quantity += 1;
+      const finalBuildId = new URLSearchParams(window.location.search).get('buildId') || draftBuildIdRef.current;
+      
+      if (!finalBuildId) {
+        // Edge case: if no buildId exists yet (e.g. only case selected, no components)
+        // trigger an immediate save to get one.
+        await saveDraftBuild(selectedComponents);
+      }
+      
+      const newlySavedId = new URLSearchParams(window.location.search).get('buildId') || draftBuildIdRef.current;
+      
+      if (!newlySavedId) {
+        throw new Error('Failed to create build ID');
+      }
+
+      const shareUrl = `${window.location.origin}/build/${newlySavedId}`;
+      
+      try {
+        // Try modern clipboard API first
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(shareUrl);
+          showToast('Build link copied to clipboard!', 'success');
+        } else {
+          throw new Error('Fallback to execCommand');
+        }
+      } catch (clipErr) {
+        // Fallback for non-secure contexts or Safari async limitations
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          const successful = document.execCommand('copy');
+          if (successful) {
+            showToast('Build link copied to clipboard!', 'success');
           } else {
-            partsMap.set(item.id, { quantity: 1, partType: 'Component' });
+            showToast(`Build link generated!\n\n${shareUrl}`, 'success', 8000);
           }
-        });
-      });
-
-      const parts = Array.from(partsMap.entries()).map(([partId, data]) => ({
-        part: partId,
-        quantity: data.quantity,
-        partType: data.partType
-      }));
-      
-      parts.push({
-        part: selectedCase.id,
-        quantity: 1,
-        partType: 'Case'
-      });
-
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/custom-builds`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: `Custom Build`,
-          baseProduct: baseProductId,
-          parts,
-          frontendSubtotal: subtotal,
-          frontendLaborFee: calculatedBuildFee,
-          frontendTotal: totalPrice
-        })
-      });
-      const buildData = await res.json();
-      if (!buildData.customBuild) throw new Error('Failed to create build');
-      
-      const shareUrl = `${window.location.origin}/configurator?buildId=${buildData.customBuild.buildId}`;
-      await navigator.clipboard.writeText(shareUrl);
-      alert('Build link copied to clipboard!');
+        } catch (err) {
+          showToast(`Build link generated!\n\n${shareUrl}`, 'success', 8000);
+        }
+        document.body.removeChild(textArea);
+      }
     } catch (err) {
       console.error(err);
-      alert('Failed to generate share link.');
+      showToast('Failed to generate share link.', 'error');
     } finally {
       setIsSharing(false);
     }
@@ -491,13 +503,13 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
     // Only allow proceeding if an item is selected for the current category, except for fans which are optional
     const currentCategoryId = componentCategories[currentStep]?.id;
     if (currentCategoryId !== 'fans' && !selectedComponents[currentCategoryId]) {
-      alert(`Please select a ${componentCategories[currentStep]?.name} to continue.`);
+      showToast(`Please select a ${componentCategories[currentStep]?.name} to continue.`, 'error');
       return;
     }
 
     if (currentStep < componentCategories.length - 1) {
       setCurrentStep(currentStep + 1);
-      window.scrollTo(0, 0);
+      setTimeout(() => window.scrollTo(0, 0), 10);
     } else {
       setShowReviewModal(true);
     }
@@ -506,13 +518,13 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
   const handlePrevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
-      window.scrollTo(0, 0);
+      setTimeout(() => window.scrollTo(0, 0), 10);
     }
   };
 
   const handleStepClick = (stepIndex: number) => {
     setCurrentStep(stepIndex);
-    window.scrollTo(0, 0);
+    setTimeout(() => window.scrollTo(0, 0), 10);
   };
 
   const renderComponentSummary = (categoryId: string, component: any, categoryName: string) => {
@@ -684,9 +696,20 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
                 </div>
               </div>
               
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold text-white mb-2">{currentCategory.name}</h2>
-                <p className="text-gray-400 text-sm">Select the best {currentCategory.name.toLowerCase()} for your build.</p>
+              <div className="mb-8 flex items-start sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-3xl font-bold text-white mb-2">{currentCategory.name}</h2>
+                  <p className="text-gray-400 text-sm">Select the best {currentCategory.name.toLowerCase()} for your build.</p>
+                </div>
+                <button
+                  onClick={handleNextStep}
+                  className="bg-white text-black hover:bg-gray-200 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-sm font-bold transition-colors flex items-center gap-2 shrink-0"
+                >
+                  {currentStep === componentCategories.length - 1 ? 'Review Build' : (currentCategory.id === 'fans' && (!selectedComponents.fans || selectedComponents.fans.length === 0) ? 'Skip Fans' : 'Continue')}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </button>
               </div>
 
               <div className="space-y-3">
@@ -850,6 +873,14 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
         onClose={() => setIsBuildRequestModalOpen(false)} 
       />
 
+      <Toast 
+        message={toast.message} 
+        type={toast.type} 
+        isVisible={toast.isVisible} 
+        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))} 
+        duration={toast.duration}
+      />
+
       {/* Review Build Modal */}
       {showReviewModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -1001,10 +1032,13 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
                       });
                   })
                   .then(() => {
-                    alert('Custom build added to cart!');
-                    window.location.href = '/cart';
+                    showToast('Custom build added to cart!', 'success');
+                    setTimeout(() => window.location.href = '/cart', 1000);
                   })
-                  .catch(err => console.error(err));
+                  .catch(err => {
+                    console.error(err);
+                    showToast('Failed to add to cart.', 'error');
+                  });
                 }}
               >
                 Add to Cart

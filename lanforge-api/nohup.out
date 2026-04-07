@@ -1,0 +1,26 @@
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"slug":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"slug":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"orderNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"slug":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"buildId":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"email":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"code":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"serialNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"slug":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"slug":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"creatorCode":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"slug":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"email":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"rmaNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(node:22291) [MONGOOSE] Warning: Duplicate schema index on {"code":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+🚀 LANForge API running on port 5001 in development mode
+✅ MongoDB connected: ac-nvizt0b-shard-00-01.u9lcgej.mongodb.net
+[0mGET /api/health [32m200[0m 1.509 ms - 54[0m
+[0mGET /api/payments/69d55ca5c1549ce2a8c5dbb0 [32m200[0m 92.065 ms - 518[0m
+[0mGET /api/page-status/public [32m200[0m 1167.215 ms - 4950[0m
+[0mGET /api/payments/69d55ca5c1549ce2a8c5dbb0 [32m200[0m 79.905 ms - 518[0m
+[0mPOST /api/payments/69d55ca5c1549ce2a8c5dbb0/refund [31m500[0m 669.083 ms - 107[0m
+[0mGET /api/payments/69d55ca5c1549ce2a8c5dbb0 [36m304[0m 112.553 ms - -[0m
+[0mGET /api/health [32m200[0m 0.247 ms - 54[0m
+[0mGET /api/health [32m200[0m 0.127 ms - 54[0m

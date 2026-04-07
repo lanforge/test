@@ -165,7 +165,7 @@ const ProductShowcase: React.FC = () => {
                             <img 
                               src={product.image} 
                               alt={product.name} 
-                              className="w-full h-full object-cover relative z-10"
+                              className="w-full h-full object-contain p-2 relative z-10"
                             />
                           ) : (
                             <div className="text-6xl opacity-30 relative z-10"><FontAwesomeIcon icon={faDesktop} /></div>
@@ -188,7 +188,6 @@ const ProductShowcase: React.FC = () => {
                       <div className="space-y-3 sm:space-y-4">
                         <div>
                           <h4 className="text-lg sm:text-xl font-bold text-white mb-2">{product.name}</h4>
-                          <p className="text-gray-400 text-xs sm:text-sm line-clamp-2">{product.description}</p>
                         </div>
                         
                         {/* Specs */}

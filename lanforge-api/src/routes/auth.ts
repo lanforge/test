@@ -49,8 +49,11 @@ router.post(
         return;
       }
 
-      user.lastLogin = new Date();
-      await user.save();
+      // Use updateOne to completely bypass Mongoose schema validation for the already-hashed password
+      await User.updateOne(
+        { _id: user._id },
+        { $set: { lastLogin: new Date() } }
+      );
 
       const token = generateAccessToken(String(user._id));
       const refreshToken = generateRefreshToken(String(user._id));
@@ -64,7 +67,8 @@ router.post(
 
       res.json({ token, refreshToken, user });
     } catch (error) {
-      res.status(500).json({ message: 'Server error during login' });
+      console.error('Login error:', error);
+      res.status(500).json({ message: 'Server error during login', error: String(error) });
     }
   }
 );

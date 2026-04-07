@@ -175,7 +175,7 @@ const PCsPage: React.FC = () => {
                               <img 
                                 src={product.image} 
                                 alt={product.name} 
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-contain p-2"
                               />
                             ) : (
                               <div className="absolute inset-0 flex items-center justify-center">
@@ -198,7 +198,6 @@ const PCsPage: React.FC = () => {
                           <div className="flex justify-between items-start mb-4">
                             <div>
                               <h3 className="text-xl font-bold text-white mb-2">{product.name}</h3>
-                              <p className="text-gray-400 mb-4">{product.description}</p>
                             </div>
                             <div className="text-2xl font-bold text-gradient-neon">
                               {product.price}

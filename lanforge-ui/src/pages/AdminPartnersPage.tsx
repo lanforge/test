@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../utils/api';
+import AdminAddPartnerModal from '../components/AdminAddPartnerModal';
 
 interface Partner {
   _id: string;
@@ -22,6 +24,7 @@ interface AffiliateApp {
 
 const AdminPartnersPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'partners' | 'affiliates'>('partners');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Partners state
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -85,7 +88,10 @@ const AdminPartnersPage: React.FC = () => {
         </div>
         {activeTab === 'partners' && (
           <div className="flex items-center space-x-4">
-            <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium">
+            <button 
+              onClick={() => setIsAddModalOpen(true)}
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium"
+            >
               + Add Partner
             </button>
           </div>
@@ -141,10 +147,16 @@ const AdminPartnersPage: React.FC = () => {
                     <tr key={p._id} className="hover:bg-gray-800/30">
                       <td className="py-3 px-4 text-white font-medium flex items-center space-x-3">
                         <img src={p.logo} alt={p.name} className="w-8 h-8 object-contain bg-white rounded p-1" />
-                        <span>{p.name}</span>
+                        <Link to={`/admin/partners/${p._id}`} className="hover:text-emerald-400 transition-colors">
+                          {p.name}
+                        </Link>
                       </td>
                       <td className="py-3 px-4 text-emerald-400 text-sm">
-                        <a href={p.website} target="_blank" rel="noreferrer">{p.website}</a>
+                        {p.website ? (
+                          <a href={p.website} target="_blank" rel="noreferrer" className="hover:underline">{p.website}</a>
+                        ) : (
+                          <span className="text-gray-500">-</span>
+                        )}
                       </td>
                       <td className="py-3 px-4">
                         <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${p.isActive ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-gray-500/10 text-gray-400 border-gray-500/30'}`}>
@@ -152,11 +164,12 @@ const AdminPartnersPage: React.FC = () => {
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <button className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors" title="Edit">
+                        <Link to={`/admin/partners/${p._id}`} className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors inline-block" title="View Details">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
-                        </button>
+                        </Link>
                       </td>
                     </tr>
                   ))
@@ -246,6 +259,12 @@ const AdminPartnersPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      <AdminAddPartnerModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={fetchPartners}
+      />
     </div>
   );
 };

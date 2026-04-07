@@ -253,9 +253,11 @@ router.put('/:buildId/assign-order', protect, staffOrAdmin, async (req: AuthRequ
 
     if (!build.serialNumber) {
       // Generate a unique main serial number for the build
-      const datePart = new Date().toISOString().slice(2, 10).replace(/-/g, ''); // YYMMDD
-      const randomPart = crypto.randomBytes(3).toString('hex').toUpperCase();
-      build.serialNumber = `LFB-${datePart}-${randomPart}`;
+      let sn = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+      while (await CustomBuild.exists({ serialNumber: sn })) {
+        sn = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+      }
+      build.serialNumber = sn;
     }
 
     await build.save();

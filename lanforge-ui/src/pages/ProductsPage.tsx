@@ -159,7 +159,7 @@ const ProductsPage: React.FC = () => {
                       idx === activeImageIndex ? 'border-emerald-500' : 'border-transparent opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt={`${product.name} view ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img src={img} alt={`${product.name} view ${idx + 1}`} className="w-full h-full object-contain p-1" />
                   </button>
                 ))}
               </div>
@@ -173,13 +173,9 @@ const ProductsPage: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="flex flex-col"
           >
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">
               {product.name}
             </h1>
-            
-            <p className="text-lg text-gray-400 mb-6">
-              {product.shortDescription || "High-performance custom gaming PC."}
-            </p>
 
             <div className="flex items-end gap-4 mb-8">
               <span className="text-3xl font-bold text-white">
@@ -226,14 +222,6 @@ const ProductsPage: React.FC = () => {
                 </svg>
                 Customize
               </button>
-            </div>
-
-            {/* Overview / Description */}
-            <div className="mb-10">
-              <h3 className="text-xl font-bold mb-4">Overview</h3>
-              <div className="prose prose-invert prose-sm text-gray-400">
-                <p>{product.description}</p>
-              </div>
             </div>
 
             {/* Specs List */}

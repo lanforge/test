@@ -12,6 +12,7 @@ import DonationCause from '../models/DonationCause';
 import BusinessInfo from '../models/BusinessInfo';
 import Payment from '../models/Payment';
 import PurchasedPC from '../models/PurchasedPC';
+import Partner from '../models/Partner';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -108,19 +109,40 @@ router.post(
       let discount = 0;
       let appliedDiscountId: any = null;
       let isFreeShippingDiscount = false;
+      let appliedCreatorCode = creatorCode || null;
+
       if (discountCode) {
-        const dc = await Discount.findOne({
+        let dc: any = await Discount.findOne({
           code: discountCode.toUpperCase(),
           status: 'active',
           expiresAt: { $gte: new Date() },
         });
+
+        if (!dc) {
+          // Check if it's a partner creator code with a discount
+          const partner = await Partner.findOne({ creatorCode: discountCode.toUpperCase(), isActive: true });
+          if (partner && partner.customerDiscountType) {
+            dc = {
+              _id: null,
+              type: partner.customerDiscountType,
+              value: partner.customerDiscountValue || 0,
+              minOrder: 0,
+              isCreatorCode: true
+            };
+            appliedCreatorCode = partner.creatorCode; // Automatically track as creator code usage too
+          }
+        }
+
         if (dc && subtotal >= dc.minOrder) {
           if (dc.type === 'percentage') discount = subtotal * (dc.value / 100);
           else if (dc.type === 'fixed') discount = Math.min(dc.value, subtotal);
           else if (dc.type === 'free_shipping') isFreeShippingDiscount = true;
-          appliedDiscountId = dc._id;
-          dc.usedCount += 1;
-          await dc.save();
+          
+          if (!dc.isCreatorCode) {
+            appliedDiscountId = dc._id;
+            dc.usedCount += 1;
+            await dc.save();
+          }
         }
       }
 
@@ -161,7 +183,10 @@ router.post(
       }
 
       // Generate order number
-      const orderNumber = `LF-${Date.now().toString(36).toUpperCase()}`;
+      let orderNumber = `LAN-${Math.floor(100000 + Math.random() * 900000)}`;
+      while (await Order.exists({ orderNumber })) {
+        orderNumber = `LAN-${Math.floor(100000 + Math.random() * 900000)}`;
+      }
 
       // Reserve stock
       for (const item of validatedItems) {
@@ -275,7 +300,7 @@ router.post(
         tax: parseFloat(tax.toFixed(2)),
         discount,
         appliedDiscount: appliedDiscountId || undefined,
-        creatorCode: creatorCode ? creatorCode.toUpperCase() : undefined,
+        creatorCode: appliedCreatorCode ? appliedCreatorCode.toUpperCase() : undefined,
         donationCause: donationCause || undefined,
         donationAmount: parsedDonationAmount,
         lanforgeDonationAmount,
@@ -330,7 +355,10 @@ router.post(
                 }
 
                 for (let i = 0; i < item.quantity; i++) {
-                  const serialNumber = `LF-PC-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+                  let serialNumber = `LAN-PC-${Math.floor(100000 + Math.random() * 900000)}`;
+                  while (await PurchasedPC.exists({ serialNumber })) {
+                    serialNumber = `LAN-PC-${Math.floor(100000 + Math.random() * 900000)}`;
+                  }
                   
                   await PurchasedPC.create({
                     serialNumber,
@@ -364,7 +392,10 @@ router.post(
               }
 
               for (let i = 0; i < item.quantity; i++) {
-                const serialNumber = `LF-CB-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+                let serialNumber = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+                while (await PurchasedPC.exists({ serialNumber })) {
+                  serialNumber = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+                }
                 
                 await PurchasedPC.create({
                   serialNumber,

@@ -65,14 +65,39 @@ router.post(
 
       let discountAmount = 0;
       let appliedDiscount = null;
+      let appliedCreatorCode = null;
 
-      // Validate Discount
+      // Validate Creator Code directly (if passed as creatorCode)
+      if (creatorCode) {
+        const cc = await Partner.findOne({ creatorCode: creatorCode.toUpperCase(), isActive: true });
+        if (!cc) issues.push('Invalid creator code');
+        else appliedCreatorCode = cc.creatorCode;
+      }
+
+      // Validate Discount (or Creator Code passed as discount)
       if (discountCode) {
-        const dc = await Discount.findOne({
+        let dc: any = await Discount.findOne({
           code: discountCode.toUpperCase(),
           status: 'active',
           expiresAt: { $gte: new Date() },
         });
+
+        if (!dc) {
+          // Check if it's a partner creator code with a discount
+          const partner = await Partner.findOne({ creatorCode: discountCode.toUpperCase(), isActive: true });
+          if (partner && partner.customerDiscountType) {
+            dc = {
+              _id: partner._id,
+              code: partner.creatorCode,
+              type: partner.customerDiscountType,
+              value: partner.customerDiscountValue || 0,
+              minOrder: 0,
+              isCreatorCode: true
+            };
+            appliedCreatorCode = partner.creatorCode; // Automatically track as creator code usage too
+          }
+        }
+
         if (!dc || subtotal < dc.minOrder) {
           issues.push('Invalid or expired discount code, or minimum order not met');
         } else {
@@ -81,14 +106,6 @@ router.post(
           else if (dc.type === 'free_shipping') discountAmount = 0;
           appliedDiscount = dc;
         }
-      }
-
-      // Validate Creator Code
-      let appliedCreatorCode = null;
-      if (creatorCode) {
-        const cc = await Partner.findOne({ creatorCode: creatorCode.toUpperCase(), isActive: true });
-        if (!cc) issues.push('Invalid creator code');
-        else appliedCreatorCode = cc.creatorCode;
       }
       
       // Validate Customer (if logged in)

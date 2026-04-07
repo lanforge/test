@@ -267,9 +267,7 @@ const DignitasPage: React.FC = () => {
                     <div className="flex justify-between items-start mb-4 mt-2">
                       <h4 className="text-2xl font-bold text-white group-hover:text-yellow-400 transition-colors duration-300">{product.name}</h4>
                     </div>
-                    
-                    <p className="text-gray-400 text-sm mb-8 flex-grow leading-relaxed">{product.description}</p>
-                    
+
                     <div className="space-y-3 mb-8 bg-gray-900/50 p-4 rounded-xl border border-gray-800">
                       {product.specs.map((spec, i) => {
                         const [label, ...valueParts] = spec.split(':');

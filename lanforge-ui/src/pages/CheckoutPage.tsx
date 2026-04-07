@@ -31,7 +31,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
   const [shippingMethodCost, setShippingMethodCost] = useState<number>(49.99);
   const [isFetchingRates, setIsFetchingRates] = useState(false);
   
-  const [discountCode, setDiscountCode] = useState('');
+  const [discountCode, setDiscountCode] = useState(() => localStorage.getItem('autoDiscountCode') || '');
   const [customDiscountAmount, setCustomDiscountAmount] = useState(0);
   const [appliedDiscount, setAppliedDiscount] = useState<any>(null);
   const [discountError, setDiscountError] = useState('');
@@ -267,6 +267,18 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
   }, []);
 
   const calculateSubtotal = () => cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+  // Auto-apply discount if it exists in local storage
+  React.useEffect(() => {
+    if (cartItems.length > 0 && discountCode && !appliedDiscount && !discountError) {
+      // Small timeout to ensure calculateSubtotal has the latest cart items
+      const timeoutId = setTimeout(() => {
+        handleApplyDiscount();
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [cartItems, discountCode, appliedDiscount, discountError]);
+
   const getAppliedDiscountAmount = () => {
     if (!appliedDiscount || appliedDiscount.type === 'free_shipping') return 0;
     if (appliedDiscount.type === 'percentage') return calculateSubtotal() * (appliedDiscount.value / 100);
@@ -335,6 +347,23 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
     if (!stripe || !elements) return;
     setIsProcessing(true);
 
+    // Ensure Stripe has the absolutely correct final total before confirming
+    try {
+      const finalTotal = calculateTotal();
+      if (finalTotal > 0 && clientSecret) {
+        await fetch(`${process.env.REACT_APP_API_URL}/payments/stripe/update-intent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clientSecret,
+            amount: finalTotal
+          })
+        });
+      }
+    } catch (err) {
+      console.error('Failed to sync final amount to intent before confirm:', err);
+    }
+
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
@@ -393,6 +422,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
         paymentMethod: 'stripe',
         discountCode: discountCode || undefined,
         shippingAmount: calculateShipping(),
+        shippingInsurance: calculateInsurance(),
         shippingRates: shippoRates,
         selectedShippingRate: shippoRates.find(r => r.objectId === shippingMethod) || null,
         donationCause: selectedCauseId || undefined,
@@ -900,7 +930,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                 {appliedDiscount && (
                   <div className="mt-2 text-emerald-400 text-sm flex justify-between items-center">
                     <span>Discount '{appliedDiscount.code}' applied!</span>
-                    <button type="button" className="text-gray-400 hover:text-white" onClick={() => { setAppliedDiscount(null); setDiscountCode(''); }}>
+                    <button type="button" className="text-gray-400 hover:text-white" onClick={() => { 
+                      setAppliedDiscount(null); 
+                      setDiscountCode(''); 
+                      localStorage.removeItem('autoDiscountCode');
+                    }}>
                       Remove
                     </button>
                   </div>
@@ -992,10 +1026,14 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
 
 const CheckoutPageWrapper: React.FC = () => {
   const [clientSecret, setClientSecret] = useState<string>('');
+  const initialized = useRef(false);
 
   // We fetch the cart to initialize the intent with the real amount
   // This intent is updated whenever the cart total changes later in the form.
   React.useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
     let sessionId = localStorage.getItem('cartSessionId');
     if (!sessionId) {
       sessionId = 'session_' + Math.random().toString(36).substring(2, 15);

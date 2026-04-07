@@ -18,7 +18,6 @@ type OrderStatus =
 const OrderStatusPage: React.FC = () => {
   const [orderStatus, setOrderStatus] = useState<OrderStatus>('Order Confirmed');
   const [orderId, setOrderId] = useState('LANF-2026-8472');
-  const [estimatedDelivery] = useState('March 25, 2026');
   const [customerInfo, setCustomerInfo] = useState<any>(null);
 
   const statusLevels: OrderStatus[] = [
@@ -261,8 +260,7 @@ const OrderStatusPage: React.FC = () => {
                   <h3>Current Status: {orderStatus}</h3>
                   <p>{getStatusDescription(orderStatus)}</p>
                   <div className="status-meta">
-                    <span className="meta-item"><FontAwesomeIcon icon={faCalendar} /> Estimated Delivery: {estimatedDelivery}</span>
-                    <span className="meta-item">⏱️ Next Update: {getEstimatedTime(orderStatus)}</span>
+                    <span className="meta-item text-xs text-gray-400">Note: Times are an estimate and are not guaranteed</span>
                   </div>
                 </div>
               </div>
@@ -373,13 +371,6 @@ const OrderStatusPage: React.FC = () => {
               <h3>Need Help?</h3>
               <div className="support-options">
                 <div className="support-option">
-                  <span className="option-icon"><FontAwesomeIcon icon={faPhone} /></span>
-                  <div>
-                    <h4>Call Support</h4>
-                    <p>1-800-LAN-FORGE</p>
-                  </div>
-                </div>
-                <div className="support-option">
                   <span className="option-icon">💬</span>
                   <div>
                     <h4>Live Chat</h4>
@@ -398,31 +389,10 @@ const OrderStatusPage: React.FC = () => {
 
             <div className="navigation-actions">
               <Link to="/" className="btn btn-secondary">Continue Shopping</Link>
-              <Link to="/account/orders" className="btn btn-outline">View All Orders</Link>
             </div>
           </motion.div>
         </div>
 
-        {/* Status Selector for Demo */}
-        <div className="demo-controls">
-          <h3>Demo: Change Order Status</h3>
-          <div className="status-buttons">
-            {[...statusLevels, ...specialStatuses].map((status) => (
-              <button
-                key={status}
-                className={`status-btn ${orderStatus === status ? 'active' : ''}`}
-                onClick={() => setOrderStatus(status)}
-                style={{
-                  backgroundColor: orderStatus === status ? getStatusColor(status) : 'rgba(255, 255, 255, 0.05)',
-                  borderColor: getStatusColor(status)
-                }}
-              >
-                {status}
-              </button>
-            ))}
-          </div>
-          <p className="demo-note">Note: This is a demo control. In a real application, status would be updated automatically.</p>
-        </div>
       </div>
     </div>
   );

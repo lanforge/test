@@ -79,7 +79,10 @@ const ConfiguratorPage: React.FC = () => {
 
             buildData.build.parts.forEach((partItem: any) => {
               const part = partItem.part;
-              let typeKey = partItem.partType ? partItem.partType.toLowerCase() : (part.type ? part.type.toLowerCase() : '');
+              // Ignore 'component' generic partType, prioritize part.type from DB for configurator mapping
+              let rawType = partItem.partType?.toLowerCase() === 'component' ? part.type : (partItem.partType || part.type);
+              let typeKey = rawType ? rawType.toLowerCase() : '';
+              
               if (['ssd', 'hdd', 'nvme', 'm.2'].includes(typeKey)) {
                 typeKey = 'storage';
               }

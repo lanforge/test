@@ -19,6 +19,7 @@ import ContactPage from './pages/ContactPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderStatusPage from './pages/OrderStatusPage';
+import CustomBuildPage from './pages/CustomBuildPage';
 import InvoicePage from './pages/InvoicePage';
 import DignitasPage from './pages/DignitasPage';
 import TradeifyPage from './pages/TradeifyPage';
@@ -32,6 +33,7 @@ import TechSupportPage from './pages/TechSupportPage';
 import PCServicesPage from './pages/PCServicesPage';
 import PartnersPage from './pages/PartnersPage';
 import AffiliateApplicationPage from './pages/AffiliateApplicationPage';
+import DiscountRedirectPage from './pages/DiscountRedirectPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Admin Pages
@@ -40,6 +42,7 @@ import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
 import AdminOrderDetailsPage from './pages/AdminOrderDetailsPage';
+import AdminPaymentDetailsPage from './pages/AdminPaymentDetailsPage';
 import AdminPurchasedPCDetailsPage from './pages/AdminPurchasedPCDetailsPage';
 import AdminProductsPage from './pages/AdminProductsPage';
 import AdminAddProductPage from './pages/AdminAddProductPage';
@@ -47,17 +50,17 @@ import AdminInventoryPage from './pages/AdminInventoryPage';
 import AdminPartsPage from './pages/AdminPartsPage';
 import AdminAddPartPage from './pages/AdminAddPartPage';
 import AdminCustomersPage from './pages/AdminCustomersPage';
+import AdminCustomerDetailsPage from './pages/AdminCustomerDetailsPage';
 import AdminAddCustomerPage from './pages/AdminAddCustomerPage';
 import AdminAddOrderPage from './pages/AdminAddOrderPage';
-import AdminUsersPage from './pages/AdminUsersPage';
 import AdminPromotionsPage from './pages/AdminPromotionsPage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminPartnersPage from './pages/AdminPartnersPage';
+import AdminPartnerDetailsPage from './pages/AdminPartnerDetailsPage';
 import AdminCartsPage from './pages/AdminCartsPage';
 import AdminCustomBuildsPage from './pages/AdminCustomBuildsPage';
 import AdminBuildRequestsPage from './pages/AdminBuildRequestsPage';
 import AdminReviewsPage from './pages/AdminReviewsPage';
-import AdminPagesPage from './pages/AdminPagesPage';
 import AdminInvoicesPage from './pages/AdminInvoicesPage';
 
 export const PageStatusContext = React.createContext<string[]>([]);
@@ -257,6 +260,13 @@ function App() {
               <Footer />
             </>
           } />
+          <Route path="/build/:id" element={
+            <>
+              <Header />
+              <CustomBuildPage />
+              <Footer />
+            </>
+          } />
           <Route path="/products" element={
             <>
               <Header />
@@ -428,6 +438,8 @@ function App() {
               <Footer />
             </>
           } />
+          <Route path="/discount/:code" element={<DiscountRedirectPage />} />
+          <Route path="/ref" element={<DiscountRedirectPage />} />
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route element={<AdminLayout />}>
@@ -435,6 +447,7 @@ function App() {
             <Route path="/admin/orders" element={<AdminOrdersPage />} />
             <Route path="/admin/orders/add" element={<AdminAddOrderPage />} />
             <Route path="/admin/orders/:id" element={<AdminOrderDetailsPage />} />
+            <Route path="/admin/payments/:id" element={<AdminPaymentDetailsPage />} />
             <Route path="/admin/purchased-pcs/:id" element={<AdminPurchasedPCDetailsPage />} />
             <Route path="/admin/products" element={<AdminProductsPage />} />
             <Route path="/admin/products/add" element={<AdminAddProductPage />} />
@@ -445,16 +458,16 @@ function App() {
             <Route path="/admin/inventory" element={<AdminInventoryPage />} />
             <Route path="/admin/customers" element={<AdminCustomersPage />} />
             <Route path="/admin/customers/add" element={<AdminAddCustomerPage />} />
-            <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/customers/:id" element={<AdminCustomerDetailsPage />} />
             <Route path="/admin/promotions" element={<AdminPromotionsPage />} />
             <Route path="/admin/partners" element={<AdminPartnersPage />} />
+            <Route path="/admin/partners/:id" element={<AdminPartnerDetailsPage />} />
             <Route path="/admin/carts" element={<AdminCartsPage />} />
             <Route path="/admin/custom-builds" element={<AdminCustomBuildsPage />} />
             <Route path="/admin/build-requests" element={<AdminBuildRequestsPage />} />
             <Route path="/admin/reviews" element={<AdminReviewsPage />} />
             <Route path="/admin/invoices" element={<AdminInvoicesPage />} />
             <Route path="/admin/settings" element={<AdminSettingsPage />} />
-            <Route path="/admin/pages" element={<AdminPagesPage />} />
           </Route>
 
           {/* 404 Not Found Route */}

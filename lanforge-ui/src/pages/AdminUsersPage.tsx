@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
+import AdminAddUserModal from '../components/AdminAddUserModal';
 
 interface User {
   _id: string;
@@ -19,6 +20,7 @@ const AdminUsersPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -59,22 +61,24 @@ const AdminUsersPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-6 h-full flex flex-col">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white">User Management</h1>
-          <p className="text-gray-400 mt-1">Manage admin users and permissions</p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium">
-            + Add User
-          </button>
-        </div>
+        <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+          <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5 0a5.5 5.5 0 01-5.5 5.5" />
+          </svg>
+          <span>User Management</span>
+        </h2>
+        <button 
+          onClick={() => setIsAddUserModalOpen(true)}
+          className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium text-sm"
+        >
+          + Add User
+        </button>
       </div>
 
       {/* Search and filters */}
-      <div className="card p-4">
+      <div className="card p-4 shrink-0">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
             <div className="relative flex-1">
@@ -118,8 +122,8 @@ const AdminUsersPage: React.FC = () => {
       </div>
 
       {/* Users table */}
-      <div className="card overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="card overflow-hidden flex-1 flex flex-col">
+        <div className="overflow-x-auto flex-1">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-800">
@@ -211,6 +215,16 @@ const AdminUsersPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {isAddUserModalOpen && (
+        <AdminAddUserModal
+          onClose={() => setIsAddUserModalOpen(false)}
+          onSuccess={() => {
+            setIsAddUserModalOpen(false);
+            fetchUsers();
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -316,10 +316,6 @@ const TradeifyPage: React.FC = () => {
                   <h3 className="text-6xl md:text-8xl font-black text-white mb-6 tracking-tighter leading-[0.9]">
                     {products[3].name}
                   </h3>
-                  
-                  <p className="text-xl text-gray-400 font-light leading-relaxed mb-12 max-w-xl">
-                    {products[3].description}
-                  </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-16">
                     {products[3].specs.map((spec, i) => {

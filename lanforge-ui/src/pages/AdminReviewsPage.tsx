@@ -3,7 +3,7 @@ import api from '../utils/api';
 
 interface Review {
   _id: string;
-  userName: string;
+  customerName: string;
   rating: number;
   title: string;
   comment: string;
@@ -46,7 +46,7 @@ const AdminReviewsPage: React.FC = () => {
 
   const toggleApproval = async (id: string, currentStatus: boolean) => {
     try {
-      await api.put(`/reviews/${id}/approve`, { isApproved: !currentStatus });
+      await api.put(`/reviews/${id}/status`, { isApproved: !currentStatus });
       fetchReviews();
     } catch (error) {
       console.error('Failed to update review status', error);
@@ -141,7 +141,7 @@ const AdminReviewsPage: React.FC = () => {
                         {review.product?.name || review.pcPart?.name || review.accessory?.name || 'Unknown Item'}
                       </p>
                     </td>
-                    <td className="py-3 px-4 text-white font-medium">{review.userName}</td>
+                    <td className="py-3 px-4 text-white font-medium">{review.customerName}</td>
                     <td className="py-3 px-4">
                       <p className="text-white font-medium text-sm">{review.title}</p>
                       <p className="text-gray-400 text-xs truncate max-w-[300px]">{review.comment}</p>

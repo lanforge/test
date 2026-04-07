@@ -1,7 +1,7 @@
 import { performance } from 'perf_hooks';
 
 // Base URL of the API to test
-const BASE_URL = process.env.API_URL || 'https://beta.lanforge.co/api';
+const BASE_URL = process.env.API_URL || 'http://localhost:3000/api';
 
 // Generates a mock Object ID (fallback)
 const generateMockId = () => {

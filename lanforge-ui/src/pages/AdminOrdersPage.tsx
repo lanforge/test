@@ -63,13 +63,14 @@ const AdminOrdersPage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'processing': return 'bg-blue-500/10 text-blue-400 border border-blue-500/30';
-      case 'building': return 'bg-purple-500/10 text-purple-400 border border-purple-500/30';
-      case 'testing': return 'bg-amber-500/10 text-amber-400 border border-amber-500/30';
-      case 'shipped': return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+      case 'order-confirmed': return 'bg-amber-500/10 text-amber-400 border border-amber-500/30';
+      case 'building': return 'bg-blue-500/10 text-blue-400 border border-blue-500/30';
+      case 'benchmarking': return 'bg-purple-500/10 text-purple-400 border border-purple-500/30';
+      case 'shipped': return 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
+      case 'out-for-delivery': return 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/30';
       case 'delivered': return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+      case 'returned': return 'bg-red-500/10 text-red-400 border border-red-500/30';
       case 'cancelled': return 'bg-red-500/10 text-red-400 border border-red-500/30';
-      case 'refunded': return 'bg-gray-500/10 text-gray-400 border border-gray-500/30';
       default: return 'bg-gray-500/10 text-gray-400 border border-gray-500/30';
     }
   };
@@ -157,12 +158,13 @@ const AdminOrdersPage: React.FC = () => {
               className="input px-3 py-2 bg-gray-900/70 border-gray-700 text-sm rounded-lg"
             >
               <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="processing">Processing</option>
+              <option value="order-confirmed">Order Confirmed</option>
               <option value="building">Building</option>
-              <option value="testing">Testing</option>
+              <option value="benchmarking">Benchmarking</option>
               <option value="shipped">Shipped</option>
+              <option value="out-for-delivery">Out for Delivery</option>
               <option value="delivered">Delivered</option>
+              <option value="returned">Returned</option>
               <option value="cancelled">Cancelled</option>
             </select>
             <button 
@@ -211,7 +213,7 @@ const AdminOrdersPage: React.FC = () => {
                   </td>
                   <td className="py-3 px-4">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                      {(order.status || 'unknown').replace('-', ' ').toUpperCase()}
+                      {(order.status || 'unknown').replace(/-/g, ' ').toUpperCase()}
                     </span>
                   </td>
                   <td className="py-3 px-4">

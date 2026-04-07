@@ -18,6 +18,7 @@ const AdminAddOrderPage: React.FC = () => {
     paymentStatus: 'paid',
     paymentMethod: 'stripe',
     shipping: 29.99,
+    shippingInsurance: 0,
   });
 
   useEffect(() => {
@@ -69,8 +70,9 @@ const AdminAddOrderPage: React.FC = () => {
         paymentMethod: formData.paymentMethod,
         subtotal: selectedProduct.price * Number(formData.quantity),
         shipping: Number(formData.shipping),
+        shippingInsurance: Number(formData.shippingInsurance),
         tax: 0, // Simplified for manual entry
-        total: (selectedProduct.price * Number(formData.quantity)) + Number(formData.shipping),
+        total: (selectedProduct.price * Number(formData.quantity)) + Number(formData.shipping) + Number(formData.shippingInsurance),
       };
 
       await api.post('/orders', payload); // Assuming /orders supports standard admin creation
@@ -163,6 +165,20 @@ const AdminAddOrderPage: React.FC = () => {
               required
               className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
               value={formData.shipping}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Shipping Insurance ($)</label>
+            <input
+              type="number"
+              name="shippingInsurance"
+              min="0"
+              step="0.01"
+              required
+              className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+              value={formData.shippingInsurance}
               onChange={handleChange}
             />
           </div>

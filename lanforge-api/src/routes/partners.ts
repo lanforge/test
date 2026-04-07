@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import Partner from '../models/Partner';
+import Order from '../models/Order';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -25,6 +26,65 @@ router.get('/admin/all', protect, staffOrAdmin, async (req: AuthRequest, res: Re
   }
 });
 
+// GET /api/partners/admin/:id — admin/staff
+router.get('/admin/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const partner = await Partner.findById(req.params.id);
+    if (!partner) {
+      res.status(404).json({ message: 'Partner not found' });
+      return;
+    }
+
+    // Dynamically update stats based on non-cancelled orders
+    const orders = await Order.find({ 
+      creatorCode: partner.creatorCode,
+      status: { $ne: 'cancelled' }
+    });
+
+    const referrals = orders.length;
+    let totalRevenue = 0;
+    let commissionEarned = 0;
+
+    for (const order of orders) {
+      const commissionableAmount = Math.max(0, order.subtotal - order.discount);
+      totalRevenue += commissionableAmount;
+      commissionEarned += commissionableAmount * (partner.commissionRate / 100);
+    }
+
+    await Partner.updateOne(
+      { _id: partner._id },
+      { 
+        $set: { 
+          'stats.referrals': referrals,
+          'stats.totalRevenue': totalRevenue,
+          'stats.commissionEarned': commissionEarned
+        } 
+      }
+    );
+
+    const updatedPartner = await Partner.findById(partner._id);
+    res.json({ partner: updatedPartner });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// GET /api/partners/:id/orders — admin/staff
+router.get('/:id/orders', protect, staffOrAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const partner = await Partner.findById(req.params.id);
+    if (!partner) {
+      res.status(404).json({ message: 'Partner not found' });
+      return;
+    }
+
+    const orders = await Order.find({ creatorCode: partner.creatorCode }).sort({ createdAt: -1 });
+    res.json({ orders });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // POST /api/partners — admin/staff
 router.post(
   '/',
@@ -32,8 +92,10 @@ router.post(
   staffOrAdmin,
   [
     body('name').notEmpty().withMessage('Name is required'),
-    body('website').isURL().withMessage('Valid website URL is required'),
-    body('logo').notEmpty().withMessage('Logo URL is required'),
+    body('email').isEmail().withMessage('Valid email is required'),
+    body('creatorCode').notEmpty().withMessage('Creator code is required'),
+    body('website').optional().isURL().withMessage('Valid website URL is required'),
+    body('logo').optional().isString().withMessage('Logo must be a string'),
   ],
   async (req: AuthRequest, res: Response): Promise<void> => {
     const errors = validationResult(req);

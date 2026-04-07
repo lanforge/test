@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import Discount from '../models/Discount';
+import Partner from '../models/Partner';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -23,12 +24,26 @@ router.get('/', protect, staffOrAdmin, async (req: AuthRequest, res: Response): 
 router.post('/validate', async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { code, orderTotal = 0 } = req.body;
-    const discount = await Discount.findOne({
+    let discount: any = await Discount.findOne({
       code: code.toUpperCase(),
       status: 'active',
       expiresAt: { $gte: new Date() },
       $expr: { $lt: ['$usedCount', '$usageLimit'] },
     });
+
+    if (!discount) {
+      // Check if it's a partner creator code with a discount
+      const partner = await Partner.findOne({ creatorCode: code.toUpperCase(), isActive: true });
+      if (partner && partner.customerDiscountType) {
+        discount = {
+          code: partner.creatorCode,
+          type: partner.customerDiscountType,
+          value: partner.customerDiscountValue || 0,
+          minOrder: 0,
+          isCreatorCode: true
+        };
+      }
+    }
 
     if (!discount) {
       res.status(400).json({ valid: false, message: 'Invalid or expired discount code' });

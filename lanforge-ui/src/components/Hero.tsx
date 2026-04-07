@@ -6,7 +6,7 @@ import { faBolt, faShieldHalved, faTrophy } from '@fortawesome/free-solid-svg-ic
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative min-h-[70vh] sm:min-h-[75vh] lg:min-h-[85vh] flex items-center justify-center overflow-hidden bg-gray-950 pb-8 sm:pb-12 pt-16 sm:pt-20">
+    <section className="relative min-h-[70vh] sm:min-h-[75vh] lg:min-h-[85vh] flex items-center justify-center overflow-hidden bg-gray-950 pb-32 sm:pb-40 pt-16 sm:pt-20">
       {/* Solid background */}
       <div className="absolute inset-0 bg-gray-950" />
       
@@ -127,7 +127,7 @@ const Hero: React.FC = () => {
 
       {/* Scroll Indicator */}
       <motion.div 
-        className="absolute bottom-0 left-1/2 transform -translate-x-1/2 hidden sm:flex"
+        className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 hidden sm:flex z-20"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}

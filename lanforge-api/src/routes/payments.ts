@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import Order from '../models/Order';
 import Invoice from '../models/Invoice';
 import Payment from '../models/Payment';
-import stripeService, { createPaymentIntent, confirmPaymentIntent, constructWebhookEvent } from '../services/stripeService';
+import stripeService, { createPaymentIntent, confirmPaymentIntent, constructWebhookEvent, createRefund } from '../services/stripeService';
 import { createPayPalOrder, capturePayPalOrder } from '../services/paypalService';
 import { authorizeAffirmCharge, captureAffirmCharge } from '../services/affirmService';
 import { sendOrderConfirmation } from '../services/emailService';
@@ -326,6 +326,85 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     }
 
     res.status(201).json({ payment });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// GET /api/payments/:id
+router.get('/:id', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const payment = await Payment.findById(req.params.id)
+      .populate('order', 'orderNumber status total customer')
+      .populate('invoice', 'invoiceNumber status amount')
+      .populate('customer', 'firstName lastName email');
+    
+    if (!payment) {
+      res.status(404).json({ message: 'Payment not found' });
+      return;
+    }
+    
+    res.json(payment);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// POST /api/payments/:id/refund
+router.post('/:id/refund', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { amount, reason, forceLocal } = req.body;
+    
+    const payment = await Payment.findById(id);
+    if (!payment) {
+      res.status(404).json({ message: 'Payment not found' });
+      return;
+    }
+
+    if (payment.paymentMethod === 'stripe' || forceLocal) {
+      let refundId = `local_refund_${Date.now()}`;
+      let refundStatus = 'succeeded';
+      let refundedAmount = amount || payment.amount;
+
+      if (payment.paymentMethod === 'stripe' && !forceLocal) {
+        const refund = await createRefund(payment.gatewayTransactionId, amount);
+        refundId = refund.id;
+        refundStatus = refund.status || 'succeeded';
+        refundedAmount = refund.amount / 100;
+      }
+      
+      const refundMetadata = payment.metadata || {};
+      refundMetadata.refunds = refundMetadata.refunds || [];
+      refundMetadata.refunds.push({
+        id: refundId,
+        amount: refundedAmount,
+        status: refundStatus,
+        reason: reason || 'requested_by_customer',
+        createdAt: new Date()
+      });
+
+      payment.metadata = refundMetadata;
+      
+      // Calculate total refunded amount
+      const totalRefunded = refundMetadata.refunds.reduce((acc: number, r: any) => acc + (r.amount || 0), 0);
+      
+      if (totalRefunded >= payment.amount) {
+        payment.status = 'refunded';
+      }
+      
+      payment.markModified('metadata');
+      await payment.save();
+
+      // Optionally, update order status if fully refunded
+      if (payment.status === 'refunded' && payment.order) {
+        await Order.findByIdAndUpdate(payment.order, { paymentStatus: 'refunded' });
+      }
+
+      res.json({ success: true, payment });
+    } else {
+      res.status(400).json({ message: `Refunds for ${payment.paymentMethod} are not implemented yet.` });
+    }
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

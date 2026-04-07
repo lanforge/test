@@ -21,6 +21,10 @@ export interface IPartner extends Document {
   website?: string;
   logo?: string;
   description?: string;
+
+  // Customer Discount (if any)
+  customerDiscountType?: 'percentage' | 'fixed' | 'free_shipping';
+  customerDiscountValue?: number;
   
   // Socials
   twitter?: string;
@@ -50,6 +54,9 @@ const PartnerSchema = new Schema<IPartner>(
     creatorCode: { type: String, required: true, unique: true, uppercase: true },
     commissionRate: { type: Number, default: 5 },
     isPartner: { type: Boolean, default: false },
+
+    customerDiscountType: { type: String, enum: ['percentage', 'fixed', 'free_shipping'] },
+    customerDiscountValue: { type: Number, min: 0 },
 
     website: { type: String },
     logo: { type: String },

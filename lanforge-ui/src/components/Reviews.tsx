@@ -118,8 +118,8 @@ const Reviews: React.FC = () => {
         >
           <div className="grid grid-cols-3 gap-6">
             {[
-              { number: '4.9/5', label: 'Average Rating', icon: faStar, color: 'text-yellow-400' },
-              { number: '98%', label: 'Satisfaction Rate', icon: faHeart, color: 'text-red-500' },
+              { number: '5/5', label: 'Average Rating', icon: faStar, color: 'text-yellow-400' },
+              { number: '100%', label: 'Satisfaction Rate', icon: faHeart, color: 'text-red-500' },
               { number: '24/7', label: 'Support Available', icon: faShieldHalved, color: 'text-blue-400' }
             ].map((stat, idx) => (
               <div key={idx} className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl text-center p-6 shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">

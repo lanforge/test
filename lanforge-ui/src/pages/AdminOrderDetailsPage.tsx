@@ -88,6 +88,7 @@ const AdminOrderDetailsPage: React.FC = () => {
   const [billingAddress, setBillingAddress] = useState<Address | null>(null);
   const [shipping, setShipping] = useState<number>(0);
   const [donationAmount, setDonationAmount] = useState<number>(0);
+  const [status, setStatus] = useState<string>('pending');
 
   useEffect(() => {
     if (id) {
@@ -107,6 +108,7 @@ const AdminOrderDetailsPage: React.FC = () => {
       setBillingAddress(data.billingAddress);
       setShipping(data.shipping || 0);
       setDonationAmount(data.donationAmount || 0);
+      setStatus(data.status || 'pending');
 
       try {
         const paymentsResponse = await api.get(`/payments?order=${id}`);
@@ -134,20 +136,28 @@ const AdminOrderDetailsPage: React.FC = () => {
     setError('');
     setSuccess('');
     try {
-      const response = await api.put(`/orders/${id}`, {
+      // 1. Update order details (items, addresses, amounts)
+      const detailsResponse = await api.put(`/orders/${id}`, {
         items,
         shippingAddress,
         billingAddress,
         shipping,
         donationAmount
       });
-      setOrder(response.data.order);
-      setItems(response.data.order.items);
+      
+      // 2. Update order status (handles loyalty points, inventory, etc. on backend)
+      // Only call status update if it actually changed, or just call it to be safe
+      const statusResponse = await api.put(`/orders/${id}/status`, {
+        status
+      });
+
+      setOrder(statusResponse.data.order || detailsResponse.data.order);
+      setItems(statusResponse.data.order?.items || detailsResponse.data.order?.items || items);
       setSuccess('Order updated successfully!');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
       console.error('Failed to update order:', err);
-      setError('Failed to update order.');
+      setError(err.response?.data?.message || 'Failed to update order.');
     } finally {
       setIsSaving(false);
     }
@@ -217,7 +227,30 @@ const AdminOrderDetailsPage: React.FC = () => {
             </svg>
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-white">Order {order.orderNumber}</h1>
+            <h1 className="text-2xl font-bold text-white flex items-center gap-4">
+              Order {order.orderNumber}
+              <select 
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className={`text-sm px-3 py-1 font-medium bg-gray-800 border border-gray-700 rounded-lg outline-none ${
+                  status === 'delivered' ? 'text-emerald-400' :
+                  status === 'shipped' || status === 'out-for-delivery' ? 'text-indigo-400' :
+                  status === 'building' ? 'text-blue-400' :
+                  status === 'benchmarking' ? 'text-purple-400' :
+                  status === 'cancelled' || status === 'returned' ? 'text-red-400' :
+                  'text-amber-400'
+                }`}
+              >
+                <option value="order-confirmed" className="text-amber-400 bg-gray-900">Order Confirmed</option>
+                <option value="building" className="text-blue-400 bg-gray-900">Building</option>
+                <option value="benchmarking" className="text-purple-400 bg-gray-900">Benchmarking</option>
+                <option value="shipped" className="text-indigo-400 bg-gray-900">Shipped</option>
+                <option value="out-for-delivery" className="text-indigo-400 bg-gray-900">Out for Delivery</option>
+                <option value="delivered" className="text-emerald-400 bg-gray-900">Delivered</option>
+                <option value="returned" className="text-red-400 bg-gray-900">Returned</option>
+                <option value="cancelled" className="text-red-400 bg-gray-900">Cancelled</option>
+              </select>
+            </h1>
             <p className="text-gray-400 mt-1">
               Placed on {new Date(order.createdAt).toLocaleString()}
             </p>
@@ -485,8 +518,16 @@ const AdminOrderDetailsPage: React.FC = () => {
                         <span className="capitalize">{payment.paymentMethod}</span>
                         <span>{new Date(payment.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <div className="text-xs text-gray-500 font-mono break-all">
-                        {payment.gatewayTransactionId}
+                      <div className="flex justify-between items-center">
+                        <div className="text-xs text-gray-500 font-mono break-all">
+                          {payment.gatewayTransactionId}
+                        </div>
+                        <button
+                          onClick={() => navigate(`/admin/payments/${payment._id}`)}
+                          className="text-xs text-blue-400 hover:text-blue-300 hover:underline ml-2 whitespace-nowrap"
+                        >
+                          View Details
+                        </button>
                       </div>
                     </div>
                   ))}
