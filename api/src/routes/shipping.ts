@@ -152,17 +152,28 @@ router.post(
         return;
       }
 
-      const transaction = await purchaseLabel(rateObjectId);
+      const { insurance } = req.body;
+      const transaction = await purchaseLabel(rateObjectId, insurance ? order.total : undefined);
       
       // Update order tracking
-      order.trackingNumber = transaction.trackingNumber;
-      order.carrier = 'Unknown';
+      order.trackingNumber = transaction.trackingNumber || (transaction as any).tracking_number;
+      // Make sure we have tracking information available from transaction or shipping response
+      order.carrier = (transaction as any).tracking_status?.provider || (transaction as any).trackingStatus?.provider || 'Unknown';
+      order.carrierTrackingUrl = (transaction as any).tracking_url_provider || (transaction as any).trackingUrlProvider || '';
+      order.labelUrl = transaction.labelUrl || (transaction as any).label_url;
+      // Store our custom tracking URL
+      if (process.env.FRONTEND_URL) {
+        order.trackingUrl = `${process.env.FRONTEND_URL}/track/${order.orderNumber}`;
+      } else {
+        order.trackingUrl = `http://localhost:3000/track/${order.orderNumber}`;
+      }
       order.status = 'shipped'; // Update status to shipped
       
       await order.save();
 
       res.json({ transaction, order });
     } catch (error: any) {
+      console.error('Purchase label error:', error);
       res.status(500).json({ message: error.message });
     }
   }
@@ -188,17 +199,60 @@ router.post('/webhook', async (req: Request, res: Response): Promise<void> => {
     if (event && event.event === 'track_updated') {
       const trackingStatus = event.data;
       const trackingNumber = trackingStatus.tracking_number;
-      const statusStr = trackingStatus.tracking_status?.status;
+      const statusStr = trackingStatus.tracking_status?.status || trackingStatus.tracking_status?.substatus?.status || trackingStatus.tracking_status?.status_details;
 
       if (trackingNumber) {
         const order = await Order.findOne({ trackingNumber });
         if (order) {
-          if (statusStr === 'DELIVERED') {
+          const upperStatus = statusStr ? statusStr.toString().toUpperCase() : '';
+          
+          let changed = false;
+          if (upperStatus === 'DELIVERED' && order.status !== 'delivered') {
             order.status = 'delivered';
-          } else if (statusStr === 'OUT_FOR_DELIVERY') {
+            changed = true;
+          } else if (upperStatus === 'OUT_FOR_DELIVERY' && order.status !== 'out-for-delivery') {
             order.status = 'out-for-delivery';
+            changed = true;
+          } else if (upperStatus === 'TRANSIT' && order.status !== 'shipped' && order.status !== 'out-for-delivery' && order.status !== 'delivered') {
+            order.status = 'shipped';
+            changed = true;
+          } else if (upperStatus === 'RETURNED' && order.status !== 'returned') {
+            order.status = 'returned';
+            changed = true;
           }
-          await order.save();
+
+          if (changed) {
+            await order.save();
+            
+            // If delivered, we should update loyalty points for the customer
+            if (order.status === 'delivered' && order.customer) {
+              const Customer = (await import('../models/Customer')).default;
+              const LoyaltyTransaction = (await import('../models/LoyaltyTransaction')).default;
+              
+              const customer = await Customer.findById(order.customer);
+              if (customer) {
+                const before = customer.loyaltyPoints;
+                if (order.loyaltyPointsEarned > 0) {
+                  customer.loyaltyPoints += order.loyaltyPointsEarned;
+                }
+                customer.totalSpent += order.total;
+                customer.totalOrders += 1;
+                await customer.save();
+
+                if (order.loyaltyPointsEarned > 0) {
+                  await LoyaltyTransaction.create({
+                    customer: customer._id,
+                    order: order._id,
+                    points: order.loyaltyPointsEarned,
+                    type: 'earn',
+                    reason: `Order ${order.orderNumber} delivered`,
+                    balanceBefore: before,
+                    balanceAfter: customer.loyaltyPoints,
+                  });
+                }
+              }
+            }
+          }
         }
       }
     }

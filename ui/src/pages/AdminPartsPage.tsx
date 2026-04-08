@@ -240,7 +240,7 @@ const AdminPartsPage: React.FC = () => {
                 <option value="storage">Storage</option>
                 <option value="psu">Power Supply</option>
                 <option value="case">Case</option>
-                <option value="cpu-cooler">Cooling</option>
+                <option value="cpu-cooler">CPU Cooler</option>
                 <option value="fan">Case Fan</option>
                 <option value="os">Operating System</option>
               </select>
@@ -319,14 +319,16 @@ const AdminPartsPage: React.FC = () => {
               className="input px-3 py-2 bg-gray-900/70 border-gray-700 text-sm rounded-lg"
             >
               <option value="all">All Types</option>
-              <option value="CPU">CPU</option>
-              <option value="GPU">GPU</option>
-              <option value="Motherboard">Motherboard</option>
-              <option value="RAM">RAM</option>
-              <option value="Storage">Storage</option>
-              <option value="Power Supply">Power Supply</option>
-              <option value="Case">Case</option>
-              <option value="Cooling">Cooling</option>
+              <option value="cpu">CPU</option>
+              <option value="gpu">GPU</option>
+              <option value="motherboard">Motherboard</option>
+              <option value="ram">RAM</option>
+              <option value="storage">Storage</option>
+              <option value="psu">Power Supply</option>
+              <option value="case">Case</option>
+              <option value="cpu-cooler">CPU Cooler</option>
+              <option value="fan">Case Fan</option>
+              <option value="os">Operating System</option>
             </select>
             <button 
               onClick={handleSearch}

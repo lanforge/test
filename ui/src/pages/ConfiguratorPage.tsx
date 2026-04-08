@@ -50,19 +50,19 @@ const ConfiguratorPage: React.FC = () => {
             // Select a random image from the available images to show on load
             const randomImageIndex = Math.floor(Math.random() * images.length);
             
-            return {
-              id: p._id,
-              name: `${p.brand || ''} ${p.partModel || ''}`.trim() || 'Unknown Case',
-              description: `${p.brand || ''} ${p.partModel || ''}`.trim() || 'Unknown Case',
-              brand: p.brand || 'Unknown',
-              partModel: p.partModel || 'Unknown Model',
-              price: p.price,
-              image: images[randomImageIndex],
-              images: images,
-              formFactor: p.specs?.formFactor || 'Mid-Tower',
-              color: p.specs?.color || 'Black',
-              specs: p.specs || {}
-            };
+              return {
+                id: p._id,
+                name: `${p.brand || ''} ${p.partModel || ''}`.trim() || 'Unknown Case',
+                description: `${p.brand || ''} ${p.partModel || ''}`.trim() || 'Unknown Case',
+                brand: p.brand || 'Unknown',
+                partModel: p.partModel || 'Unknown Model',
+                price: p.price,
+                image: images[randomImageIndex],
+                images: images,
+                formFactor: p.specs?.formFactor || 'Mid-Tower',
+                color: p.specs?.availableColors ? p.specs.availableColors.join(' / ') : 'Black / White',
+                specs: p.specs || {}
+              };
           });
           mappedCases.sort((a: any, b: any) => a.price - b.price);
           setCaseOptions(mappedCases);

@@ -339,6 +339,48 @@ const AdminAddPartPage: React.FC = () => {
             </div>
           </>
         );
+      case 'cpu-cooler':
+        return (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Type</label>
+              <input type="text" name="type" value={specs.type || ''} placeholder="e.g. Air, AIO" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Radiator Size (mm, if AIO)</label>
+              <input type="number" name="radiatorSize" value={specs.radiatorSize || ''} placeholder="e.g. 240, 360" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Height (mm, if Air)</label>
+              <input type="number" name="height" value={specs.height || ''} placeholder="e.g. 158" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">RPM</label>
+              <input type="text" name="rpm" value={specs.rpm || ''} placeholder="e.g. 500-2000" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+            </div>
+          </>
+        );
+      case 'fan':
+        return (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Size (mm)</label>
+              <input type="number" name="size" value={specs.size || ''} placeholder="e.g. 120, 140" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">RPM</label>
+              <input type="text" name="rpm" value={specs.rpm || ''} placeholder="e.g. 500-2000" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Airflow (CFM)</label>
+              <input type="number" name="airflow" value={specs.airflow || ''} placeholder="e.g. 65.4" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-2">Noise Level (dBA)</label>
+              <input type="number" name="noiseLevel" value={specs.noiseLevel || ''} placeholder="e.g. 29.5" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+            </div>
+          </>
+        );
       default:
         return (
           <div className="md:col-span-2 text-gray-500 text-sm">
@@ -390,7 +432,7 @@ const AdminAddPartPage: React.FC = () => {
                 <option value="storage">Storage</option>
                 <option value="psu">Power Supply</option>
                 <option value="case">Case</option>
-                <option value="cpu-cooler">Cooling</option>
+                <option value="cpu-cooler">CPU Cooler</option>
                 <option value="fan">Case Fan</option>
                 <option value="os">Operating System</option>
               </select>

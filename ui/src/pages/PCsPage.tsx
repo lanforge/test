@@ -21,6 +21,7 @@ const PCsPage: React.FC = () => {
   const [expandedSpecs, setExpandedSpecs] = useState<Record<number, boolean>>({});
   const [selectedSeries, setSelectedSeries] = useState<string>('All');
   const [sortBy, setSortBy] = useState<string>('price-asc');
+  const [selectedColors, setSelectedColors] = useState<Record<string, string>>({});
 
   React.useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/products?limit=100`)
@@ -185,13 +186,13 @@ const PCsPage: React.FC = () => {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                             <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2">
                               {product.tags.filter(t => seriesOrder.some(s => s.label.toLowerCase() === t.toLowerCase() || s.tag === t.toLowerCase())).map(tag => (
-                                <div key={tag} className="badge-accent inline-block">
-                                  {tag === 'Pre Configured' ? 'Preconfigured' : tag}
-                                </div>
-                              ))}
+                                  <div key={tag} className="badge-accent inline-block">
+                                    {tag === 'Pre Configured' ? 'Preconfigured' : tag}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
-                        </div>
 
                         {/* Product Info */}
                         <div>
@@ -227,6 +228,27 @@ const PCsPage: React.FC = () => {
                             </ul>
                           </div>
 
+                  {/* Color Selection */}
+                  <div className="mb-4 relative z-20">
+                    <div className="text-sm font-semibold text-gray-400 mb-2">Case Color</div>
+                    <div className="flex gap-2 relative z-20">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedColors(prev => ({ ...prev, [product.id]: 'Black' })); }}
+                        className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-all ${(!selectedColors[product.id] || selectedColors[product.id] === 'Black') ? 'border-emerald-400 scale-110' : 'border-gray-600 hover:border-gray-400'}`}
+                        style={{ backgroundColor: '#111' }}
+                        title="Black"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedColors(prev => ({ ...prev, [product.id]: 'White' })); }}
+                        className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-all ${(selectedColors[product.id] === 'White') ? 'border-emerald-400 scale-110' : 'border-gray-600 hover:border-gray-400'}`}
+                        style={{ backgroundColor: '#f3f4f6' }}
+                        title="White"
+                      />
+                    </div>
+                  </div>
+
                   {/* Actions */}
                   <div className="flex flex-col gap-3">
                     <Link 
@@ -239,12 +261,6 @@ const PCsPage: React.FC = () => {
                       </svg>
                       View Details
                     </Link>
-                    <button className="btn btn-outline w-full">
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                      Customize
-                    </button>
                     <button 
                       id={`add-btn-${product.id}`}
                       className="btn btn-secondary w-full transition-all duration-300"
@@ -265,9 +281,11 @@ const PCsPage: React.FC = () => {
                               customBuild: i.customBuild?._id || i.customBuild,
                               quantity: i.quantity
                             }));
+                            const color = selectedColors[product.id] || 'Black';
                             mappedItems.push({
                               product: product.id,
-                              quantity: 1
+                              quantity: 1,
+                              notes: `Case Color: ${color}`
                             });
                             return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
                               method: 'PUT',

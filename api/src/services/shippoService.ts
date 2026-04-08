@@ -75,15 +75,33 @@ export const getLiveRates = async (addressTo: any, lineItems: any[]) => {
   }
 };
 
-export const purchaseLabel = async (rateObjectId: string) => {
+export const purchaseLabel = async (rateObjectId: string, insuranceAmount?: number) => {
   try {
-    return await shippo.transactions.create({
+    const payload: any = {
       rate: rateObjectId,
-      labelFileType: 'PDF',
+      label_file_type: 'PDF',
       async: false,
+    };
+
+    const response = await fetch('https://api.goshippo.com/transactions/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `ShippoToken ${process.env.SHIPPO_API_TOKEN}`,
+        'Content-Type': 'application/json',
+        'Shippo-API-Version': '2018-02-08'
+      },
+      body: JSON.stringify(payload)
     });
+
+    const dataText = await response.text();
+
+    if (!response.ok) {
+      throw new Error(`${dataText}`);
+    }
+
+    return JSON.parse(dataText);
   } catch (error: any) {
-    throw new Error(`Failed to purchase label: ${error.message}`);
+    throw new Error(`${error.message}`);
   }
 };
 

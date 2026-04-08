@@ -9,6 +9,7 @@ interface OrderItem {
   price: number;
   quantity: number;
   image?: string;
+  notes?: string;
 }
 
 interface Address {
@@ -56,6 +57,16 @@ interface Order {
   paymentId?: string;
   trackingNumber?: string;
   carrier?: string;
+  carrierTrackingUrl?: string;
+  trackingUrl?: string;
+  labelUrl?: string;
+  shippingRates?: any[];
+  selectedShippingRate?: {
+    objectId: string;
+    title: string;
+    estimatedDays: string;
+    amount: number;
+  };
   notes?: string;
   createdAt: string;
 }
@@ -90,6 +101,11 @@ const AdminOrderDetailsPage: React.FC = () => {
   const [donationAmount, setDonationAmount] = useState<number>(0);
   const [status, setStatus] = useState<string>('pending');
 
+  // Shipping Modal State
+  const [showShippingModal, setShowShippingModal] = useState(false);
+  const [selectedRateId, setSelectedRateId] = useState<string>('');
+  const [addInsurance, setAddInsurance] = useState(false);
+
   useEffect(() => {
     if (id) {
       fetchOrderDetails();
@@ -109,6 +125,12 @@ const AdminOrderDetailsPage: React.FC = () => {
       setShipping(data.shipping || 0);
       setDonationAmount(data.donationAmount || 0);
       setStatus(data.status || 'pending');
+      
+      if (data.selectedShippingRate) {
+        setSelectedRateId(data.selectedShippingRate.objectId);
+      } else if (data.shippingRates && data.shippingRates.length > 0) {
+        setSelectedRateId(data.shippingRates[0].objectId);
+      }
 
       try {
         const paymentsResponse = await api.get(`/payments?order=${id}`);
@@ -296,6 +318,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                           onChange={(e) => handleItemChange(idx, 'name', e.target.value)}
                           className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                         />
+                        {item.notes && <div className="text-xs text-emerald-400 mt-1">{item.notes}</div>}
                       </div>
                       <div className="w-1/3">
                         <label className="block text-xs text-gray-500 mb-1">SKU</label>
@@ -380,6 +403,12 @@ const AdminOrderDetailsPage: React.FC = () => {
                         {pc.serialNumber}
                       </button>
                     </div>
+                    {pc.color && (
+                      <div className="flex justify-between items-center text-sm mt-1">
+                        <span className="text-gray-400">Color:</span>
+                        <span className="text-emerald-400">{pc.color}</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -480,6 +509,31 @@ const AdminOrderDetailsPage: React.FC = () => {
                 <span className="text-gray-400">Method:</span>
                 <span className="text-white capitalize font-medium">{order.paymentMethod}</span>
               </div>
+              {order.trackingNumber && (
+                <>
+                  <div className="flex justify-between text-sm mt-2 pt-2 border-t border-gray-800">
+                    <span className="text-gray-400">Tracking Number:</span>
+                    <span className="text-white font-mono">{order.trackingNumber}</span>
+                  </div>
+                  {order.carrierTrackingUrl && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Carrier Track:</span>
+                      <a href={order.carrierTrackingUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 hover:underline">
+                        Track with {order.carrier || 'Carrier'}
+                      </a>
+                    </div>
+                  )}
+                  {order.trackingUrl && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Customer Track:</span>
+                      <a href={order.trackingUrl} target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 hover:underline">
+                        View Tracking Page
+                      </a>
+                    </div>
+                  )}
+                </>
+              )}
+              
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Status:</span>
                 <span className={`capitalize font-medium ${
@@ -532,6 +586,63 @@ const AdminOrderDetailsPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+          </div>
+
+          {/* Shipping Labels / Purchase Label */}
+          <div className="card p-6">
+            <h2 className="text-lg font-bold text-white mb-4">Shipping Actions</h2>
+            
+            {order.status !== 'shipped' && order.status !== 'out-for-delivery' && order.status !== 'delivered' && (
+              <div className="space-y-4 border border-gray-800 rounded-lg p-4 bg-gray-900/50">
+                <h3 className="text-sm font-bold text-white">Purchase Shipping Label</h3>
+                {order.shippingRates && order.shippingRates.length > 0 ? (
+                  <div>
+                    <p className="text-sm text-gray-400 mb-3">
+                      Customer selected: <span className="text-white font-medium">{order.selectedShippingRate?.title || 'Standard'}</span>
+                    </p>
+                    <button 
+                      onClick={() => setShowShippingModal(true)}
+                      className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-sm transition-colors w-full flex justify-center items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                      </svg>
+                      Review & Purchase Label
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-sm text-amber-400">No shipping rates were calculated during checkout. Label must be purchased manually.</p>
+                )}
+              </div>
+            )}
+            
+            {(order.status === 'shipped' || order.status === 'out-for-delivery' || order.status === 'delivered') && (
+              <div className="space-y-4 border border-gray-800 rounded-lg p-4 bg-gray-900/50">
+                <div className="flex items-center gap-3 text-emerald-400">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="font-medium">Label has been purchased.</span>
+                </div>
+                {order.trackingNumber && (
+                  <div className="text-sm mt-2">
+                    Tracking: <span className="text-white font-mono">{order.trackingNumber}</span>
+                  </div>
+                )}
+                {order.labelUrl && (
+                  <div className="mt-3">
+                    <a 
+                      href={order.labelUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm text-center block w-full px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded border border-gray-700 transition-colors"
+                    >
+                      Download Shipping Label (PDF)
+                    </a>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -669,6 +780,104 @@ const AdminOrderDetailsPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Shipping Purchase Modal */}
+      {showShippingModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-xl w-full">
+            <h2 className="text-2xl font-bold text-white mb-4">Purchase Shipping Label</h2>
+            <p className="text-gray-400 mb-6">Select a shipping rate and options to generate a label via Shippo.</p>
+            
+            <div className="space-y-4 mb-6">
+              <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Available Rates</h3>
+              {order.shippingRates?.map((rate: any) => (
+                <div 
+                  key={rate.objectId}
+                  onClick={() => setSelectedRateId(rate.objectId)}
+                  className={`p-4 rounded-lg border cursor-pointer transition-colors ${
+                    selectedRateId === rate.objectId 
+                      ? 'border-indigo-500 bg-indigo-500/10' 
+                      : 'border-gray-700 bg-gray-800/50 hover:bg-gray-800'
+                  }`}
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-bold text-white flex items-center gap-2">
+                      {rate.title}
+                      {order.selectedShippingRate?.objectId === rate.objectId && (
+                        <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          Customer Selected
+                        </span>
+                      )}
+                    </span>
+                    <span className="font-bold text-emerald-400">{formatCurrency(parseFloat(rate.amount))}</span>
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    Estimated Delivery: {rate.estimatedDays} days
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-4 mb-8">
+              <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Additional Options</h3>
+              <label className="flex items-center gap-3 p-4 rounded-lg border border-gray-700 bg-gray-800/50 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={addInsurance}
+                  onChange={(e) => setAddInsurance(e.target.checked)}
+                  className="w-5 h-5 rounded border-gray-600 text-indigo-500 focus:ring-indigo-500 bg-gray-700"
+                />
+                <div>
+                  <div className="font-bold text-white">Add Shipping Insurance</div>
+                  <div className="text-sm text-gray-400">Protect the full value of this order ({formatCurrency(order.total)}) against loss or damage in transit.</div>
+                </div>
+              </label>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
+              <button 
+                onClick={() => setShowShippingModal(false)}
+                className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                disabled={isSaving}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={async () => {
+                  try {
+                    setIsSaving(true);
+                    const response = await api.post('/shipping/purchase', {
+                      rateObjectId: selectedRateId,
+                      orderId: order._id,
+                      insurance: addInsurance
+                    });
+                    setOrder(response.data.order);
+                    setShowShippingModal(false);
+                    setSuccess('Label purchased successfully!');
+                    setTimeout(() => setSuccess(''), 3000);
+                  } catch (err: any) {
+                    console.error('Failed to purchase label:', err);
+                    setError(err.response?.data?.message || 'Failed to purchase label.');
+                    setShowShippingModal(false);
+                  } finally {
+                    setIsSaving(false);
+                  }
+                }}
+                disabled={!selectedRateId || isSaving}
+                className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isSaving ? (
+                  <>Processing...</>
+                ) : (
+                  <>
+                    Purchase Label
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

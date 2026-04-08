@@ -17,8 +17,9 @@ type OrderStatus =
 
 const OrderStatusPage: React.FC = () => {
   const [orderStatus, setOrderStatus] = useState<OrderStatus>('Order Confirmed');
-  const [orderId, setOrderId] = useState('LANF-2026-8472');
+  const [orderId, setOrderId] = useState('');
   const [customerInfo, setCustomerInfo] = useState<any>(null);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const statusLevels: OrderStatus[] = [
     'Order Confirmed',
@@ -104,13 +105,12 @@ const OrderStatusPage: React.FC = () => {
   const [totalCost, setTotalCost] = useState(0);
   const [activeDonationCauses, setActiveDonationCauses] = useState<any[]>([]);
 
-  React.useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-    if (!id) return;
-    
+  const fetchOrder = (id: string) => {
     fetch(`${process.env.REACT_APP_API_URL}/orders/${id}`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Order not found');
+        return res.json();
+      })
       .then(data => {
         if (data.order) {
           setOrderId(data.order.orderNumber || data.order._id);
@@ -125,7 +125,6 @@ const OrderStatusPage: React.FC = () => {
           setShippingInsurance(data.order.shippingInsurance || 0);
           setTaxCost(data.order.tax || 0);
           setDiscountAmount(data.order.discount || 0);
-          // Only use total from API if it exists, but ensure we don't accidentally ignore missing breakdown parts
           setTotalCost(data.order.total || 0);
           setCustomerInfo({
              firstName: data.order.customer?.firstName || 'Customer',
@@ -150,7 +149,6 @@ const OrderStatusPage: React.FC = () => {
             setOrderStatus(statusMap[backendStatus]);
           }
 
-          // Fetch donation causes and filter based on order creation date
           const orderDate = new Date(data.order.createdAt || Date.now());
           fetch(`${process.env.REACT_APP_API_URL}/donation-causes`)
             .then(res => res.json())
@@ -165,10 +163,63 @@ const OrderStatusPage: React.FC = () => {
               }
             })
             .catch(err => console.error('Error fetching donation causes:', err));
+        } else {
+          setErrorMsg('Order not found.');
         }
       })
-      .catch(err => console.error(err));
-  }, [orderId]);
+      .catch(err => {
+        console.error(err);
+        setErrorMsg('We could not find an order with that ID.');
+      });
+  };
+
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    if (!id) {
+      setErrorMsg('No order ID provided in the link.');
+      return;
+    }
+    
+    fetchOrder(id);
+
+    // Auto update order status from backend via Server-Sent Events to catch admin changes
+    let eventSource: EventSource | null = null;
+    
+    const sseTimeout = setTimeout(() => {
+      // Connect to the stream using either the Mongo ID or orderNumber
+      // To ensure it matches how it's sent from the backend, we use the raw ID from URL which could be either
+      eventSource = new EventSource(`${process.env.REACT_APP_API_URL}/orders/stream/${id}`);
+      
+      eventSource.addEventListener('order_update', (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'update') {
+            fetchOrder(id);
+          }
+        } catch (e) {
+          console.error('Error parsing SSE data', e);
+        }
+      });
+
+      eventSource.onerror = (error) => {
+        console.error('SSE Error', error);
+        if (eventSource && eventSource.readyState === EventSource.CLOSED) {
+          eventSource.close();
+        }
+      };
+    }, 100);
+
+    return () => {
+      clearTimeout(sseTimeout);
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
+  }, []);
+
+  // To prevent TS unused-vars or anything if it complains, I am replacing the original fetch with fetchOrder inside useEffect.
+  // Wait, I need to make sure I remove the old fetch exactly as it was. Let's fix the SEARCH block.
 
   const calculateTotal = () => {
     if (totalCost > 0) return totalCost;
@@ -176,6 +227,21 @@ const OrderStatusPage: React.FC = () => {
     // If totalCost is 0, we'll just sum what we know.
     return orderItems.reduce((total, item) => total + (item.price * item.quantity), 0) + taxCost + shippingCost + shippingInsurance - discountAmount;
   };
+
+  if (errorMsg) {
+    return (
+      <div className="order-status-page" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="container" style={{ textAlign: 'center' }}>
+          <FontAwesomeIcon icon={faBox} style={{ fontSize: '4rem', color: 'rgba(255, 255, 255, 0.2)', marginBottom: '1rem' }} />
+          <h2>Order Not Found</h2>
+          <p style={{ color: 'rgba(255, 255, 255, 0.7)', marginBottom: '2rem' }}>{errorMsg}</p>
+          <Link to="/" className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+            <FontAwesomeIcon icon={faHouse} /> Return Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="order-status-page">
@@ -186,7 +252,14 @@ const OrderStatusPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <h1>Order Status</h1>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', marginBottom: '0.5rem' }}>
+            <div style={{ position: 'absolute', left: 'calc(50% - 50vw + 2rem)' }}>
+              <Link to="/" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <FontAwesomeIcon icon={faHouse} /> Home
+              </Link>
+            </div>
+            <h1 style={{ margin: 0, textAlign: 'center' }}>Order Status</h1>
+          </div>
           <p className="order-subtitle">Track your order in real-time</p>
           <div className="order-id-display">
             <span className="order-id-label">Order ID:</span>
@@ -264,13 +337,16 @@ const OrderStatusPage: React.FC = () => {
                   </div>
                 </div>
               </div>
+              
+              {['Shipped', 'Out for Delivery', 'Delivered'].includes(orderStatus) && (
+                <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+                  <Link to={`/track/${orderId}`} className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', width: '100%', justifyContent: 'center' }}>
+                    <FontAwesomeIcon icon={faTruckFast} /> Track Shipment
+                  </Link>
+                </div>
+              )}
             </div>
 
-            <div className="status-actions">
-              <button className="btn btn-primary">Track Package</button>
-              <button className="btn btn-outline">Contact Support</button>
-              <button className="btn btn-text">View Order Details</button>
-            </div>
           </motion.div>
 
           <motion.div 

@@ -15,6 +15,7 @@ interface CartItem {
   category: string;
   rawItem: any; // Keep the original reference to pass back to API
   fee?: number;
+  notes?: string;
 }
 
 const CartPage: React.FC = () => {
@@ -83,10 +84,12 @@ const CartPage: React.FC = () => {
               quantity: item.quantity || 1,
               image: product?.images?.[0] || '/logo-2.png',
               category: itemCategory,
+              notes: item.notes,
               rawItem: { 
                 product: item.product?._id || item.product,
                 pcPart: item.pcPart?._id || item.pcPart,
                 accessory: item.accessory?._id || item.accessory,
+                notes: item.notes,
               }
             };
           });
@@ -161,7 +164,8 @@ const CartPage: React.FC = () => {
     // Group identical items
     const mergedItemsMap = new Map<string, any>();
     items.forEach(i => {
-      const key = i.rawItem.customBuild || i.rawItem.product || i.rawItem.pcPart || i.rawItem.accessory;
+      const baseKey = i.rawItem.customBuild || i.rawItem.product || i.rawItem.pcPart || i.rawItem.accessory;
+      const key = `${baseKey}-${i.notes || ''}`;
       if (mergedItemsMap.has(key)) {
         mergedItemsMap.get(key).quantity += i.quantity;
       } else {
@@ -284,6 +288,11 @@ const CartPage: React.FC = () => {
                         <span className="cart-item-category">{item.category}</span>
                       </div>
                       <p className="cart-item-description">{item.description}</p>
+                      {item.notes && (
+                        <p className="text-sm text-emerald-400 mt-1 mb-2 font-medium">
+                          {item.notes}
+                        </p>
+                      )}
                       {item.fee !== undefined && item.fee > 0 && (
                         <p className="text-sm text-emerald-400 mt-1 mb-2 font-medium">
                           Includes ${item.fee.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} System Integration & Validation fee
@@ -356,13 +365,14 @@ const CartPage: React.FC = () => {
             </div>
 
             <div className="summary-actions">
-              <button 
-                className="btn btn-primary btn-large"
-                onClick={handleCheckout}
-                disabled={cartItems.length === 0}
-              >
-                Proceed to Checkout
-              </button>
+              {cartItems.length > 0 && (
+                <button 
+                  className="btn btn-primary btn-large"
+                  onClick={handleCheckout}
+                >
+                  Proceed to Checkout
+                </button>
+              )}
               
               <Link to="/configurator" className="btn btn-secondary">
                 Continue Shopping

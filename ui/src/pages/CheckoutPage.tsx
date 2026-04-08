@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faCheck, faLock } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
@@ -178,7 +178,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                 itemId: customBuild._id,
                 name: customBuild.name || 'Custom Build',
                 price: item.price || customBuild.total || 0,
-                quantity: item.quantity || 1
+                quantity: item.quantity || 1,
+                notes: item.notes
               };
             }
             return {
@@ -187,7 +188,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
               itemId: product?._id,
               name: product?.name || 'Item',
               price: item.price || product?.price || 0,
-              quantity: item.quantity || 1
+              quantity: item.quantity || 1,
+              notes: item.notes
             };
           });
           setCartItems(mapped);
@@ -340,6 +342,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
   const elements = useElements();
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isProcessingBilling, setIsProcessingBilling] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -567,6 +570,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
         }
       }
       
+      setIsProcessingBilling(true);
       // We completed the billing step, so let's hit our checkout-init endpoint
       try {
         const custRes = await fetch(`${process.env.REACT_APP_API_URL}/customers/checkout-init`, {
@@ -593,6 +597,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
         }
       } catch (err) {
         console.error('Failed to init customer or update intent', err);
+      } finally {
+        setIsProcessingBilling(false);
       }
     } else if (section === 'shippingMethod') {
       if (shippoRates.length === 0) {
@@ -722,7 +728,16 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                 <motion.div className="checkout-section" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>
                   <div className="section-header">
                     <h2>Billing Address</h2>
-                    <button type="button" className="btn btn-outline btn-small" onClick={() => handleSectionComplete('billing')}>Continue</button>
+                    <button type="button" className="btn btn-outline btn-small flex items-center gap-2" onClick={() => handleSectionComplete('billing')} disabled={isProcessingBilling}>
+                      {isProcessingBilling ? (
+                        <>
+                          <div className="w-3 h-3 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
+                          Processing...
+                        </>
+                      ) : (
+                        'Continue'
+                      )}
+                    </button>
                   </div>
                   {errorMsg && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 rounded text-red-500 text-sm">{errorMsg}</div>}
                   <div className="checkbox-label mb-4">
@@ -915,7 +930,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                 <h3>Items ({cartItems.length})</h3>
                 {cartItems.map((item) => (
                   <div key={item.id} className="order-item">
-                    <div className="item-info"><span className="item-name">{item.name}</span><span className="item-quantity">Qty: {item.quantity}</span></div>
+                    <div className="item-info">
+                      <span className="item-name">{item.name}</span>
+                      {item.notes && <span className="text-xs text-emerald-400 block mt-0.5">{item.notes}</span>}
+                      <span className="item-quantity">Qty: {item.quantity}</span>
+                    </div>
                     <span className="item-price">${(item.price * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 ))}
@@ -1003,9 +1022,23 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
               )}
               <div className="total-row grand-total"><span>Total</span><span>${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
               </div>
+              {activeSection === 'payment' && isProcessing && (
+                <div className="py-4 flex flex-col items-center justify-center text-center">
+                  <div className="w-10 h-10 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-3"></div>
+                  <p className="text-emerald-400 font-medium">Processing your payment...</p>
+                  <p className="text-gray-400 text-sm mt-1">Please do not close or refresh this page.</p>
+                </div>
+              )}
               {activeSection === 'payment' && (
-                <button type="submit" className="btn btn-primary btn-large" disabled={!stripe || isProcessing}>
-                  {isProcessing ? 'Processing...' : `Place Order • $${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                <button type="submit" className="btn btn-primary btn-large flex items-center justify-center gap-2" disabled={!stripe || isProcessing}>
+                  {isProcessing ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    `Place Order • $${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                  )}
                 </button>
               )}
             </motion.div>
@@ -1027,6 +1060,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
 const CheckoutPageWrapper: React.FC = () => {
   const [clientSecret, setClientSecret] = useState<string>('');
   const initialized = useRef(false);
+  const navigate = useNavigate();
 
   // We fetch the cart to initialize the intent with the real amount
   // This intent is updated whenever the cart total changes later in the form.
@@ -1043,6 +1077,11 @@ const CheckoutPageWrapper: React.FC = () => {
     fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
       .then(res => res.json())
       .then(data => {
+        if (!data.cart || !data.cart.items || data.cart.items.length === 0) {
+          navigate('/cart');
+          return null;
+        }
+        
         let initialAmount = 0;
         if (data.cart && data.cart.items) {
           initialAmount = data.cart.items.reduce((total: number, item: any) => {
@@ -1065,12 +1104,17 @@ const CheckoutPageWrapper: React.FC = () => {
           body: JSON.stringify({ amount: initialAmount })
         });
       })
-      .then(res => res.json())
+      .then(res => {
+        if (res) return res.json();
+        return null;
+      })
       .then(data => {
-        setClientSecret(data.clientSecret);
+        if (data && data.clientSecret) {
+          setClientSecret(data.clientSecret);
+        }
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [navigate]);
 
   if (!clientSecret) {
     return (

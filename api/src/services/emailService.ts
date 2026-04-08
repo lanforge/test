@@ -35,6 +35,85 @@ interface OrderEmailData {
   };
 }
 
+interface OrderStatusUpdateData {
+  email: string;
+  orderNumber: string;
+  customerName: string;
+  status: string;
+  trackingNumber?: string;
+  carrier?: string;
+}
+
+export const sendOrderStatusUpdate = async (data: OrderStatusUpdateData): Promise<void> => {
+  const formattedStatus = data.status.replace(/-/g, ' ').toUpperCase();
+  const subject = `Order Status Updated: ${formattedStatus} - LANForge`;
+  
+  let trackingHtml = '';
+  if (data.trackingNumber) {
+    trackingHtml = `
+      <div style="background-color:#0f172a;border:1px solid #334155;border-radius:12px;padding:24px;margin-bottom:32px;">
+        <p style="margin:0;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:600;">Tracking Information</p>
+        <p style="margin:8px 0 0;font-size:20px;font-weight:bold;color:#f8fafc;">${escapeHtml(data.trackingNumber)}</p>
+        ${data.carrier ? `<p style="margin:4px 0 0;font-size:14px;color:#cbd5e1;">Carrier: ${escapeHtml(data.carrier)}</p>` : ''}
+      </div>
+    `;
+  }
+
+  const { error } = await resend.emails.send({
+    from: `${FROM_NAME} <${FROM_EMAIL}>`,
+    to: data.email,
+    subject,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <body style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background-color:#0f172a;margin:0;padding:40px 20px;">
+        <div style="max-width:640px;margin:0 auto;background-color:#1e293b;border-radius:16px;overflow:hidden;box-shadow:0 20px 25px -5px rgba(0,0,0,0.5);">
+          
+          <!-- Header -->
+          <div style="background:linear-gradient(135deg, #064e3b 0%, #10b981 100%);padding:40px;text-align:center;">
+            <h1 style="color:#ffffff;margin:0;font-size:36px;font-weight:800;letter-spacing:-1px;">LANForge</h1>
+            <p style="color:#d1fae5;margin:12px 0 0;font-size:18px;font-weight:500;">Order Update</p>
+          </div>
+          
+          <div style="padding:40px;">
+            <h2 style="color:#f8fafc;margin:0 0 16px;font-size:24px;">Hi ${escapeHtml(data.customerName)},</h2>
+            <p style="color:#94a3b8;margin:0 0 32px;font-size:16px;line-height:1.6;">
+              The status of your order <strong>#${escapeHtml(data.orderNumber)}</strong> has been updated.
+            </p>
+            
+            <div style="text-align:center;padding:24px;border:1px solid #10b981;border-radius:12px;background-color:rgba(16, 185, 129, 0.1);margin-bottom:32px;">
+              <h3 style="color:#10b981;margin:0;font-size:28px;text-transform:uppercase;letter-spacing:1px;">${formattedStatus}</h3>
+            </div>
+            
+            ${trackingHtml}
+            
+            <!-- Action Button -->
+            <div style="text-align:center;margin-top:48px;">
+              <a href="${FRONTEND_URL}/order-status?order=${data.orderNumber}" 
+                 style="display:inline-block;background-color:#10b981;color:#ffffff;padding:16px 40px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;box-shadow:0 4px 6px -1px rgba(16, 185, 129, 0.4);">
+                Track Your Order Live
+              </a>
+            </div>
+          </div>
+          
+          <!-- Footer -->
+          <div style="background-color:#0f172a;padding:32px;text-align:center;border-top:1px solid #334155;">
+            <p style="margin:0 0 12px;color:#64748b;font-size:13px;">© ${new Date().getFullYear()} LANForge. Built for performance.</p>
+            <p style="margin:0;"><a href="${FRONTEND_URL}" style="color:#10b981;text-decoration:none;font-size:13px;font-weight:500;">Visit our website</a></p>
+          </div>
+          
+        </div>
+      </body>
+      </html>
+    `,
+    text: `Order Status Update: ${formattedStatus}\n\nHi ${data.customerName},\nYour order #${data.orderNumber} is now: ${formattedStatus}\n\n${data.trackingNumber ? `Tracking: ${data.trackingNumber} (${data.carrier || ''})\n\n` : ''}Track live: ${FRONTEND_URL}/order-status?order=${encodeURIComponent(data.orderNumber)}`,
+  });
+
+  if (error) {
+    console.error('Resend error sending order status update:', error);
+  }
+};
+
 export const sendOrderConfirmation = async (data: OrderEmailData): Promise<void> => {
   const itemsHtml = data.items
     .map(

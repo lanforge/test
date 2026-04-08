@@ -14,10 +14,71 @@ import Payment from '../models/Payment';
 import PurchasedPC from '../models/PurchasedPC';
 import Partner from '../models/Partner';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
+import { sendOrderStatusUpdate } from '../services/emailService';
+
+const FROM_EMAIL = process.env.POSTMARK_FROM_EMAIL || 'support@lanforge.co';
+const FROM_NAME = process.env.POSTMARK_FROM_NAME || 'LANForge';
 
 const router = Router();
 
+const activeConnections = new Map<string, Response>();
+
+export const notifyOrderUpdated = (orderId: string) => {
+  const res = activeConnections.get(orderId);
+  if (res) {
+    res.write('event: order_update\n');
+    res.write(`data: ${JSON.stringify({ type: 'update', timestamp: Date.now() })}\n\n`);
+    
+    if (typeof (res as any).flush === 'function') {
+      (res as any).flush();
+    }
+  }
+};
+
 // ─── FRONTEND ROUTES ─────────────────────────────────────────────────────────
+
+// Helper export so other routes can notify order updates
+// This is already exported as notifyOrderUpdated above
+
+// GET /api/orders/stream/:orderId — SSE endpoint for real-time order updates
+router.get('/stream/:orderId', (req: Request, res: Response) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache, no-transform',
+    'Connection': 'keep-alive',
+    'X-Accel-Buffering': 'no'
+  });
+
+  const orderId = req.params.orderId;
+  
+  if (activeConnections.has(orderId)) {
+    activeConnections.get(orderId)?.end();
+  }
+  
+  activeConnections.set(orderId, res);
+
+  res.write('event: connected\n');
+  res.write(`data: ${JSON.stringify({ type: 'connected', orderId })}\n\n`);
+
+  const heartbeatId = setInterval(() => {
+    if (activeConnections.has(orderId) && activeConnections.get(orderId) === res) {
+      res.write('event: heartbeat\n');
+      res.write(`data: ${JSON.stringify({ timestamp: Date.now() })}\n\n`);
+      if (typeof (res as any).flush === 'function') {
+        (res as any).flush();
+      }
+    } else {
+      clearInterval(heartbeatId);
+    }
+  }, 15000);
+
+  req.on('close', () => {
+    clearInterval(heartbeatId);
+    if (activeConnections.get(orderId) === res) {
+      activeConnections.delete(orderId);
+    }
+  });
+});
 
 // POST /api/orders — create order (frontend checkout)
 router.post(
@@ -57,6 +118,7 @@ router.post(
             price: p.price,
             quantity: item.quantity,
             image: p.images?.[0],
+            notes: item.notes,
           });
         } else if (item.pcPart) {
           const p = await PCPart.findById(item.pcPart);
@@ -72,6 +134,7 @@ router.post(
             price: p.price,
             quantity: item.quantity,
             image: p.images?.[0],
+            notes: item.notes,
           });
         } else if (item.accessory) {
           const a = await Accessory.findById(item.accessory);
@@ -87,6 +150,7 @@ router.post(
             price: a.price,
             quantity: item.quantity,
             image: a.images?.[0],
+            notes: item.notes,
           });
         } else if (item.customBuild) {
           const cb = await CustomBuild.findById(item.customBuild);
@@ -101,6 +165,7 @@ router.post(
             sku: 'CUSTOM-BUILD',
             price: cb.total,
             quantity: item.quantity,
+            notes: item.notes,
           });
         }
       }
@@ -360,12 +425,22 @@ router.post(
                     serialNumber = `LAN-PC-${Math.floor(100000 + Math.random() * 900000)}`;
                   }
                   
+                  // Extract color from notes if available
+                  let color: string | undefined = undefined;
+                  if (item.notes && item.notes.includes('Case Color:')) {
+                    const match = item.notes.match(/Case Color:\s*([^\n,]+)/i);
+                    if (match) {
+                      color = match[1].trim();
+                    }
+                  }
+
                   await PurchasedPC.create({
                     serialNumber,
                     order: order._id,
                     customer: finalCustomerId || undefined,
                     product: p._id,
                     name: p.name,
+                    color,
                     specs: rawSpecs,
                     parts: partsList,
                     status: 'building',
@@ -397,12 +472,23 @@ router.post(
                   serialNumber = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
                 }
                 
+                // Extract color from cb.notes or item.notes if available
+                let color: string | undefined = undefined;
+                const notesStr = cb.notes || item.notes || '';
+                if (notesStr && notesStr.includes('Case Color:')) {
+                  const match = notesStr.match(/Case Color:\s*([^\n,]+)/i);
+                  if (match) {
+                    color = match[1].trim();
+                  }
+                }
+
                 await PurchasedPC.create({
                   serialNumber,
                   order: order._id,
                   customer: finalCustomerId || undefined,
                   customBuild: cb._id,
                   name: cb.name || 'Custom Build',
+                  color,
                   specs: {}, // we store structured parts for custom builds instead of basic specs map
                   parts: partsList,
                   status: 'building',
@@ -623,6 +709,25 @@ router.put('/:id/status', protect, staffOrAdmin, async (req: AuthRequest, res: R
       }
     }
 
+    notifyOrderUpdated(order._id.toString());
+    notifyOrderUpdated(order.orderNumber);
+
+    try {
+      const email = order.shippingAddress?.email || order.guestEmail;
+      if (email) {
+        await sendOrderStatusUpdate({
+          email,
+          orderNumber: order.orderNumber,
+          customerName: order.shippingAddress?.firstName || 'Customer',
+          status,
+          trackingNumber,
+          carrier
+        });
+      }
+    } catch (emailErr) {
+      console.error('Failed to send order status update email:', emailErr);
+    }
+
     res.json({ order });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -736,6 +841,28 @@ router.post('/bulk/status', protect, staffOrAdmin, async (req: AuthRequest, res:
     }
 
     const result = await Order.updateMany({ _id: { $in: ids } }, { status });
+    
+    // Notify all affected orders and send emails
+    const updatedOrders = await Order.find({ _id: { $in: ids } }).populate('shippingAddress guestEmail orderNumber');
+    for (const order of updatedOrders) {
+      notifyOrderUpdated(order._id.toString());
+      notifyOrderUpdated(order.orderNumber);
+      
+      try {
+        const email = order.shippingAddress?.email || order.guestEmail;
+        if (email) {
+          await sendOrderStatusUpdate({
+            email,
+            orderNumber: order.orderNumber,
+            customerName: order.shippingAddress?.firstName || 'Customer',
+            status
+          });
+        }
+      } catch (emailErr) {
+        console.error('Failed to send bulk order status update email:', emailErr);
+      }
+    }
+
     res.json({ message: `Updated ${result.modifiedCount} orders` });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

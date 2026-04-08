@@ -33,6 +33,7 @@ interface ConfiguratorProps {
 
 const Configurator: React.FC<ConfiguratorProps> = (props) => {
   const { selectedCase, baseProductId, initialSelectedParts } = props;
+  const [selectedCaseColor, setSelectedCaseColor] = useState<string>('Black');
   const [componentCategories, setComponentCategories] = useState<any[]>([]);
   const [selectedComponents, setSelectedComponents] = useState<Record<string, any>>(initialSelectedParts || {});
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -109,6 +110,31 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
           // Sort options in each category from lowest price to highest price
           categoriesArray.forEach(category => {
             category.options.sort((a: any, b: any) => a.price - b.price);
+            
+            // Allow skipping parts that aren't strictly required
+            const requiredParts = ['cpu', 'motherboard', 'cooler', 'psu'];
+            if (category.id !== 'fans' && !requiredParts.includes(category.id)) {
+              let skipName = `No ${category.name} - Ship without a ${category.name}`;
+              if (category.id === 'os') {
+                skipName = `No Operating System - Ship without an OS`;
+              } else if (category.id === 'gpu') {
+                skipName = `No Graphics - Ship without a Graphics Card`;
+              } else if (category.id === 'ram') {
+                skipName = `No Memory - Ship without Memory`;
+              } else if (category.id === 'storage') {
+                skipName = `No Storage - Ship without Storage`;
+              } else if (category.name.match(/^[AEIOU]/i)) {
+                skipName = `No ${category.name} - Ship without an ${category.name}`;
+              }
+              
+              category.options.unshift({
+                id: `no-part-${category.id}`,
+                name: skipName,
+                description: `Skip selecting a ${category.name}`,
+                price: 0,
+                specs: {}
+              });
+            }
           });
 
           setComponentCategories(categoriesArray);
@@ -210,7 +236,58 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
         }
       }
 
+      if (category.id === 'psu') {
+        const caseFf = selectedCase.formFactor?.toLowerCase() || '';
+        const isCaseItx = caseFf.includes('itx');
+        const isSFX = (specs.formFactor && specs.formFactor.toLowerCase().includes('sfx')) || 
+                      /sfx|\bsf\d+\b/i.test(option.name) || 
+                      /sfx/i.test(option.description || '');
+
+        if (!String(option.id).startsWith('no-part-')) {
+          if (isCaseItx) {
+            if (!isSFX) return false;
+          } else {
+            if (isSFX) return false;
+          }
+        }
+
+        const cpu = selectedComponents.cpu;
+        const gpu = selectedComponents.gpu;
+        const baseTdp = (Number(cpu?.specs?.tdp) || 0) + (Number(gpu?.specs?.tdp) || 0);
+        const requiredWattage = baseTdp > 0 ? baseTdp + 150 : 0;
+        
+        if (requiredWattage > 0) {
+          let psuWattage = specs.wattage || 0;
+          if (!psuWattage) {
+            const match = option.name.match(/(\d+)W/i) || option.description?.match(/(\d+)W/i);
+            if (match) psuWattage = parseInt(match[1]);
+          }
+          if (psuWattage > 0 && psuWattage < requiredWattage) {
+            return false;
+          }
+        }
+      }
+
       if (category.id === 'cooler') {
+        const caseFf = selectedCase.formFactor?.toLowerCase() || '';
+        const isCaseItx = caseFf.includes('itx');
+        
+        const getRadSize = (o: any) => {
+          if (o.specs?.radiatorSize) return String(o.specs.radiatorSize).replace(/[^0-9]/g, '');
+          const match = (o.name + ' ' + (o.description || '')).match(/(\d+)mm/i);
+          return match ? match[1] : null;
+        };
+
+        const is240mm = getRadSize(option) === '240';
+
+        if (!String(option.id).startsWith('no-part-')) {
+          if (isCaseItx) {
+            if (!is240mm) return false;
+          } else {
+            if (is240mm) return false;
+          }
+        }
+
         const cpu = selectedComponents.cpu;
         const mobo = selectedComponents.motherboard;
         const targetSocket = cpu?.specs?.socket || mobo?.specs?.socket;
@@ -236,6 +313,10 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
   };
 
   const currentCategory = componentCategories[currentStep] || { id: '', name: '', options: [] };
+
+  // Calculate estimated wattage from CPU, GPU, and a buffer for motherboard, RGB, fans, etc.
+  const baseTdp = (Number(selectedComponents.cpu?.specs?.tdp) || 0) + (Number(selectedComponents.gpu?.specs?.tdp) || 0);
+  const estimatedWattage = baseTdp > 0 ? baseTdp + 150 : 0;
 
   // Calculate total price including the selected case
   const componentsTotal = Object.values(selectedComponents).reduce((sum, comp) => {
@@ -267,7 +348,7 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
   const totalPrice = subtotal + calculatedBuildFee;
 
   // Automatically save draft custom build and sync to URL so state isn't lost
-  const saveDraftBuild = async (newSelectedComponents: Record<string, any>) => {
+  const saveDraftBuild = async (newSelectedComponents: Record<string, any>, newColor: string = selectedCaseColor) => {
     // Wait for any pending save to complete so we don't create multiple documents
     if (pendingSavePromiseRef.current) {
       try {
@@ -284,6 +365,7 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
         Object.entries(newSelectedComponents).forEach(([catId, comp]) => {
           const items = Array.isArray(comp) ? comp : [comp];
           items.forEach(item => {
+            if (String(item.id).startsWith('no-part-')) return;
             const existing = partsMap.get(item.id);
             if (existing) {
               existing.quantity += 1;
@@ -342,7 +424,8 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
             parts,
             frontendSubtotal: newSubtotal,
             frontendLaborFee: newCalculatedBuildFee,
-            frontendTotal: newTotalPrice
+            frontendTotal: newTotalPrice,
+            notes: `Case Color: ${newColor}`
           })
         });
         const buildData = await res.json();
@@ -376,6 +459,25 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
       const next = { ...selectedComponents, [categoryId]: option };
       
       // Cascading compatibility clears
+      // Cascading compatibility clears
+      if (categoryId === 'cpu' || categoryId === 'gpu') {
+         const baseTdp = (categoryId === 'cpu' ? (Number(option.specs?.tdp) || 0) : (Number(next.cpu?.specs?.tdp) || 0)) +
+                         (categoryId === 'gpu' ? (Number(option.specs?.tdp) || 0) : (Number(next.gpu?.specs?.tdp) || 0));
+         const requiredWattage = baseTdp > 0 ? baseTdp + 150 : 0;
+         
+         const psu = next.psu;
+         if (psu) {
+           let psuWattage = psu.specs?.wattage || 0;
+           if (!psuWattage) {
+             const match = psu.name.match(/(\d+)W/i) || psu.description?.match(/(\d+)W/i);
+             if (match) psuWattage = parseInt(match[1]);
+           }
+           if (psuWattage > 0 && psuWattage < requiredWattage) {
+             delete next.psu;
+           }
+         }
+      }
+
       if (categoryId === 'cpu') {
          const mobo = next.motherboard;
          if (mobo && mobo.specs?.socket && option.specs?.socket && mobo.specs.socket !== option.specs.socket) {
@@ -502,8 +604,19 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
   const handleNextStep = () => {
     // Only allow proceeding if an item is selected for the current category, except for fans which are optional
     const currentCategoryId = componentCategories[currentStep]?.id;
-    if (currentCategoryId !== 'fans' && !selectedComponents[currentCategoryId]) {
+    
+    // Additional validation to prevent "None" option from satisfying required parts bypass somehow
+    const requiredParts = ['cpu', 'motherboard', 'cooler', 'psu'];
+    const isRequired = requiredParts.includes(currentCategoryId);
+    const selectedPart = selectedComponents[currentCategoryId];
+    
+    if (currentCategoryId !== 'fans' && !selectedPart) {
       showToast(`Please select a ${componentCategories[currentStep]?.name} to continue.`, 'error');
+      return;
+    }
+    
+    if (isRequired && selectedPart && String(selectedPart.id).startsWith('no-part-')) {
+      showToast(`A ${componentCategories[currentStep]?.name} is required for this build.`, 'error');
       return;
     }
 
@@ -713,57 +826,274 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
               </div>
 
               <div className="space-y-3">
-                {getFilteredOptions(currentCategory).map((option: any) => {
-                  const isFans = currentCategory.id === 'fans';
-                  const currentFans = (selectedComponents['fans'] as ComponentOption[]) || [];
-                  const fanCount = isFans ? currentFans.filter(f => f.id === option.id).length : 0;
-                  const isSelected = isFans ? fanCount > 0 : selectedComponents[currentCategory.id]?.id === option.id;
+                {(() => {
+                  const options = getFilteredOptions(currentCategory);
+                  
+                  // Helper function to group options
+                  const renderOptionsGroup = (title: string, groupOptions: any[]) => {
+                    if (groupOptions.length === 0) return null;
+                    return (
+                      <div key={title} className="mb-6 last:mb-0">
+                        {title && <h3 className="text-lg font-semibold text-emerald-400 mb-3 px-1">{title}</h3>}
+                        <div className="space-y-3">
+                          {groupOptions.map((option: any) => {
+                            const isFans = currentCategory.id === 'fans';
+                            const currentFans = (selectedComponents['fans'] as ComponentOption[]) || [];
+                            const fanCount = isFans ? currentFans.filter(f => f.id === option.id).length : 0;
+                            const isSelected = isFans ? fanCount > 0 : selectedComponents[currentCategory.id]?.id === option.id;
+
+                            return (
+                              <div
+                                key={option.id}
+                                onClick={() => !isFans && handleSelect(currentCategory.id, option)}
+                                className={`group cursor-pointer p-4 md:p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-4 ${
+                                  isSelected
+                                    ? 'bg-[#161616] border-white ring-1 ring-white/20 shadow-lg'
+                                    : 'bg-[#111111] border-white/5 hover:border-white/20'
+                                }`}
+                              >
+                                <div className="flex-1 min-w-0" onClick={() => isFans && handleSelect(currentCategory.id, option)}>
+                                  <h3 className={`font-semibold mb-1 truncate ${
+                                    isSelected ? 'text-white' : 'text-gray-200 group-hover:text-white'
+                                  }`}>{option.name}</h3>
+                                  <p className="text-gray-500 text-sm truncate">{option.description}</p>
+                                </div>
+                                <div className="flex items-center gap-6">
+                                  <div className="text-lg font-medium text-white">${option.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                  
+                                  {isFans ? (
+                                    <div className="flex items-center gap-3 bg-black/50 rounded-full border border-white/10 px-2 py-1">
+                                      <button 
+                                        onClick={(e) => { e.stopPropagation(); handleFanChange(option, -1); }}
+                                        className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+                                      >-</button>
+                                      <span className="text-sm font-bold w-4 text-center">{fanCount}</span>
+                                      <button 
+                                        onClick={(e) => { e.stopPropagation(); handleFanChange(option, 1); }}
+                                        className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+                                      >+</button>
+                                    </div>
+                                  ) : (
+                                    <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
+                                      isSelected
+                                        ? 'border-white bg-white'
+                                        : 'border-gray-600 bg-transparent group-hover:border-gray-400'
+                                    }`}>
+                                      {isSelected && (
+                                        <div className="w-2 h-2 rounded-full bg-black" />
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  };
+
+                  if (currentCategory.id === 'cpu') {
+                    const intelOptions = options.filter((o: any) => o.name.toLowerCase().includes('intel') || o.description.toLowerCase().includes('intel'));
+                    const amdOptions = options.filter((o: any) => o.name.toLowerCase().includes('amd') || o.name.toLowerCase().includes('ryzen') || o.description.toLowerCase().includes('amd') || o.description.toLowerCase().includes('ryzen'));
+                    const otherOptions = options.filter((o: any) => !intelOptions.includes(o) && !amdOptions.includes(o) && !o.id.toString().startsWith('no-part-'));
+                    const skipOption = options.filter((o: any) => o.id.toString().startsWith('no-part-'));
+
+                    return (
+                      <>
+                        {renderOptionsGroup('', skipOption)}
+                        {renderOptionsGroup('AMD Processors', amdOptions)}
+                        {renderOptionsGroup('Intel Processors', intelOptions)}
+                        {renderOptionsGroup('Other', otherOptions)}
+                      </>
+                    );
+                  }
+
+                  if (currentCategory.id === 'ram') {
+                    // Group by speed
+                    const groups: Record<string, any[]> = {};
+                    const skipOption = options.filter((o: any) => o.id.toString().startsWith('no-part-'));
+                    
+                    options.forEach((o: any) => {
+                      if (o.id.toString().startsWith('no-part-')) return;
+                      // Try to find speed in name or specs (e.g., 6000MHz or 6000 MT/s)
+                      const speedMatch = o.name.match(/(\d{4})\s*(?:MHz|MT\/s)/i) || (o.specs && o.specs.speed ? [null, o.specs.speed] : null);
+                      const speed = speedMatch ? `${speedMatch[1]}` : 'Other';
+                      
+                      if (!groups[speed]) groups[speed] = [];
+                      groups[speed].push(o);
+                    });
+
+                    // Target Speeds
+                    const targetSpeeds = ['6000', '6200', '6400', '6800', '7200', '7600', '8000', '8200', '8400', '8800'];
+                    
+                    return (
+                      <>
+                        {renderOptionsGroup('', skipOption)}
+                        {targetSpeeds.map(speed => renderOptionsGroup(`${speed} MHz`, groups[speed] || []))}
+                        {renderOptionsGroup('Other Speeds', Object.keys(groups).filter(k => !targetSpeeds.includes(k) && k !== 'Other').reduce((acc, k) => [...acc, ...groups[k]], [] as any[]))}
+                        {renderOptionsGroup('Other Speeds', groups['Other'] || [])}
+                      </>
+                    );
+                  }
+
+                  if (currentCategory.id === 'gpu') {
+                    const rtx5090 = options.filter((o: any) => o.name.includes('5090') || o.description.includes('5090'));
+                    const rtx5080 = options.filter((o: any) => o.name.includes('5080') || o.description.includes('5080'));
+                    const rtx5070 = options.filter((o: any) => o.name.includes('5070') || o.description.includes('5070'));
+                    const rtx5060 = options.filter((o: any) => o.name.includes('5060') || o.description.includes('5060'));
+                    const rtx5050 = options.filter((o: any) => o.name.includes('5050') || o.description.includes('5050'));
+                    
+                    const specified = [...rtx5090, ...rtx5080, ...rtx5070, ...rtx5060, ...rtx5050];
+                    const otherOptions = options.filter((o: any) => !specified.includes(o) && !o.id.toString().startsWith('no-part-'));
+                    const skipOption = options.filter((o: any) => o.id.toString().startsWith('no-part-'));
+
+                    return (
+                      <>
+                        {renderOptionsGroup('', skipOption)}
+                        {renderOptionsGroup('RTX 5050', rtx5050)}
+                        {renderOptionsGroup('RTX 5060', rtx5060)}
+                        {renderOptionsGroup('RTX 5070', rtx5070)}
+                        {renderOptionsGroup('RTX 5080', rtx5080)}
+                        {renderOptionsGroup('RTX 5090', rtx5090)}
+                        {renderOptionsGroup('Other Graphics Cards', otherOptions)}
+                      </>
+                    );
+                  }
+
+                  if (currentCategory.id === 'motherboard') {
+                    // Filter just exactly what requested
+                    const b850Exact = options.filter((o: any) => o.name.includes('B850') || o.description.includes('B850'));
+                    const x870Exact = options.filter((o: any) => o.name.includes('X870') || o.description.includes('X870'));
+                    const z890Exact = options.filter((o: any) => o.name.includes('Z890') || o.description.includes('Z890'));
+
+                    const specified = [...b850Exact, ...x870Exact, ...z890Exact];
+                    const otherOptions = options.filter((o: any) => !specified.includes(o) && !o.id.toString().startsWith('no-part-'));
+                    const skipOption = options.filter((o: any) => o.id.toString().startsWith('no-part-'));
+
+                    return (
+                      <>
+                        {renderOptionsGroup('', skipOption)}
+                        {renderOptionsGroup('AMD B850', b850Exact)}
+                        {renderOptionsGroup('AMD X870', x870Exact)}
+                        {renderOptionsGroup('Intel Z890', z890Exact)}
+                        {renderOptionsGroup('Other Motherboards', otherOptions)}
+                      </>
+                    );
+                  }
+
+                  if (currentCategory.id === 'storage') {
+                    const tb8 = options.filter((o: any) => o.name.includes('8TB') || o.description.includes('8TB'));
+                    const tb4 = options.filter((o: any) => o.name.includes('4TB') || o.description.includes('4TB'));
+                    const tb2 = options.filter((o: any) => o.name.includes('2TB') || o.description.includes('2TB'));
+                    const tb1 = options.filter((o: any) => (o.name.includes('1TB') || o.description.includes('1TB')) && !o.name.includes('11TB'));
+                    
+                    const specified = [...tb8, ...tb4, ...tb2, ...tb1];
+                    const otherOptions = options.filter((o: any) => !specified.includes(o) && !o.id.toString().startsWith('no-part-'));
+                    const skipOption = options.filter((o: any) => o.id.toString().startsWith('no-part-'));
+
+                    return (
+                      <>
+                        {renderOptionsGroup('', skipOption)}
+                        {renderOptionsGroup('1TB Storage', tb1)}
+                        {renderOptionsGroup('2TB Storage', tb2)}
+                        {renderOptionsGroup('4TB Storage', tb4)}
+                        {renderOptionsGroup('8TB Storage', tb8)}
+                        {renderOptionsGroup('Other Storage', otherOptions)}
+                      </>
+                    );
+                  }
+
+                  if (currentCategory.id === 'psu') {
+                    const getWattage = (o: any) => {
+                      if (o.specs?.wattage) return String(o.specs.wattage).replace(/[^0-9]/g, '');
+                      const match = (o.name + ' ' + (o.description || '')).match(/(\d+)\s*w/i);
+                      return match ? match[1] : null;
+                    };
+
+                    const w1600 = options.filter((o: any) => getWattage(o) === '1600');
+                    const w1200 = options.filter((o: any) => getWattage(o) === '1200');
+                    const w1000 = options.filter((o: any) => getWattage(o) === '1000');
+                    const w850 = options.filter((o: any) => getWattage(o) === '850');
+                    
+                    const specified = [...w1600, ...w1200, ...w1000, ...w850];
+                    const otherOptions = options.filter((o: any) => !specified.includes(o) && !o.id.toString().startsWith('no-part-'));
+                    const skipOption = options.filter((o: any) => o.id.toString().startsWith('no-part-'));
+
+                    return (
+                      <>
+                        {renderOptionsGroup('', skipOption)}
+                        {renderOptionsGroup('850W Power Supplies', w850)}
+                        {renderOptionsGroup('1000W Power Supplies', w1000)}
+                        {renderOptionsGroup('1200W Power Supplies', w1200)}
+                        {renderOptionsGroup('1600W Power Supplies', w1600)}
+                        {renderOptionsGroup('Other Power Supplies', otherOptions)}
+                      </>
+                    );
+                  }
+
+                  if (currentCategory.id === 'cooler') {
+                    const getRadSize = (o: any) => {
+                      if (o.specs?.radiatorSize) return String(o.specs.radiatorSize).replace(/[^0-9]/g, '');
+                      const match = (o.name + ' ' + (o.description || '')).match(/(\d+)mm/i);
+                      return match ? match[1] : null;
+                    };
+
+                    const mm420 = options.filter((o: any) => getRadSize(o) === '420');
+                    const mm360 = options.filter((o: any) => getRadSize(o) === '360');
+                    const mm280 = options.filter((o: any) => getRadSize(o) === '280');
+                    const mm240 = options.filter((o: any) => getRadSize(o) === '240');
+                    const mm120 = options.filter((o: any) => getRadSize(o) === '120');
+                    
+                    const specified = [...mm420, ...mm360, ...mm280, ...mm240, ...mm120];
+                    const otherOptions = options.filter((o: any) => !specified.includes(o) && !o.id.toString().startsWith('no-part-'));
+                    const skipOption = options.filter((o: any) => o.id.toString().startsWith('no-part-'));
+
+                    return (
+                      <>
+                        {renderOptionsGroup('', skipOption)}
+                        {renderOptionsGroup('240mm Coolers', mm240)}
+                        {renderOptionsGroup('280mm Coolers', mm280)}
+                        {renderOptionsGroup('360mm Coolers', mm360)}
+                        {renderOptionsGroup('420mm Coolers', mm420)}
+                        {renderOptionsGroup('Other Coolers', [...mm120, ...otherOptions])}
+                      </>
+                    );
+                  }
+
+                  if (currentCategory.id === 'fans') {
+                    const mm360 = options.filter((o: any) => o.name.includes('360mm') || o.description.includes('360mm'));
+                    const mm280 = options.filter((o: any) => o.name.includes('280mm') || o.description.includes('280mm'));
+                    const mm240 = options.filter((o: any) => o.name.includes('240mm') || o.description.includes('240mm'));
+                    const mm120 = options.filter((o: any) => o.name.includes('120mm') || o.description.includes('120mm'));
+                    
+                    const specified = [...mm360, ...mm280, ...mm240, ...mm120];
+                    const otherOptions = options.filter((o: any) => !specified.includes(o) && !o.id.toString().startsWith('no-part-'));
+                    const skipOption = options.filter((o: any) => o.id.toString().startsWith('no-part-'));
+
+                    return (
+                      <>
+                        {renderOptionsGroup('', skipOption)}
+                        {renderOptionsGroup('120mm Case Fans', mm120)}
+                        {renderOptionsGroup('240mm Case Fans', mm240)}
+                        {renderOptionsGroup('280mm Case Fans', mm280)}
+                        {renderOptionsGroup('360mm Case Fans', mm360)}
+                        {renderOptionsGroup('Other Case Fans', otherOptions)}
+                      </>
+                    );
+                  }
+
+                  // Default rendering for unhandled categories
+                  const skipOption = options.filter((o: any) => o.id.toString().startsWith('no-part-'));
+                  const standardOptions = options.filter((o: any) => !o.id.toString().startsWith('no-part-'));
 
                   return (
-                  <div
-                    key={option.id}
-                    onClick={() => !isFans && handleSelect(currentCategory.id, option)}
-                    className={`group cursor-pointer p-4 md:p-5 rounded-2xl border transition-all duration-200 flex items-center justify-between gap-4 ${
-                      isSelected
-                        ? 'bg-[#161616] border-white ring-1 ring-white/20 shadow-lg'
-                        : 'bg-[#111111] border-white/5 hover:border-white/20'
-                    }`}
-                  >
-                    <div className="flex-1 min-w-0" onClick={() => isFans && handleSelect(currentCategory.id, option)}>
-                      <h3 className={`font-semibold mb-1 truncate ${
-                        isSelected ? 'text-white' : 'text-gray-200 group-hover:text-white'
-                      }`}>{option.name}</h3>
-                      <p className="text-gray-500 text-sm truncate">{option.description}</p>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <div className="text-lg font-medium text-white">${option.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                      
-                      {isFans ? (
-                        <div className="flex items-center gap-3 bg-black/50 rounded-full border border-white/10 px-2 py-1">
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleFanChange(option, -1); }}
-                            className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
-                          >-</button>
-                          <span className="text-sm font-bold w-4 text-center">{fanCount}</span>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleFanChange(option, 1); }}
-                            className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
-                          >+</button>
-                        </div>
-                      ) : (
-                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                          isSelected
-                            ? 'border-white bg-white'
-                            : 'border-gray-600 bg-transparent group-hover:border-gray-400'
-                        }`}>
-                          {isSelected && (
-                            <div className="w-2 h-2 rounded-full bg-black" />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )})}
+                    <>
+                      {renderOptionsGroup('', skipOption)}
+                      {renderOptionsGroup('', standardOptions)}
+                    </>
+                  );
+                })()}
               </div>
 
               {/* Navigation Bar */}
@@ -803,13 +1133,35 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
               <div className="bg-[#111111] rounded-3xl border border-white/5 p-6 overflow-hidden relative">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-400 opacity-50" />
                 
-                <h3 className="text-lg font-bold text-white mb-6">Build Summary</h3>
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-lg font-bold text-white">Build Summary</h3>
+                  {estimatedWattage > 0 && (
+                    <div className="text-xs font-semibold px-2 py-1 bg-white/10 rounded-md text-emerald-400" title="Estimated wattage based on CPU and GPU">
+                      Est. Wattage: {estimatedWattage}W
+                    </div>
+                  )}
+                </div>
                 
                 {/* Selected Case */}
                 <div className="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-white/5">
                   <div>
                     <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Case</div>
                     <div className="text-sm text-gray-200 line-clamp-2">{selectedCase.name}</div>
+                    
+                    <div className="mt-2 flex gap-2">
+                      <button 
+                        onClick={() => { setSelectedCaseColor('Black'); saveDraftBuild(selectedComponents, 'Black'); }}
+                        className={`w-6 h-6 rounded-full border-2 transition-all ${selectedCaseColor === 'Black' ? 'border-emerald-400 scale-110' : 'border-gray-600 hover:border-gray-400'}`}
+                        style={{ backgroundColor: '#111' }}
+                        title="Black"
+                      />
+                      <button 
+                        onClick={() => { setSelectedCaseColor('White'); saveDraftBuild(selectedComponents, 'White'); }}
+                        className={`w-6 h-6 rounded-full border-2 transition-all ${selectedCaseColor === 'White' ? 'border-emerald-400 scale-110' : 'border-gray-600 hover:border-gray-400'}`}
+                        style={{ backgroundColor: '#f3f4f6' }}
+                        title="White"
+                      />
+                    </div>
                   </div>
                   <div className="text-sm font-medium text-white">${selectedCase.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
@@ -907,7 +1259,7 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Case</span>
-                <span className="font-medium text-white">{selectedCase.name}</span>
+                <span className="font-medium text-white">{selectedCase.name} ({selectedCaseColor})</span>
               </div>
 
               {Object.entries(selectedComponents).map(([categoryId, component]) => {
@@ -959,6 +1311,7 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
                   Object.entries(selectedComponents).forEach(([catId, comp]) => {
                     const items = Array.isArray(comp) ? comp : [comp];
                     items.forEach(item => {
+                      if (String(item.id).startsWith('no-part-')) return;
                       const existing = partsMap.get(item.id);
                       if (existing) {
                         existing.quantity += 1;
@@ -994,7 +1347,8 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
                         parts,
                         frontendSubtotal: subtotal,
                         frontendLaborFee: calculatedBuildFee,
-                        frontendTotal: totalPrice
+                        frontendTotal: totalPrice,
+                        notes: `Case Color: ${selectedCaseColor}`
                       })
                     })
                     .then(res => res.json())

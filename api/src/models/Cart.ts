@@ -6,6 +6,7 @@ export interface ICartItem {
   accessory?: mongoose.Types.ObjectId;
   customBuild?: mongoose.Types.ObjectId;
   quantity: number;
+  notes?: string;
 }
 
 export interface ICart extends Document {
@@ -28,6 +29,7 @@ const CartItemSchema = new Schema<ICartItem>({
   accessory: { type: Schema.Types.ObjectId, ref: 'Accessory' },
   customBuild: { type: Schema.Types.ObjectId, ref: 'CustomBuild' },
   quantity: { type: Number, required: true, min: 1 },
+  notes: { type: String },
 }, { _id: false });
 
 const CartSchema = new Schema<ICart>(

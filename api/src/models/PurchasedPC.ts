@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IPurchasedPC extends Document {
   serialNumber: string;
   order: mongoose.Types.ObjectId;
+  color?: string; // e.g. "Black" or "White"
   customer?: mongoose.Types.ObjectId;
   product?: mongoose.Types.ObjectId; // If it's a pre-built or normal PC product
   customBuild?: mongoose.Types.ObjectId; // If it's a custom build
@@ -28,6 +29,7 @@ const PurchasedPCSchema = new Schema<IPurchasedPC>(
     product: { type: Schema.Types.ObjectId, ref: 'Product' },
     customBuild: { type: Schema.Types.ObjectId, ref: 'CustomBuild' },
     name: { type: String, required: true },
+    color: { type: String },
     specs: { type: Map, of: String, default: {} },
     parts: [{
       partType: { type: String },

@@ -19,6 +19,7 @@ import ContactPage from './pages/ContactPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderStatusPage from './pages/OrderStatusPage';
+import ShipmentTrackingPage from './pages/ShipmentTrackingPage';
 import CustomBuildPage from './pages/CustomBuildPage';
 import InvoicePage from './pages/InvoicePage';
 import DignitasPage from './pages/DignitasPage';
@@ -325,6 +326,7 @@ function App() {
           } />
           <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order-status" element={<OrderStatusPage />} />
+              <Route path="/track/:orderId" element={<ShipmentTrackingPage />} />
               <Route path="/invoice" element={<InvoicePage />} />
           <Route path="/accessories" element={
             <>

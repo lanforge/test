@@ -73,6 +73,12 @@ router.post('/stripe/confirm', async (req: Request, res: Response): Promise<void
         { paymentStatus: 'paid', paymentId: paymentIntentId, status: 'order-confirmed' },
         { new: true }
       );
+      if (order) {
+        import('./orders').then(({ notifyOrderUpdated }) => {
+          notifyOrderUpdated(order._id.toString());
+          notifyOrderUpdated(order.orderNumber);
+        });
+      }
 
       if (order) {
         await Payment.create({
@@ -158,6 +164,11 @@ router.post('/webhook/stripe', async (req: Request, res: Response): Promise<void
             order.paymentId = intent.id;
             order.status = 'order-confirmed';
             await order.save();
+            
+            import('./orders').then(({ notifyOrderUpdated }) => {
+              notifyOrderUpdated(order._id.toString());
+              notifyOrderUpdated(order.orderNumber);
+            });
 
             await Payment.create({
               amount: intent.amount / 100, // Stripe amount is in cents
@@ -299,6 +310,12 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     // Optionally update order or invoice status
     if (orderId && status === 'completed') {
       const order = await Order.findByIdAndUpdate(orderId, { paymentStatus: 'paid', paymentId: payment.gatewayTransactionId, status: 'order-confirmed' }, { new: true });
+      if (order) {
+        import('./orders').then(({ notifyOrderUpdated }) => {
+          notifyOrderUpdated(order._id.toString());
+          notifyOrderUpdated(order.orderNumber);
+        });
+      }
       
       if (order) {
         // Send confirmation email

@@ -32,6 +32,7 @@ const ProductsPage: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [selectedColor, setSelectedColor] = useState<string>('Black');
 
   useEffect(() => {
     if (!productId) {
@@ -73,7 +74,8 @@ const ProductsPage: React.FC = () => {
         }));
         mappedItems.push({
           product: product._id,
-          quantity: 1
+          quantity: 1,
+          notes: `Case Color: ${selectedColor}`
         });
         return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
           method: 'PUT',
@@ -186,6 +188,25 @@ const ProductsPage: React.FC = () => {
                   ${product.compareAtPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               )}
+            </div>
+
+            {/* Color Selection */}
+            <div className="mb-6">
+              <div className="text-sm font-semibold text-gray-400 mb-2">Case Color</div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSelectedColor('Black')}
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${selectedColor === 'Black' ? 'border-emerald-400 scale-110' : 'border-gray-600 hover:border-gray-400'}`}
+                  style={{ backgroundColor: '#111' }}
+                  title="Black"
+                />
+                <button
+                  onClick={() => setSelectedColor('White')}
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${selectedColor === 'White' ? 'border-emerald-400 scale-110' : 'border-gray-600 hover:border-gray-400'}`}
+                  style={{ backgroundColor: '#f3f4f6' }}
+                  title="White"
+                />
+              </div>
             </div>
 
             {/* Actions */}

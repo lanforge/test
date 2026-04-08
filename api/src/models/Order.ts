@@ -10,6 +10,7 @@ export interface IOrderItem {
   price: number;
   quantity: number;
   image?: string;
+  notes?: string;
 }
 
 export interface IAddress {
@@ -48,6 +49,9 @@ export interface IOrder extends Document {
   paymentId?: string;
   trackingNumber?: string;
   carrier?: string;
+  carrierTrackingUrl?: string;
+  trackingUrl?: string;
+  labelUrl?: string;
   shippingRates?: any[];
   selectedShippingRate?: any;
   notes?: string;
@@ -67,6 +71,7 @@ const OrderItemSchema = new Schema<IOrderItem>({
   price: { type: Number, required: true },
   quantity: { type: Number, required: true, min: 1 },
   image: { type: String },
+  notes: { type: String },
 });
 
 const AddressSchema = new Schema<IAddress>({
@@ -123,6 +128,9 @@ const OrderSchema = new Schema<IOrder>(
     paymentId: { type: String },
     trackingNumber: { type: String },
     carrier: { type: String },
+    carrierTrackingUrl: { type: String },
+    trackingUrl: { type: String },
+    labelUrl: { type: String },
     shippingRates: [{ type: Schema.Types.Mixed }],
     selectedShippingRate: { type: Schema.Types.Mixed },
     notes: { type: String },

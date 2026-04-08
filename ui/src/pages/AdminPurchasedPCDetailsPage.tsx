@@ -7,6 +7,7 @@ interface PurchasedPC {
   serialNumber: string;
   name: string;
   status: string;
+  color?: string;
   specs: Record<string, string>;
   parts?: Array<{
     partType: string;
@@ -121,6 +122,11 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
             <p className="text-gray-400 mt-1 font-mono">
               S/N: {pc.serialNumber}
             </p>
+            {pc.color && (
+              <p className="text-gray-400 mt-1">
+                Color: <span className="text-emerald-400">{pc.color}</span>
+              </p>
+            )}
           </div>
         </div>
         <div className="flex items-center space-x-3">
