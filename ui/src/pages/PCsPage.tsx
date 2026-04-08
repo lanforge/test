@@ -317,7 +317,7 @@ const PCsPage: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-10 bg-gray-900/30">
+      <section className="py-10">
         <div className="container-narrow">
           <div className="text-center mb-12">
             <h2 className="heading-2 mb-4">Why Choose LANForge?</h2>
