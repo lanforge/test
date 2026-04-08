@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import Configurator from '../components/Configurator';
 import BuildRequestModal from '../components/BuildRequestModal';
+import SEO from '../components/SEO';
 
 interface CaseOption {
   id: number;
@@ -219,6 +220,11 @@ const ConfiguratorPage: React.FC = () => {
   if (showConfigurator && selectedCase) {
     return (
       <div className="min-h-screen bg-gray-950">
+        <SEO 
+          title={`Configure ${selectedCase.name} | LANForge Configurator`}
+          description={`Customize your PC build using the ${selectedCase.name} case. Choose your CPU, GPU, memory, and more.`}
+          url="https://lanforge.com/configurator"
+        />
         {/* Minimalist Top Nav for Configurator */}
         <div className="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-white/10 px-6 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -257,7 +263,11 @@ const ConfiguratorPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-200 selection:bg-emerald-500/30">
-      
+      <SEO 
+        title="Custom PC Configurator | LANForge"
+        description="Build your dream PC with our interactive configurator. Start by selecting a case and customize every component."
+        url="https://lanforge.com/configurator"
+      />
       {/* Clean Hero Section */}
       <section className="pt-24 pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">

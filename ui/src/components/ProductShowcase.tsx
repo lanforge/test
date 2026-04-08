@@ -19,6 +19,7 @@ interface Product {
 
 const ProductShowcase: React.FC = () => {
   const [products, setProducts] = React.useState<Product[]>([]);
+  const [selectedColors, setSelectedColors] = React.useState<Record<number, string>>({});
 
   React.useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/products?limit=100`)
@@ -208,6 +209,27 @@ const ProductShowcase: React.FC = () => {
                           </ul>
                         </div>
                         
+                        {/* Color Selection */}
+                        <div className="pt-2 relative z-20">
+                          <div className="text-xs sm:text-sm font-medium text-gray-500 mb-2">Case Color</div>
+                          <div className="flex gap-2 relative z-20">
+                            <button
+                              type="button"
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedColors(prev => ({ ...prev, [product.id]: 'Black' })); }}
+                              className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 cursor-pointer transition-all ${(!selectedColors[product.id] || selectedColors[product.id] === 'Black') ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(34,211,238,0.5)]' : 'border-gray-600 hover:border-gray-400'}`}
+                              style={{ backgroundColor: '#111' }}
+                              title="Black"
+                            />
+                            <button
+                              type="button"
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedColors(prev => ({ ...prev, [product.id]: 'White' })); }}
+                              className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 cursor-pointer transition-all ${(selectedColors[product.id] === 'White') ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(34,211,238,0.5)]' : 'border-gray-600 hover:border-gray-400'}`}
+                              style={{ backgroundColor: '#f3f4f6' }}
+                              title="White"
+                            />
+                          </div>
+                        </div>
+                        
                         {/* Actions */}
                         <div className="flex items-center justify-between gap-2 pt-3 sm:pt-4 border-t border-gray-800/50">
                           <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
@@ -231,9 +253,11 @@ const ProductShowcase: React.FC = () => {
                                       customBuild: i.customBuild?._id || i.customBuild,
                                       quantity: i.quantity
                                     }));
+                                    const color = selectedColors[product.id] || 'Black';
                                     mappedItems.push({
                                       product: product.id,
-                                      quantity: 1
+                                      quantity: 1,
+                                      notes: `Case Color: ${color}`
                                     });
                                     return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
                                       method: 'PUT',

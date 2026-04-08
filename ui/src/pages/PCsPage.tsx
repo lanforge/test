@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDesktop, faBolt, faShieldHalved, faTruckFast, faWrench } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { faDesktop, faWrench, faBolt, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 interface Product {
   id: number;
@@ -94,6 +95,11 @@ const PCsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-950">
+      <SEO 
+        title="Gaming PCs & Workstations | LANForge"
+        description="Explore our lineup of pre-configured gaming PCs and high-performance workstations. Ready to ship or customize to your exact needs."
+        url="https://lanforge.com/pcs"
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden py-10 md:py-16">
         <div className="absolute inset-0 bg-gradient-radial from-emerald-400/10 via-transparent to-transparent" />

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const FAQ: React.FC = () => {
-  const [faqItems, setFaqItems] = useState<{ question: string; answer: string }[]>([]);
+  const [faqItems, setFaqItems] = useState<{ question: string; answer: string; category?: string }[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [heights, setHeights] = useState<number[]>([]);
   const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -12,7 +12,22 @@ const FAQ: React.FC = () => {
     fetch(`${process.env.REACT_APP_API_URL}/faqs`)
       .then(res => res.json())
       .then(data => {
-        if (data.faqs) setFaqItems(data.faqs);
+        if (data.faqs) {
+          const uniqueCategoryFaqs: any[] = [];
+          const seenCategories = new Set();
+          
+          for (const faq of data.faqs) {
+            if (uniqueCategoryFaqs.length >= 4) break;
+            
+            const cat = faq.category || 'General';
+            if (!seenCategories.has(cat)) {
+              seenCategories.add(cat);
+              uniqueCategoryFaqs.push(faq);
+            }
+          }
+          
+          setFaqItems(uniqueCategoryFaqs);
+        }
       })
       .catch(err => console.error(err));
   }, []);

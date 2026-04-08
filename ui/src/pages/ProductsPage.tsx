@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDesktop } from '@fortawesome/free-solid-svg-icons';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import SEO from '../components/SEO';
 
 interface Part {
   _id: string;
@@ -109,6 +110,12 @@ const ProductsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white selection:bg-emerald-500/30 pt-24 pb-16">
+      <SEO 
+        title={product.name ? `${product.name} | LANForge Products` : "PC Components & Hardware | LANForge"}
+        description={product.description || "Browse our selection of premium PC components, gaming hardware, and accessories."}
+        url={`https://lanforge.com/products/${product._id}`}
+        image={product.images?.[0] || "https://lanforge.com/logo512.png"}
+      />
       <div className="container-narrow px-6 max-w-6xl mx-auto">
         
         {/* Breadcrumb */}

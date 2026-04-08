@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faComputerMouse, faDesktop, faHeadphones, faKeyboard } from '@fortawesome/free-solid-svg-icons';
+import SEO from '../components/SEO';
 
 interface Accessory {
   id: number;
@@ -98,7 +99,12 @@ const AccessoriesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-gray-950 text-white selection:bg-emerald-500/30">
+      <SEO 
+        title="Gaming Accessories & Peripherals | LANForge"
+        description="Upgrade your setup with premium gaming keyboards, mice, headsets, and monitors. High-performance gear for competitive gamers."
+        url="https://lanforge.com/accessories"
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden py-10 md:py-16">
         <div className="absolute inset-0 bg-gradient-radial from-emerald-400/10 via-transparent to-transparent" />

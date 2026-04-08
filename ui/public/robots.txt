@@ -1,3 +1,9 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /checkout
+Disallow: /cart
+Disallow: /order-status
+Disallow: /track/
+Disallow: /invoice
+
+Sitemap: https://lanforge.com/sitemap.xml

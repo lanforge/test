@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Toast, { ToastType } from '../components/Toast';
+import SEO from '../components/SEO';
 
 const CustomBuildPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -108,6 +109,11 @@ const CustomBuildPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-200 py-16 px-4 flex items-start justify-center">
+      <SEO 
+        title={`Custom Build ${build.buildId} | LANForge`}
+        description={`Check out this custom PC build configured on LANForge. Featuring ${build.parts.length} components for high-performance gaming.`}
+        url={`https://lanforge.com/build/${id}`}
+      />
       <div className="w-full max-w-xl">
         <motion.div
           initial={{ opacity: 0, y: 15 }}

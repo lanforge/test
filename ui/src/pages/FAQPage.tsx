@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons';
-import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  faPhone,
+  faWrench,
+  faLaptop,
+  faTruck,
+  faRotate,
+  faShieldHalved,
+  faCreditCard,
+  faGear,
+  faCircleQuestion,
+  faCommentDots
+} from '@fortawesome/free-solid-svg-icons';
+import { motion } from 'framer-motion';
 
 interface FAQItem {
   question: string;
@@ -11,7 +22,7 @@ interface FAQItem {
 interface FAQCategory {
   title: string;
   items: FAQItem[];
-  icon: string;
+  icon: React.ReactNode;
 }
 
 const FAQPage: React.FC = () => {
@@ -32,10 +43,22 @@ const FAQPage: React.FC = () => {
             if (!groups[cat]) groups[cat] = [];
             groups[cat].push({ question: faq.question, answer: faq.answer });
           });
+          const getCategoryIcon = (categoryStr: string) => {
+            if (categoryStr.includes('General')) return <FontAwesomeIcon icon={faWrench} />;
+            if (categoryStr.includes('Orders')) return <FontAwesomeIcon icon={faLaptop} />;
+            if (categoryStr.includes('Shipping')) return <FontAwesomeIcon icon={faTruck} />;
+            if (categoryStr.includes('Returns')) return <FontAwesomeIcon icon={faRotate} />;
+            if (categoryStr.includes('Warranty')) return <FontAwesomeIcon icon={faShieldHalved} />;
+            if (categoryStr.includes('Payments')) return <FontAwesomeIcon icon={faCreditCard} />;
+            if (categoryStr.includes('Performance')) return <FontAwesomeIcon icon={faGear} />;
+            if (categoryStr.includes('Support')) return <FontAwesomeIcon icon={faPhone} />;
+            return <FontAwesomeIcon icon={faCircleQuestion} />;
+          };
+
           const formattedCategories: FAQCategory[] = Object.keys(groups).map(cat => ({
             title: cat,
             items: groups[cat],
-            icon: '?' // Default icon
+            icon: getCategoryIcon(cat)
           }));
           setFaqCategories(formattedCategories);
         }
@@ -208,7 +231,7 @@ const FAQPage: React.FC = () => {
 
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center text-xl">
-                      💬
+                      <FontAwesomeIcon icon={faCommentDots} />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-2">Live Chat</h3>
