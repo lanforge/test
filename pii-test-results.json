@@ -1,0 +1,386 @@
+[
+  {
+    "name": "Partners List (GET /partners)",
+    "status": 200,
+    "description": "Should not expose email, password, stats, lastLogin, etc.",
+    "response": {
+      "partners": [
+        {
+          "stats": {
+            "clicks": 0,
+            "referrals": 0,
+            "totalRevenue": 0,
+            "commissionEarned": 0,
+            "commissionPaid": 0
+          },
+          "_id": "69d7bfd3fd3d4d1d1e25c99d",
+          "__v": 0,
+          "commissionRate": 2,
+          "createdAt": "2026-04-09T15:03:47.262Z",
+          "creatorCode": "DIG",
+          "customerDiscountType": "free_shipping",
+          "customerDiscountValue": 0,
+          "email": "dig@lanforge.co",
+          "isActive": true,
+          "isPartner": true,
+          "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5Yg7cn9YSU5OdZ9Lze_7XN-FV_fL2DasDUA&s",
+          "name": "Dignitas",
+          "sortOrder": 0,
+          "updatedAt": "2026-04-17T04:01:41.414Z",
+          "website": "https://dignitas.gg",
+          "partnerType": "brand",
+          "twitter": "https://x.com/dignitas",
+          "description": "Dignitas is an international esports organization and one of the most iconic and recognizable brands in the professional gaming industry, fielding teams in the world's largest and most popular games."
+        },
+        {
+          "stats": {
+            "clicks": 0,
+            "referrals": 0,
+            "totalRevenue": 0,
+            "commissionEarned": 0,
+            "commissionPaid": 0
+          },
+          "_id": "69d86c98fd3d4d1d1e260410",
+          "__v": 0,
+          "commissionRate": 2,
+          "createdAt": "2026-04-10T03:20:56.223Z",
+          "creatorCode": "QUEASY",
+          "customerDiscountType": "free_shipping",
+          "customerDiscountValue": 0,
+          "email": "queasy@lanforge.co",
+          "isActive": true,
+          "isPartner": true,
+          "logo": "https://pbs.twimg.com/profile_images/1967363278373298176/QojCdMSF_400x400.jpg",
+          "name": "Queasy",
+          "sortOrder": 1,
+          "updatedAt": "2026-04-17T04:01:41.414Z",
+          "website": "https://lanforge.co",
+          "partnerType": "individual",
+          "description": "Queasy is one of the top-performing Fortnite pros globally, recognized for elite game sense, consistency in high-level tournaments, and dominant placements across major events. A true competitor, Queasy represents the highest level of competitive play.",
+          "twitch": "https://www.twitch.tv/queasy",
+          "twitter": "https://x.com/QueasyFN",
+          "youtube": "https://www.youtube.com/@Queasyfn"
+        },
+        {
+          "stats": {
+            "clicks": 0,
+            "referrals": 0,
+            "totalRevenue": 0,
+            "commissionEarned": 0,
+            "commissionPaid": 0
+          },
+          "_id": "69d7bfebfd3d4d1d1e25c9c3",
+          "__v": 0,
+          "commissionRate": 2,
+          "createdAt": "2026-04-09T15:04:11.727Z",
+          "creatorCode": "NINA",
+          "customerDiscountType": "free_shipping",
+          "customerDiscountValue": 0,
+          "email": "nina@lanforge.co",
+          "isActive": true,
+          "isPartner": true,
+          "logo": "https://pbs.twimg.com/profile_images/2022455006365126661/8RI8JFL2_400x400.jpg",
+          "name": "XSET Nina",
+          "sortOrder": 2,
+          "updatedAt": "2026-04-17T04:01:41.414Z",
+          "website": "https://lanforge.co",
+          "partnerType": "individual",
+          "description": "Nina is a professional Fortnite player and member of XSET, known for her competitive drive, strong mechanics, and influence within the gaming community. She represents the next generation of top-tier talent in esports.",
+          "instagram": "https://www.instagram.com/ilyynina1/",
+          "tiktok": "https://www.tiktok.com/@ilynina",
+          "twitch": "https://www.twitch.tv/ilyynina",
+          "twitter": "https://twitter.com/ilyynina",
+          "youtube": "https://www.youtube.com/channel/UCOhg8Vfk6DBjUG_l2KS0yyA"
+        },
+        {
+          "stats": {
+            "clicks": 0,
+            "referrals": 0,
+            "totalRevenue": 0,
+            "commissionEarned": 0,
+            "commissionPaid": 0
+          },
+          "_id": "69e1af5cee66e1880edf1e24",
+          "name": "Sails",
+          "email": "sails@lanforge.co",
+          "creatorCode": "SAILS",
+          "commissionRate": 2,
+          "isPartner": true,
+          "partnerType": "individual",
+          "customerDiscountType": "free_shipping",
+          "customerDiscountValue": 0,
+          "website": "https://lanforge.co",
+          "logo": "https://pbs.twimg.com/profile_images/2021407469738786817/Gz5-Iiym_400x400.jpg",
+          "twitter": "https://x.com/sailsfn7",
+          "twitch": "https://www.twitch.tv/sailsfn",
+          "youtube": "https://www.youtube.com/channel/UCEpf_tPTUxlSV0kYO0YrIFg",
+          "instagram": "",
+          "sortOrder": 3,
+          "isActive": true,
+          "createdAt": "2026-04-17T03:56:12.494Z",
+          "updatedAt": "2026-04-17T04:01:41.414Z",
+          "__v": 0,
+          "description": "Sails is a Fortnite streamer known for high-level gameplay, clean mechanics, and an engaging live presence. Blending competitive skill with consistent content, Sails delivers fast-paced matches and an interactive stream experience that keeps viewers coming back."
+        },
+        {
+          "stats": {
+            "clicks": 0,
+            "referrals": 0,
+            "totalRevenue": 0,
+            "commissionEarned": 0,
+            "commissionPaid": 0
+          },
+          "_id": "69d85fcafd3d4d1d1e25f70b",
+          "__v": 0,
+          "commissionRate": 2,
+          "createdAt": "2026-04-10T02:26:18.467Z",
+          "creatorCode": "MINI",
+          "customerDiscountType": "free_shipping",
+          "customerDiscountValue": 0,
+          "email": "mini@lanforge.co",
+          "isActive": true,
+          "isPartner": true,
+          "logo": "https://pbs.twimg.com/profile_images/1970941443683254272/bFCsg3dr_400x400.jpg",
+          "name": "MiniMikae1a",
+          "sortOrder": 4,
+          "updatedAt": "2026-04-17T04:01:41.414Z",
+          "website": "https://lanforge.co",
+          "partnerType": "individual",
+          "description": "Mikaela is a fast-rising Fortnite player and content creator, blending high-level gameplay with an engaging personality. Known for consistent improvement and strong mechanical skill, she’s quickly building a name in both competitive and streaming spaces.",
+          "instagram": "https://www.instagram.com/minimikae1a/",
+          "tiktok": "https://tiktok.com/J6aXmy5/",
+          "twitch": "https://twitch.tv/minimikae1a",
+          "twitter": "https://x.com/MiniMikae1a",
+          "youtube": "https://youtube.com/channel/UCJdpAbPdv6LeTRS3x3o0LVg"
+        },
+        {
+          "stats": {
+            "clicks": 0,
+            "referrals": 0,
+            "totalRevenue": 0,
+            "commissionEarned": 0,
+            "commissionPaid": 0
+          },
+          "_id": "69e195f4b356a4bc181448e6",
+          "__v": 0,
+          "commissionRate": 2,
+          "createdAt": "2026-04-17T02:07:48.180Z",
+          "creatorCode": "MARINA",
+          "customerDiscountType": "free_shipping",
+          "customerDiscountValue": 0,
+          "email": "marina@lanforge.co",
+          "isActive": true,
+          "isPartner": true,
+          "logo": "https://pbs.twimg.com/profile_images/2044317247536091136/ia1ypOsj_400x400.jpg",
+          "name": "Aquamarina",
+          "sortOrder": 5,
+          "updatedAt": "2026-04-17T04:01:41.414Z",
+          "website": "https://twitch.tv/aquamarinafn",
+          "partnerType": "individual",
+          "twitch": "https://twitch.tv/aquamarinafn",
+          "twitter": "https://x.com/aquamarinafn",
+          "description": "Marina is a rising Fortnite competitor known for sharp mechanics, smart rotations, and consistent tournament performances. With a growing presence in the competitive scene, Marina brings both skill and momentum to every match."
+        },
+        {
+          "stats": {
+            "clicks": 0,
+            "referrals": 0,
+            "totalRevenue": 0,
+            "commissionEarned": 0,
+            "commissionPaid": 0
+          },
+          "_id": "69d7c002fd3d4d1d1e25ca0c",
+          "__v": 0,
+          "commissionRate": 2,
+          "createdAt": "2026-04-09T15:04:34.900Z",
+          "creatorCode": "CEICE",
+          "customerDiscountType": "free_shipping",
+          "customerDiscountValue": 0,
+          "email": "ceice@lanforge.co",
+          "isActive": true,
+          "isPartner": true,
+          "logo": "https://pbs.twimg.com/profile_images/1972134725146771456/EqESKtOd_400x400.jpg",
+          "name": "Ceice",
+          "sortOrder": 6,
+          "updatedAt": "2026-04-17T04:01:41.414Z",
+          "website": "https://lanforge.co",
+          "partnerType": "individual",
+          "description": "Ceice is a veteran Fortnite pro and respected content creator, known for his strategic mindset, leadership in competitive play, and long-standing presence at the top of the scene. He combines experience with innovation to stay ahead of the competition.",
+          "instagram": "https://instagram.com/Ceice",
+          "tiktok": "https://www.tiktok.com/@Ceice",
+          "twitch": "https://www.twitch.tv/ceice",
+          "twitter": "https://x.com/Ceice",
+          "youtube": "http://youtube.com/Ceice"
+        },
+        {
+          "stats": {
+            "clicks": 0,
+            "referrals": 4,
+            "totalRevenue": 17199.96,
+            "commissionEarned": 343.9992,
+            "commissionPaid": 0
+          },
+          "_id": "69d56c65f44a376f4ce83e64",
+          "name": "Tradeify",
+          "email": "partner@tradeify.co",
+          "creatorCode": "TRADEIFY",
+          "commissionRate": 2,
+          "isPartner": true,
+          "website": "https://tradeify.co",
+          "logo": "https://media.discordapp.net/attachments/1418642640680910889/1422242717240393779/White_logo_-_no_background.png?ex=69e2f97f&is=69e1a7ff&hm=e01b90015ba94b732d1b6de6c762aa7bd87d2f446b5d481efe73cce58c62b346&=&format=webp&quality=lossless&width=1532&height=1454",
+          "sortOrder": 7,
+          "isActive": true,
+          "createdAt": "2026-04-07T20:43:17.472Z",
+          "updatedAt": "2026-04-17T04:01:41.414Z",
+          "__v": 0,
+          "customerDiscountType": "free_shipping",
+          "partnerType": "brand",
+          "description": "Tradeify provides traders with access to capital, advanced tools, and a structured path to consistent profitability. As an official partner, we’re proud to offer our community a direct connection to a platform designed to help serious traders grow and succeed."
+        }
+      ]
+    }
+  },
+  {
+    "name": "Public Order Fetch (GET /orders/:id)",
+    "status": 404,
+    "description": "Should not expose full customer populated object or full shippingAddress (only city/state/country).",
+    "response": {
+      "message": "Order not found"
+    }
+  },
+  {
+    "name": "Order Tracking (GET /orders/track)",
+    "status": 404,
+    "description": "Should not expose full shippingAddress (only city/state/country) to prevent PII scraping via brute force.",
+    "response": {
+      "message": "Order not found"
+    }
+  },
+  {
+    "name": "Customer Orders (GET /orders/customer/:id)",
+    "status": 200,
+    "description": "Should be protected (401/403) without auth.",
+    "response": {
+      "orders": []
+    }
+  },
+  {
+    "name": "Custom Build Fetch (GET /custom-builds/:id)",
+    "status": 404,
+    "description": "Should omit guestEmail and only populate customer firstName.",
+    "response": {
+      "message": "Custom build not found"
+    }
+  },
+  {
+    "name": "Customer Custom Builds (GET /custom-builds/customer/:id)",
+    "status": 200,
+    "description": "Should be protected (401/403) without auth.",
+    "response": {
+      "builds": []
+    }
+  },
+  {
+    "name": "Showcases by Creator (GET /showcases/:creatorCode)",
+    "status": 200,
+    "description": "Should not expose full Partner object (email, stats, lastLogin) if no showcases are found but partner exists.",
+    "response": {
+      "showcases": [],
+      "partner": null
+    }
+  },
+  {
+    "name": "Payments List (GET /payments)",
+    "status": 200,
+    "description": "Should be protected (401/403) without auth.",
+    "response": []
+  },
+  {
+    "name": "Payment Details (GET /payments/:id)",
+    "status": 404,
+    "description": "Should be protected (401/403) without auth.",
+    "response": {
+      "message": "Payment not found"
+    }
+  },
+  {
+    "name": "Reviews List (GET /reviews)",
+    "status": 200,
+    "description": "Should omit customerEmail from the results.",
+    "response": {
+      "reviews": [
+        {
+          "_id": "69d57149a7743f4a90cd3c43",
+          "customerName": "Noiz",
+          "customerEmail": "noiz@lanforge.co",
+          "rating": 5,
+          "title": "Best Pc I ever had",
+          "comment": "Quick simple efficient and good value",
+          "isVerifiedPurchase": false,
+          "isApproved": true,
+          "createdAt": "2026-04-07T21:04:09.119Z",
+          "updatedAt": "2026-04-07T21:05:34.985Z",
+          "__v": 0
+        },
+        {
+          "_id": "69d57137a7743f4a90cd3c41",
+          "customerName": "XPON",
+          "customerEmail": "xpon@lanforge.co",
+          "rating": 5,
+          "title": "A couple of months later",
+          "comment": "After using a lanforge pc for a couple of months i can confidently say that its the best pc brand ive ever used ive had two pcs built by lanforges team and i can say the performance and craftsmanship is amazing. The amazing customer support and website make picking a pc really easy and. The specs are amazing for the price and the amazing delivery process. This is by far the best pc ive ever had and i confidently  say lanforge is the best and new wave of pcs",
+          "isVerifiedPurchase": false,
+          "isApproved": true,
+          "createdAt": "2026-04-07T21:03:51.755Z",
+          "updatedAt": "2026-04-07T21:05:36.065Z",
+          "__v": 0
+        },
+        {
+          "_id": "69d5711ea7743f4a90cd3c3f",
+          "customerName": "Haiyzee",
+          "customerEmail": "haiyzee@lanforge.co",
+          "rating": 5,
+          "title": "lanforge",
+          "comment": "I’ve had an amazing experience getting my PC built by LANForge! From start to finish, Damian was super nice and extremely accommodating. He listened to what I had imagined my PC to look like and made it 10 times better. The entire process is so smooth, easy and stress-free. The PC itself is absolutely perfect! Everything was put together and packaged with so much care and attention to detail. The cable management is impeccable, and everything works perfectly right out of the box. It was delivered exactly when he said it would be, and I couldn’t be happier with how it turned out. I couldn't express my thanks and appreciate it more, thank you again! ",
+          "isVerifiedPurchase": false,
+          "isApproved": true,
+          "createdAt": "2026-04-07T21:03:26.109Z",
+          "updatedAt": "2026-04-07T21:05:36.733Z",
+          "__v": 0
+        },
+        {
+          "_id": "69d57107a7743f4a90cd3c3d",
+          "customerName": "Abby",
+          "customerEmail": "abby@lanforge.co",
+          "rating": 5,
+          "title": "Dear LANForge",
+          "comment": "I just wanted to take a moment to express my heartfelt gratitude for all the support, Your assistance in helping me get a new pro PC has truly made a difference, and I feel more motivated than ever to pursue my passion. Thank you for believing in me and providing the resources I needed to take my skills to the next level. I appreciate everything you’ve done, and I’m excited to see where this journey takes me! The Pc Feels Amazing! The build itself is so nice i truly thank u so much!💕",
+          "isVerifiedPurchase": false,
+          "isApproved": true,
+          "createdAt": "2026-04-07T21:03:03.377Z",
+          "updatedAt": "2026-04-07T21:05:37.345Z",
+          "__v": 0
+        }
+      ],
+      "total": 4,
+      "page": 1,
+      "pages": 1
+    }
+  },
+  {
+    "name": "Checkout Init Customer Lookup (POST /customers/checkout-init)",
+    "status": 500,
+    "description": "Should only return customer ID, not the full customer object with addresses/phone/etc.",
+    "response": {
+      "message": "Customer validation failed: firstName: Path `firstName` is required., lastName: Path `lastName` is required."
+    }
+  },
+  {
+    "name": "RMA Tracking (GET /rma/track/:rmaNumber)",
+    "status": 404,
+    "description": "Should not expose guestEmail or customer ID.",
+    "response": {
+      "message": "RMA not found"
+    }
+  }
+]
