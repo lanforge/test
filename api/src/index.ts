@@ -10,6 +10,7 @@ import path from 'path';
 import mongoSanitize from 'express-mongo-sanitize';
 import connectDB from './config/db';
 import { startPriceScrapingJob } from './services/scraperService';
+import { startAbandonedCartJob } from './services/cartSchedulerService';
 import { AppError } from './utils/AppError';
 import { env } from './config/env';
 
@@ -217,6 +218,7 @@ app.listen(PORT, () => {
   
   // Start background jobs
   startPriceScrapingJob();
+  startAbandonedCartJob();
 });
 
 export default app;

@@ -84,42 +84,33 @@ const TradeifyPage: React.FC = () => {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="mb-8 flex flex-col items-center gap-6"
+              className="mb-6 flex flex-col items-center gap-6"
             >
-              <div className="flex flex-row items-center justify-center gap-8 sm:gap-12 w-full max-w-2xl mx-auto px-4">
-                <div className="flex-1 flex justify-end items-center">
-                  <img src="/tradeify.png" alt="Tradeify Logo" className="h-8 sm:h-12 md:h-16 w-auto object-contain filter invert brightness-0" style={{ filter: 'brightness(0) invert(1)' }} />
+              <div className="inline-flex items-center gap-6 px-8 py-4 rounded-full border border-cyan-500/50 bg-cyan-950/40 backdrop-blur-md shadow-[0_0_30px_rgba(6,182,212,0.2)]">
+                <div className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.8)]" />
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  <span className="text-cyan-300 uppercase tracking-[0.3em] text-sm font-black opacity-90">OFFICIAL PARTNER OF</span>
+                  <img src="https://cdn.prod.website-files.com/679b064a680c614548672a06/679b233279e9e11c06af4d06_horizontal-logo.svg" alt="Tradeify" className="h-6 sm:h-8 object-contain drop-shadow-lg filter brightness-125" />
                 </div>
-                <div className="flex-none text-gray-500 text-2xl sm:text-3xl font-light opacity-50">×</div>
-                <div className="flex-1 flex justify-start items-center">
-                  <img src="/lanforge.png" alt="LANForge Logo" className="h-8 sm:h-12 md:h-16 w-auto object-contain filter invert brightness-0" style={{ filter: 'brightness(0) invert(1)' }} />
-                </div>
-              </div>
-              <div className="inline-flex items-center gap-4 px-6 py-2 rounded-full border border-cyan-500/30 bg-cyan-950/30 backdrop-blur-md">
-                <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                <span className="text-cyan-300 uppercase tracking-[0.2em] text-[10px] sm:text-xs font-bold">The Official Tradeify Workstation Partner</span>
-                <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                <div className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.8)]" />
               </div>
             </motion.div>
 
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 tracking-tighter leading-[0.9]">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tighter leading-tight py-2">
               TRADE BY DAY.<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-emerald-400 drop-shadow-[0_0_30px_rgba(6,182,212,0.4)]">
+              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-emerald-400 drop-shadow-[0_0_30px_rgba(6,182,212,0.4)] py-2">
                 DOMINATE BY NIGHT.
               </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl font-light leading-relaxed mx-auto">
-              Zero compromises. Extreme data-throughput for professional trading algorithms, paired with flagship graphics to crush any AAA title.
+            <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-3xl font-light leading-relaxed mx-auto">
+              Purpose-built workstations optimized for Futures & Crypto prop firm trading. Experience ultra-low latency execution to help you tackle evaluations, paired with flagship graphics for high-end gaming when the markets close.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center w-full sm:w-auto pb-4">
               <a href="#workstations" className="group relative px-10 py-5 bg-white text-black font-black uppercase tracking-widest text-sm rounded-none overflow-hidden hover:scale-105 transition-all duration-500 shadow-[0_0_40px_rgba(255,255,255,0.3)]">
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <span className="relative z-10 group-hover:text-white transition-colors duration-500">Explore The Lineup</span>
-              </a>
-              <a href="#advantages" className="px-10 py-5 bg-transparent text-white border border-gray-700 hover:border-cyan-400 font-bold uppercase tracking-widest text-sm rounded-none transition-all duration-500 hover:bg-cyan-950/30">
-                Discover The Advantage
+                <span className="relative z-10 group-hover:text-white transition-colors duration-500">Explore Trading Rigs</span>
               </a>
             </div>
           </motion.div>
@@ -144,9 +135,9 @@ const TradeifyPage: React.FC = () => {
         <div className="container-narrow px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 divide-y md:divide-y-0 md:divide-x divide-gray-900">
             {[
-              { top: "Data", bottom: "Ultra-Low Latency" },
-              { top: "Displays", bottom: "Up to 5 Native" },
-              { top: "Gaming", bottom: "Max Framerates" }
+              { top: "Execution", bottom: "Ultra-Low Latency" },
+              { top: "Displays", bottom: "Multi-Monitor Ready" },
+              { top: "Performance", bottom: "Trading & Gaming" }
             ].map((stat, i) => (
               <motion.div 
                 key={i}
@@ -178,7 +169,7 @@ const TradeifyPage: React.FC = () => {
             className="text-center mb-24"
           >
             <h2 className="text-cyan-500 font-mono tracking-[0.3em] text-sm font-bold mb-4">THE ARSENAL</h2>
-            <h3 className="text-5xl md:text-7xl font-black text-white tracking-tighter">Choose Your Weapon</h3>
+            <h3 className="text-5xl md:text-7xl font-black text-white tracking-tighter">Choose Your Trading Edge</h3>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
@@ -250,7 +241,7 @@ const TradeifyPage: React.FC = () => {
                     </div>
                     <Link to={`/products/${product.id}`} className="block w-full">
                       <button className="w-full py-4 border border-gray-700 text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all duration-300 relative overflow-hidden group/btn">
-                        <span className="relative z-10">Configure Build</span>
+                        <span className="relative z-10">Configure Trading Rig</span>
                       </button>
                     </Link>
                   </div>
@@ -337,7 +328,7 @@ const TradeifyPage: React.FC = () => {
                     </div>
                     <Link to={`/products/${products[3].id}`} className="w-full sm:w-auto ml-auto">
                       <button className="w-full sm:w-auto px-12 py-6 bg-white text-black font-black uppercase tracking-[0.2em] text-sm hover:scale-105 transition-transform duration-500 shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)]">
-                        Claim The Ultimate
+                        Claim The Ultimate Edge
                       </button>
                     </Link>
                   </div>
@@ -362,9 +353,9 @@ const TradeifyPage: React.FC = () => {
             viewport={{ once: true }}
             className="max-w-4xl mx-auto"
           >
-            <h2 className="text-5xl md:text-7xl font-black mb-8 text-white tracking-tighter">Ready to Upgrade Your Edge?</h2>
+            <h2 className="text-5xl md:text-7xl font-black mb-8 text-white tracking-tighter">Ready to Upgrade Your Setup?</h2>
             <p className="text-xl text-gray-400 mb-12 font-light">
-              Stop letting hardware bottleneck your trading execution. Speak with our configuration experts today.
+              Stop letting hardware bottleneck your trading execution or gaming experience. Equip yourself with the performance you need for prop firm challenges and beyond.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <Link to="/configurator">

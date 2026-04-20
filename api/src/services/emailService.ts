@@ -656,6 +656,61 @@ export const sendPasswordReset = async (
   if (error) throw new Error(error.message);
 };
 
+export const sendAbandonedCartEmail = async (email: string, name: string, cartUrl: string): Promise<void> => {
+  const { error } = await resend.emails.send({
+    from: `${FROM_NAME} <${FROM_EMAIL}>`,
+    to: email,
+    subject: `Did you forget something? - LANForge`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background-color:#0f172a;margin:0;padding:20px 10px;-webkit-font-smoothing:antialiased;">
+        <div style="width:100%;max-width:640px;margin:0 auto;background-color:#1e293b;border-radius:16px;overflow:hidden;box-shadow:0 20px 25px -5px rgba(0,0,0,0.5);box-sizing:border-box;">
+          
+          <!-- Header -->
+          <div style="background:linear-gradient(135deg, #064e3b 0%, #10b981 100%);padding:30px 20px;text-align:center;box-sizing:border-box;">
+            <img src="${FRONTEND_URL}/logo-2.png" alt="LANForge Logo" style="max-height:60px;width:auto;max-width:100%;display:block;margin:0 auto;">
+            <p style="color:#d1fae5;margin:16px 0 0;font-size:18px;font-weight:500;">You left items in your cart! 🛒</p>
+          </div>
+          
+          <div style="padding:30px 20px;box-sizing:border-box;word-break:break-word;">
+            <h2 style="color:#f8fafc;margin:0 0 16px;font-size:24px;">Hi ${escapeHtml(name)},</h2>
+            <p style="color:#94a3b8;margin:0 0 24px;font-size:16px;line-height:1.6;">
+              We noticed you left some items in your shopping cart. Don't worry, we've saved them for you!
+            </p>
+            <p style="color:#94a3b8;margin:0 0 24px;font-size:16px;line-height:1.6;">
+              Click the button below to return to your cart and complete your purchase.
+            </p>
+            
+            <!-- Action Button -->
+            <div style="text-align:center;margin-top:40px;margin-bottom:32px;">
+              <a href="${cartUrl}" 
+                 style="display:inline-block;background-color:#10b981;color:#ffffff;padding:16px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;box-shadow:0 4px 6px -1px rgba(16, 185, 129, 0.4);max-width:100%;box-sizing:border-box;">
+                Return to Cart
+              </a>
+            </div>
+            
+          </div>
+          
+          <!-- Footer -->
+          <div style="background-color:#0f172a;padding:30px 20px;text-align:center;border-top:1px solid #334155;box-sizing:border-box;">
+            <p style="margin:0 0 12px;color:#64748b;font-size:13px;">© ${new Date().getFullYear()} LANForge. Built for performance.</p>
+            <p style="margin:0;"><a href="${FRONTEND_URL}" style="color:#10b981;text-decoration:none;font-size:13px;font-weight:500;">Visit our website</a></p>
+          </div>
+          
+        </div>
+      </body>
+      </html>
+    `,
+    text: `Hi ${name},\nWe noticed you left some items in your cart.\nReturn to your cart: ${cartUrl}`,
+  });
+  if (error) throw new Error(error.message);
+};
+
 export const sendCampaignEmail = async (
   to: string[],
   subject: string,

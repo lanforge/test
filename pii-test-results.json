@@ -6,54 +6,26 @@
     "response": {
       "partners": [
         {
-          "stats": {
-            "clicks": 0,
-            "referrals": 0,
-            "totalRevenue": 0,
-            "commissionEarned": 0,
-            "commissionPaid": 0
-          },
           "_id": "69d7bfd3fd3d4d1d1e25c99d",
-          "__v": 0,
-          "commissionRate": 2,
-          "createdAt": "2026-04-09T15:03:47.262Z",
           "creatorCode": "DIG",
           "customerDiscountType": "free_shipping",
           "customerDiscountValue": 0,
-          "email": "dig@lanforge.co",
-          "isActive": true,
-          "isPartner": true,
           "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5Yg7cn9YSU5OdZ9Lze_7XN-FV_fL2DasDUA&s",
           "name": "Dignitas",
           "sortOrder": 0,
-          "updatedAt": "2026-04-17T04:01:41.414Z",
           "website": "https://dignitas.gg",
           "partnerType": "brand",
           "twitter": "https://x.com/dignitas",
           "description": "Dignitas is an international esports organization and one of the most iconic and recognizable brands in the professional gaming industry, fielding teams in the world's largest and most popular games."
         },
         {
-          "stats": {
-            "clicks": 0,
-            "referrals": 0,
-            "totalRevenue": 0,
-            "commissionEarned": 0,
-            "commissionPaid": 0
-          },
           "_id": "69d86c98fd3d4d1d1e260410",
-          "__v": 0,
-          "commissionRate": 2,
-          "createdAt": "2026-04-10T03:20:56.223Z",
           "creatorCode": "QUEASY",
           "customerDiscountType": "free_shipping",
           "customerDiscountValue": 0,
-          "email": "queasy@lanforge.co",
-          "isActive": true,
-          "isPartner": true,
           "logo": "https://pbs.twimg.com/profile_images/1967363278373298176/QojCdMSF_400x400.jpg",
           "name": "Queasy",
           "sortOrder": 1,
-          "updatedAt": "2026-04-17T04:01:41.414Z",
           "website": "https://lanforge.co",
           "partnerType": "individual",
           "description": "Queasy is one of the top-performing Fortnite pros globally, recognized for elite game sense, consistency in high-level tournaments, and dominant placements across major events. A true competitor, Queasy represents the highest level of competitive play.",
@@ -62,27 +34,13 @@
           "youtube": "https://www.youtube.com/@Queasyfn"
         },
         {
-          "stats": {
-            "clicks": 0,
-            "referrals": 0,
-            "totalRevenue": 0,
-            "commissionEarned": 0,
-            "commissionPaid": 0
-          },
           "_id": "69d7bfebfd3d4d1d1e25c9c3",
-          "__v": 0,
-          "commissionRate": 2,
-          "createdAt": "2026-04-09T15:04:11.727Z",
           "creatorCode": "NINA",
           "customerDiscountType": "free_shipping",
           "customerDiscountValue": 0,
-          "email": "nina@lanforge.co",
-          "isActive": true,
-          "isPartner": true,
           "logo": "https://pbs.twimg.com/profile_images/2022455006365126661/8RI8JFL2_400x400.jpg",
           "name": "XSET Nina",
           "sortOrder": 2,
-          "updatedAt": "2026-04-17T04:01:41.414Z",
           "website": "https://lanforge.co",
           "partnerType": "individual",
           "description": "Nina is a professional Fortnite player and member of XSET, known for her competitive drive, strong mechanics, and influence within the gaming community. She represents the next generation of top-tier talent in esports.",
@@ -93,19 +51,9 @@
           "youtube": "https://www.youtube.com/channel/UCOhg8Vfk6DBjUG_l2KS0yyA"
         },
         {
-          "stats": {
-            "clicks": 0,
-            "referrals": 0,
-            "totalRevenue": 0,
-            "commissionEarned": 0,
-            "commissionPaid": 0
-          },
           "_id": "69e1af5cee66e1880edf1e24",
           "name": "Sails",
-          "email": "sails@lanforge.co",
           "creatorCode": "SAILS",
-          "commissionRate": 2,
-          "isPartner": true,
           "partnerType": "individual",
           "customerDiscountType": "free_shipping",
           "customerDiscountValue": 0,
@@ -116,34 +64,16 @@
           "youtube": "https://www.youtube.com/channel/UCEpf_tPTUxlSV0kYO0YrIFg",
           "instagram": "",
           "sortOrder": 3,
-          "isActive": true,
-          "createdAt": "2026-04-17T03:56:12.494Z",
-          "updatedAt": "2026-04-17T04:01:41.414Z",
-          "__v": 0,
           "description": "Sails is a Fortnite streamer known for high-level gameplay, clean mechanics, and an engaging live presence. Blending competitive skill with consistent content, Sails delivers fast-paced matches and an interactive stream experience that keeps viewers coming back."
         },
         {
-          "stats": {
-            "clicks": 0,
-            "referrals": 0,
-            "totalRevenue": 0,
-            "commissionEarned": 0,
-            "commissionPaid": 0
-          },
           "_id": "69d85fcafd3d4d1d1e25f70b",
-          "__v": 0,
-          "commissionRate": 2,
-          "createdAt": "2026-04-10T02:26:18.467Z",
           "creatorCode": "MINI",
           "customerDiscountType": "free_shipping",
           "customerDiscountValue": 0,
-          "email": "mini@lanforge.co",
-          "isActive": true,
-          "isPartner": true,
           "logo": "https://pbs.twimg.com/profile_images/1970941443683254272/bFCsg3dr_400x400.jpg",
           "name": "MiniMikae1a",
           "sortOrder": 4,
-          "updatedAt": "2026-04-17T04:01:41.414Z",
           "website": "https://lanforge.co",
           "partnerType": "individual",
           "description": "Mikaela is a fast-rising Fortnite player and content creator, blending high-level gameplay with an engaging personality. Known for consistent improvement and strong mechanical skill, she’s quickly building a name in both competitive and streaming spaces.",
@@ -154,27 +84,13 @@
           "youtube": "https://youtube.com/channel/UCJdpAbPdv6LeTRS3x3o0LVg"
         },
         {
-          "stats": {
-            "clicks": 0,
-            "referrals": 0,
-            "totalRevenue": 0,
-            "commissionEarned": 0,
-            "commissionPaid": 0
-          },
           "_id": "69e195f4b356a4bc181448e6",
-          "__v": 0,
-          "commissionRate": 2,
-          "createdAt": "2026-04-17T02:07:48.180Z",
           "creatorCode": "MARINA",
           "customerDiscountType": "free_shipping",
           "customerDiscountValue": 0,
-          "email": "marina@lanforge.co",
-          "isActive": true,
-          "isPartner": true,
           "logo": "https://pbs.twimg.com/profile_images/2044317247536091136/ia1ypOsj_400x400.jpg",
           "name": "Aquamarina",
           "sortOrder": 5,
-          "updatedAt": "2026-04-17T04:01:41.414Z",
           "website": "https://twitch.tv/aquamarinafn",
           "partnerType": "individual",
           "twitch": "https://twitch.tv/aquamarinafn",
@@ -182,27 +98,13 @@
           "description": "Marina is a rising Fortnite competitor known for sharp mechanics, smart rotations, and consistent tournament performances. With a growing presence in the competitive scene, Marina brings both skill and momentum to every match."
         },
         {
-          "stats": {
-            "clicks": 0,
-            "referrals": 0,
-            "totalRevenue": 0,
-            "commissionEarned": 0,
-            "commissionPaid": 0
-          },
           "_id": "69d7c002fd3d4d1d1e25ca0c",
-          "__v": 0,
-          "commissionRate": 2,
-          "createdAt": "2026-04-09T15:04:34.900Z",
           "creatorCode": "CEICE",
           "customerDiscountType": "free_shipping",
           "customerDiscountValue": 0,
-          "email": "ceice@lanforge.co",
-          "isActive": true,
-          "isPartner": true,
           "logo": "https://pbs.twimg.com/profile_images/1972134725146771456/EqESKtOd_400x400.jpg",
           "name": "Ceice",
           "sortOrder": 6,
-          "updatedAt": "2026-04-17T04:01:41.414Z",
           "website": "https://lanforge.co",
           "partnerType": "individual",
           "description": "Ceice is a veteran Fortnite pro and respected content creator, known for his strategic mindset, leadership in competitive play, and long-standing presence at the top of the scene. He combines experience with innovation to stay ahead of the competition.",
@@ -213,26 +115,12 @@
           "youtube": "http://youtube.com/Ceice"
         },
         {
-          "stats": {
-            "clicks": 0,
-            "referrals": 4,
-            "totalRevenue": 17199.96,
-            "commissionEarned": 343.9992,
-            "commissionPaid": 0
-          },
           "_id": "69d56c65f44a376f4ce83e64",
           "name": "Tradeify",
-          "email": "partner@tradeify.co",
           "creatorCode": "TRADEIFY",
-          "commissionRate": 2,
-          "isPartner": true,
           "website": "https://tradeify.co",
           "logo": "https://media.discordapp.net/attachments/1418642640680910889/1422242717240393779/White_logo_-_no_background.png?ex=69e2f97f&is=69e1a7ff&hm=e01b90015ba94b732d1b6de6c762aa7bd87d2f446b5d481efe73cce58c62b346&=&format=webp&quality=lossless&width=1532&height=1454",
           "sortOrder": 7,
-          "isActive": true,
-          "createdAt": "2026-04-07T20:43:17.472Z",
-          "updatedAt": "2026-04-17T04:01:41.414Z",
-          "__v": 0,
           "customerDiscountType": "free_shipping",
           "partnerType": "brand",
           "description": "Tradeify provides traders with access to capital, advanced tools, and a structured path to consistent profitability. As an official partner, we’re proud to offer our community a direct connection to a platform designed to help serious traders grow and succeed."
@@ -242,10 +130,51 @@
   },
   {
     "name": "Public Order Fetch (GET /orders/:id)",
-    "status": 404,
+    "status": 200,
     "description": "Should not expose full customer populated object or full shippingAddress (only city/state/country).",
     "response": {
-      "message": "Order not found"
+      "order": {
+        "_id": "69dd99f9f5b11356dd2e7c60",
+        "orderNumber": "ORD-3KOATH3J",
+        "customer": "69dd982dfd3d4d1d1e26ab3b",
+        "guestEmail": "ilyynina1@gmail.com",
+        "items": [
+          {
+            "name": "LANForge Custom PC",
+            "sku": "CUSTOM",
+            "price": 0,
+            "quantity": 1,
+            "_id": "69dd99f9f5b11356dd2e7c61"
+          }
+        ],
+        "shippingAddress": {
+          "city": "Colorado Springs",
+          "state": "Colorado",
+          "country": "US"
+        },
+        "subtotal": 0,
+        "shipping": 0,
+        "shippingInsurance": 0,
+        "tax": 0,
+        "discount": 0,
+        "donationAmount": 0,
+        "lanforgeDonationAmount": 0,
+        "total": 0,
+        "status": "delivered",
+        "paymentStatus": "paid",
+        "paymentMethod": "stripe",
+        "shippingRates": [],
+        "loyaltyPointsEarned": 0,
+        "loyaltyPointsUsed": 0,
+        "createdAt": "2026-04-14T01:35:53.326Z",
+        "updatedAt": "2026-04-17T22:24:19.900Z",
+        "carrier": "Unknown",
+        "carrierTrackingUrl": "https://wwwapps.ups.com/WebTracking/track?HTMLVersion=5.0&loc=en_US&Requester=UPSHome&WBPM_lid=homepage%2Fct1.html_pnl_trk&track.x=Track&trackNums=1Z06VG611320236964",
+        "isAdminCreated": false,
+        "labelUrl": "https://deliver.goshippo.com/c83df5c3795f4306af1ba441f4291f8c.pdf?Expires=1807898366&Signature=bNSPn64R2X1l5eW7rGvCUJrMi2TUAzCnsPbbMT6gUhocMdjtWdcQhEGIp3cLKua97lMohrrNriQG1zonVFO9DROETBsMf5ud5gvs01zUP1lnm-B8XT0Jr4hFIsTlPbpMun0XXgsPGQkyrknXJ0IhxwsuhazbAoIe7eTMTR5o7f5mDcF9VHYmhVoF7y9o~HgoJBIzfVdfFzCKWtZdUgfdOpaD6P-2PkE5UvCUK8-S5pkd1nCfG6ETtJ4JxByi8eTBUj-ZXxZaVUEHCI2~kev3TM4IrZU0Z~vK-MwGrO4CmDmunylvl9AqnFsnOA5lsgfhJv7EhubL5Y7Mm2ZPRS223w__&Key-Pair-Id=APKAJRICFXQ2S4YUQRSQ",
+        "trackingNumber": "1Z06VG611320236964",
+        "trackingUrl": "https://lanforge.co/track/ORD-3KOATH3J"
+      }
     }
   },
   {
@@ -258,26 +187,138 @@
   },
   {
     "name": "Customer Orders (GET /orders/customer/:id)",
-    "status": 200,
+    "status": 401,
     "description": "Should be protected (401/403) without auth.",
     "response": {
-      "orders": []
+      "message": "Not authorized, no token"
     }
   },
   {
     "name": "Custom Build Fetch (GET /custom-builds/:id)",
-    "status": 404,
+    "status": 200,
     "description": "Should omit guestEmail and only populate customer firstName.",
     "response": {
-      "message": "Custom build not found"
+      "build": {
+        "_id": "69e2e18c902b011139625700",
+        "buildId": "F5914347",
+        "name": "Custom Build Draft",
+        "parts": [
+          {
+            "part": {
+              "_id": "69bd6b7079b5694aeef8c8bf",
+              "type": "cpu",
+              "slug": "amd-ryzen-9-9950x3d",
+              "brand": "AMD",
+              "partModel": "Ryzen™ 9 9950X3D",
+              "sku": "PART-553405",
+              "price": 724.99,
+              "stock": 10,
+              "images": []
+            },
+            "quantity": 1,
+            "partType": "cpu",
+            "serialNumbers": []
+          },
+          {
+            "part": {
+              "_id": "69bd6c7f79b5694aeef8c8f9",
+              "type": "gpu",
+              "slug": "msi-gaming-geforce-rtx-5080-16gb",
+              "brand": "MSI",
+              "partModel": "Gaming GeForce RTX 5080 16GB",
+              "sku": "PART-609392",
+              "price": 1759.99,
+              "stock": 10,
+              "images": []
+            },
+            "quantity": 1,
+            "partType": "gpu",
+            "serialNumbers": []
+          },
+          {
+            "part": {
+              "_id": "69bc8c8e91e3d4395d283d8b",
+              "type": "motherboard",
+              "slug": "msi-b850-tomahawk",
+              "brand": "MSI",
+              "partModel": "B850 TOMAHAWK",
+              "sku": "8571929312",
+              "price": 230.99,
+              "stock": 1,
+              "images": []
+            },
+            "quantity": 1,
+            "partType": "motherboard",
+            "serialNumbers": []
+          },
+          {
+            "part": {
+              "_id": "69d5b3c16b2a6fcc7d1f9f7e",
+              "type": "ram",
+              "slug": "g-skill-trident-z5-32gb-6400-cl30",
+              "brand": "G.SKILL",
+              "partModel": "Trident Z5 32GB 6400 CL30",
+              "sku": "PART-993499",
+              "price": 538.99,
+              "stock": 10,
+              "images": []
+            },
+            "quantity": 1,
+            "partType": "ram",
+            "serialNumbers": []
+          },
+          {
+            "part": {
+              "_id": "69bd6e7d79b5694aeef8c959",
+              "type": "storage",
+              "slug": "samsung-990-pro-2tb",
+              "brand": "SAMSUNG",
+              "partModel": "990 PRO 2TB",
+              "sku": "PART-738798",
+              "price": 439.99,
+              "stock": 10,
+              "images": []
+            },
+            "quantity": 1,
+            "partType": "storage",
+            "serialNumbers": []
+          },
+          {
+            "part": {
+              "_id": "69c1c6675c7e141cdd90cf1e",
+              "type": "case",
+              "slug": "havn-hs-420-vgpu",
+              "brand": "HAVN",
+              "partModel": "HS 420 VGPU",
+              "sku": "PART-959012",
+              "price": 362.99,
+              "stock": 10,
+              "images": [
+                "https://cdn.lanforge.co/Parts/case/1774479530767-136108741.png"
+              ]
+            },
+            "quantity": 1,
+            "partType": "Case",
+            "serialNumbers": []
+          }
+        ],
+        "subtotal": 4057.9399999999996,
+        "laborFee": 405.99,
+        "total": 4463.929999999999,
+        "status": "saved",
+        "notes": "Case Color: Black",
+        "createdAt": "2026-04-18T01:42:36.117Z",
+        "updatedAt": "2026-04-18T01:44:05.972Z",
+        "__v": 0
+      }
     }
   },
   {
     "name": "Customer Custom Builds (GET /custom-builds/customer/:id)",
-    "status": 200,
+    "status": 401,
     "description": "Should be protected (401/403) without auth.",
     "response": {
-      "builds": []
+      "message": "Not authorized, no token"
     }
   },
   {
@@ -285,22 +326,388 @@
     "status": 200,
     "description": "Should not expose full Partner object (email, stats, lastLogin) if no showcases are found but partner exists.",
     "response": {
-      "showcases": [],
-      "partner": null
+      "showcases": [
+        {
+          "_id": "69e145d17c7503a37d63c7f3",
+          "name": "Nina's Gaming PC",
+          "creatorName": "XSET Nina",
+          "creatorCode": "nina",
+          "description": "",
+          "images": [
+            "https://cdn.lanforge.co/misc/9dafdbda-cba9-4038-8da9-6ebaf3131faf.jpg"
+          ],
+          "parts": [
+            {
+              "part": {
+                "ratings": {
+                  "average": 0,
+                  "count": 0
+                },
+                "_id": "69bc76f091e3d4395d283c2f",
+                "type": "cpu",
+                "slug": "amd-ryzen-7-9800x3d",
+                "brand": "AMD",
+                "partModel": "Ryzen™ 7 9800X3D",
+                "sku": "12481723192",
+                "price": 510.99,
+                "cost": 464,
+                "stock": 1,
+                "reserved": 0,
+                "reorderPoint": 3,
+                "serialNumbers": [],
+                "specs": {
+                  "_empty": true,
+                  "tdp": 120
+                },
+                "images": [],
+                "description": "",
+                "tags": [],
+                "isActive": true,
+                "isFeatured": false,
+                "weight": 0,
+                "createdAt": "2026-03-19T22:21:36.677Z",
+                "updatedAt": "2026-04-16T18:27:25.304Z",
+                "__v": 0,
+                "productUrl": "https://www.amazon.com/AMD-9800X3D-16-Thread-Desktop-Processor/dp/B0DKFMSMYK/ref=sr_1_2?crid=2EZ8O7BR091PD&dib=eyJ2IjoiMSJ9.lNGh0mbKVGf5HKuHUD5M_Fi5gDjotRBwHcfk1_N3Uk-crz-abUGEq7M2JciQpvEmy_ijVfWUf2JSX_xzoC_iCe_sXMiKyVUnjJo8gPIGWmLRYiY3Eu5oxirLZm1q9bLFhCQI7HigiMesEddXnrQ_fFswd6d2pzgMniz0DMOr0tqK9Erc8o-ZDj6nmGNpXLcDSLcMAugaXfNDzvhiZLbNUHYWzNPLzDYrftEksbd2mXw.zTXYLU2qdndlOMM_5BGikWK83Pij9lnCd28DmbqPMMk&dib_tag=se&keywords=9800x3d&qid=1773975374&sprefix=9800x3%2Caps%2C215&sr=8-2"
+              },
+              "quantity": 1,
+              "partType": "cpu"
+            },
+            {
+              "part": {
+                "ratings": {
+                  "average": 0,
+                  "count": 0
+                },
+                "_id": "69bd6c7c79b5694aeef8c8f1",
+                "type": "gpu",
+                "slug": "gigabyte-gaming-geforce-rtx-5070-ti-16gb",
+                "brand": "GIGABYTE",
+                "partModel": "Gaming GeForce RTX 5070 Ti 16GB",
+                "sku": "PART-803257",
+                "price": 1209.99,
+                "cost": 1099.99,
+                "stock": 10,
+                "reserved": 0,
+                "reorderPoint": 3,
+                "serialNumbers": [],
+                "specs": {
+                  "_empty": true,
+                  "tdp": 285
+                },
+                "images": [],
+                "description": "",
+                "tags": [],
+                "isActive": true,
+                "isFeatured": false,
+                "weight": 0,
+                "productUrl": "https://www.newegg.com/gigabyte-gv-n507tgaming-oc-16gd-geforce-rtx-5070-ti-16gb-graphics-card-triple-fans/p/N82E16814932768",
+                "createdAt": "2026-03-20T15:49:16.259Z",
+                "updatedAt": "2026-04-08T03:28:18.390Z",
+                "__v": 0
+              },
+              "quantity": 1,
+              "partType": "gpu"
+            },
+            {
+              "part": {
+                "ratings": {
+                  "average": 0,
+                  "count": 0
+                },
+                "_id": "69bc8c8e91e3d4395d283d8b",
+                "type": "motherboard",
+                "slug": "msi-b850-tomahawk",
+                "brand": "MSI",
+                "partModel": "B850 TOMAHAWK",
+                "sku": "8571929312",
+                "price": 230.99,
+                "cost": 209.99,
+                "stock": 1,
+                "reserved": 0,
+                "reorderPoint": 3,
+                "serialNumbers": [],
+                "specs": {
+                  "_empty": true,
+                  "socket": "AM5",
+                  "formFactor": "ATX",
+                  "chipset": "B850"
+                },
+                "images": [],
+                "description": "",
+                "tags": [],
+                "isActive": true,
+                "isFeatured": false,
+                "weight": 0,
+                "createdAt": "2026-03-19T23:53:50.246Z",
+                "updatedAt": "2026-04-17T18:34:31.964Z",
+                "__v": 0,
+                "productUrl": "https://www.amazon.com/MSI-B850-Tomahawk-WiFi-Motherboard/dp/B0DT58JK2W/ref=sr_1_1?crid=1FHVA4QCBPKN5&dib=eyJ2IjoiMSJ9.jYMeO38grdcd9mp5uSltdZF5FJscgMyYqXkl-jgXVoVZsdfpF2b3oE8MT_s0KD6NwdlWRXrWSrw-jHUW19sUDEYu9yN8aITAYYIBkG4hsE3KLkuVNqfcdL2yEq0r0NdNefYH0Ysa2D8HFy9ebb4R_ajUKOHwyb8V4_HGAl7F4NEN46xWOnqJoPqf13qoyjcVpkrsvbxv35LTYv3H9sxXAbPvSmRim3ODJujnY9Hvtyg.x3ZXdLRnQFDLb91fIxZul1ncjkzYvbeOoybaSQsMZrw&dib_tag=se&keywords=b850%2Btomahawk&qid=1773973102&sprefix=b850%2Btom%2Caps%2C208&sr=8-1&th=1"
+              },
+              "quantity": 1,
+              "partType": "motherboard"
+            },
+            {
+              "part": {
+                "ratings": {
+                  "average": 0,
+                  "count": 0
+                },
+                "_id": "69bd73cd500944cc71f0f3c0",
+                "type": "ram",
+                "slug": "v-color-manta-xsky-32gb-6000-cl30",
+                "brand": "V-COLOR",
+                "partModel": "Manta XSky 32GB 6000 CL30",
+                "sku": "PART-737049",
+                "price": 434.99,
+                "cost": 394.99,
+                "stock": 10,
+                "reserved": 0,
+                "reorderPoint": 3,
+                "serialNumbers": [],
+                "specs": {
+                  "_empty": true,
+                  "speed": 6000
+                },
+                "images": [],
+                "description": "",
+                "tags": [],
+                "isActive": true,
+                "isFeatured": false,
+                "weight": 0,
+                "productUrl": "https://www.newegg.com/v-color-32gb-2-x-16gb-ddr5-6000-pc5-48000-cas-latency-cl30-memory-desktop-memory/p/0RN-00MB-000T5",
+                "createdAt": "2026-03-20T16:20:29.197Z",
+                "updatedAt": "2026-04-16T00:20:08.082Z",
+                "__v": 0
+              },
+              "quantity": 1,
+              "partType": "ram"
+            },
+            {
+              "part": {
+                "ratings": {
+                  "average": 0,
+                  "count": 0
+                },
+                "_id": "69bd6e7d79b5694aeef8c959",
+                "type": "storage",
+                "slug": "samsung-990-pro-2tb",
+                "brand": "SAMSUNG",
+                "partModel": "990 PRO 2TB",
+                "sku": "PART-738798",
+                "price": 439.99,
+                "cost": 399.99,
+                "stock": 10,
+                "reserved": 0,
+                "reorderPoint": 3,
+                "serialNumbers": [],
+                "specs": {
+                  "_empty": true
+                },
+                "images": [],
+                "description": "",
+                "tags": [],
+                "isActive": true,
+                "isFeatured": false,
+                "weight": 0,
+                "productUrl": "https://www.newegg.com/samsung-2tb-990-pro-nvme-2-0/p/N82E16820147861",
+                "createdAt": "2026-03-20T15:57:49.402Z",
+                "updatedAt": "2026-04-17T21:34:30.512Z",
+                "__v": 0
+              },
+              "quantity": 1,
+              "partType": "storage"
+            },
+            {
+              "part": {
+                "ratings": {
+                  "average": 0,
+                  "count": 0
+                },
+                "_id": "69bd6f2f79b5694aeef8c971",
+                "type": "psu",
+                "slug": "montech-century-ii-850w",
+                "brand": "MONTECH",
+                "partModel": "CENTURY II 850W",
+                "sku": "PART-747361",
+                "price": 98.99,
+                "cost": 89.9,
+                "stock": 10,
+                "reserved": 0,
+                "reorderPoint": 3,
+                "serialNumbers": [],
+                "specs": {
+                  "_empty": true,
+                  "wattage": 850
+                },
+                "images": [],
+                "description": "",
+                "tags": [],
+                "isActive": true,
+                "isFeatured": false,
+                "weight": 0,
+                "productUrl": "https://www.amazon.com/sspa/click?ie=UTF8&spc=MToxNDkxNjEyNTIxNTk4Mjg1OjE3NzQwMjE3OTg6c3BfYXRmOjMwMTA4Njc5NzQ3MTAwMjo6MDo6&url=%2FMONTECH-Century-II-High-End-Cybenetics%2Fdp%2FB0F3XW1J16%2Fref%3Dsr_1_3_sspa%3Fcrid%3D2DDUHB63WQPZA%26dib%3DeyJ2IjoiMSJ9.LfbsSEkki3YZ9FTrCWQJPmV0T1pfMAakkezBPOjO_TYJHhTEAZmXI2LKOLCrIK9CwtP6v1wIjrBDKVmwBAvU8l4g7rWIlkztV9KK_LgwB5UvyrvEpatilJVYCgbQeQNjsdkzJd4ARHhocjjxq_dt_i2wOxGeDPw7KRQvSYlcAFU2x05KNsEHvx16XrL3K6NEwUBJb-DK9-E0Ipm4D2VuYpnInHYPqOPfahBqb_6RWC4.xw3r0rtdTvJRHnputWkDNMGq1thMcOzZrx_HXu_VRHw%26dib_tag%3Dse%26keywords%3Dmsi%2Btomahawk%26qid%3D1774021798%26sprefix%3Dmsitomahawk%252Caps%252C178%26sr%3D8-3-spons%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9hdGY%26psc%3D1",
+                "createdAt": "2026-03-20T16:00:47.779Z",
+                "updatedAt": "2026-04-08T03:30:48.394Z",
+                "__v": 0
+              },
+              "quantity": 1,
+              "partType": "psu"
+            },
+            {
+              "part": {
+                "ratings": {
+                  "average": 0,
+                  "count": 0
+                },
+                "_id": "69bd706d79b5694aeef8c98f",
+                "type": "case",
+                "slug": "lian-li-li-lancool-207",
+                "brand": "Lian Li",
+                "partModel": "LI LANCOOL 207",
+                "sku": "PART-679762",
+                "price": 91.99,
+                "cost": 82.99,
+                "stock": 10,
+                "reserved": 0,
+                "reorderPoint": 3,
+                "serialNumbers": [],
+                "specs": {
+                  "_empty": true,
+                  "formFactor": "ATX",
+                  "availableColors": [
+                    "Black",
+                    "White"
+                  ]
+                },
+                "images": [
+                  "https://cdn.lanforge.co/Parts/case/1774917559267-998799293.png"
+                ],
+                "description": "",
+                "tags": [],
+                "isActive": true,
+                "isFeatured": false,
+                "weight": 0,
+                "productUrl": "https://www.newegg.com/lian-li-atx-mid-tower-steel-4-0mm-tempered-glass-cases-black-lancool-207/p/2AM-000Z-000D6",
+                "createdAt": "2026-03-20T16:06:05.822Z",
+                "updatedAt": "2026-04-02T20:35:48.150Z",
+                "__v": 0
+              },
+              "quantity": 1,
+              "partType": "case"
+            },
+            {
+              "part": {
+                "ratings": {
+                  "average": 0,
+                  "count": 0
+                },
+                "_id": "69d5b5836b2a6fcc7d1fa34e",
+                "type": "cpu-cooler",
+                "slug": "nzxt-kraken-core-360-rgb",
+                "brand": "NZXT",
+                "partModel": "Kraken Core 360 RGB",
+                "sku": "PART-721520",
+                "price": 120.99,
+                "cost": 109.99,
+                "stock": 10,
+                "reserved": 0,
+                "reorderPoint": 3,
+                "serialNumbers": [],
+                "specs": {
+                  "type": "AIO",
+                  "radiatorSize": 360
+                },
+                "images": [],
+                "description": "",
+                "tags": [],
+                "isActive": true,
+                "isFeatured": false,
+                "weight": 0,
+                "productUrl": "https://www.amazon.com/NZXT-Kraken-Core-360-RGB/dp/B0FLTZ2SHM/ref=sr_1_1?crid=1686PBEEZHIX4&dib=eyJ2IjoiMSJ9.UHveq0zV3lS2PqFMkGA3v1-kMux62HI_bEsUwTaybNo_xtsZg1213g6pUrbeekyl6i7lielhDu0ZHXK5jhKelQYe2ak-lF5ngc_geTe6a-89gpuL2uIMp3yb9xO9NkqpwdS_gTPjyxEJ9mmS71TkXta6ASG5sgDNilZYUs-jvApuXd18Z2iJiczvjV2-gsx3rj8gwlmtuJRPtuCxn8YWG_oAvrFBbvlmI3tioUvVLVs.RbtAbaH0cIcpDgdL37RyiftC_wZN6vLx1whI4IVscOA&dib_tag=se&keywords=nzxt+kraken+core&qid=1775613245&sprefix=nzxt+kraken+c%2Caps%2C249&sr=8-1",
+                "createdAt": "2026-04-08T01:55:15.085Z",
+                "updatedAt": "2026-04-14T03:48:59.475Z",
+                "__v": 0
+              },
+              "quantity": 1,
+              "partType": "cpu-cooler"
+            },
+            {
+              "part": {
+                "ratings": {
+                  "average": 0,
+                  "count": 0
+                },
+                "_id": "69bd72ec500944cc71f0f388",
+                "type": "os",
+                "slug": "windows-11-pro",
+                "brand": "Windows",
+                "partModel": "11 Pro",
+                "sku": "1481239293",
+                "price": 49.99,
+                "cost": 10,
+                "stock": 10,
+                "reserved": 0,
+                "reorderPoint": 3,
+                "serialNumbers": [],
+                "specs": {
+                  "_empty": true
+                },
+                "images": [],
+                "description": "",
+                "tags": [],
+                "isActive": true,
+                "isFeatured": false,
+                "weight": 0,
+                "createdAt": "2026-03-20T16:16:44.878Z",
+                "updatedAt": "2026-04-08T01:32:51.660Z",
+                "__v": 0
+              },
+              "quantity": 1,
+              "partType": "os"
+            }
+          ],
+          "subtotal": 3293.909999999999,
+          "laborFee": 329.99,
+          "total": 3623.8999999999987,
+          "isActive": true,
+          "createdAt": "2026-04-16T20:25:53.177Z",
+          "updatedAt": "2026-04-16T22:36:33.101Z",
+          "__v": 4
+        }
+      ],
+      "partner": {
+        "_id": "69d7bfebfd3d4d1d1e25c9c3",
+        "creatorCode": "NINA",
+        "customerDiscountType": "free_shipping",
+        "customerDiscountValue": 0,
+        "logo": "https://pbs.twimg.com/profile_images/2022455006365126661/8RI8JFL2_400x400.jpg",
+        "name": "XSET Nina",
+        "website": "https://lanforge.co",
+        "partnerType": "individual",
+        "description": "Nina is a professional Fortnite player and member of XSET, known for her competitive drive, strong mechanics, and influence within the gaming community. She represents the next generation of top-tier talent in esports.",
+        "instagram": "https://www.instagram.com/ilyynina1/",
+        "tiktok": "https://www.tiktok.com/@ilynina",
+        "twitch": "https://www.twitch.tv/ilyynina",
+        "twitter": "https://twitter.com/ilyynina",
+        "youtube": "https://www.youtube.com/channel/UCOhg8Vfk6DBjUG_l2KS0yyA"
+      }
     }
   },
   {
     "name": "Payments List (GET /payments)",
-    "status": 200,
+    "status": 401,
     "description": "Should be protected (401/403) without auth.",
-    "response": []
+    "response": {
+      "message": "Not authorized, no token"
+    }
   },
   {
     "name": "Payment Details (GET /payments/:id)",
-    "status": 404,
+    "status": 401,
     "description": "Should be protected (401/403) without auth.",
     "response": {
-      "message": "Payment not found"
+      "message": "Not authorized, no token"
     }
   },
   {
@@ -312,7 +719,6 @@
         {
           "_id": "69d57149a7743f4a90cd3c43",
           "customerName": "Noiz",
-          "customerEmail": "noiz@lanforge.co",
           "rating": 5,
           "title": "Best Pc I ever had",
           "comment": "Quick simple efficient and good value",
@@ -325,7 +731,6 @@
         {
           "_id": "69d57137a7743f4a90cd3c41",
           "customerName": "XPON",
-          "customerEmail": "xpon@lanforge.co",
           "rating": 5,
           "title": "A couple of months later",
           "comment": "After using a lanforge pc for a couple of months i can confidently say that its the best pc brand ive ever used ive had two pcs built by lanforges team and i can say the performance and craftsmanship is amazing. The amazing customer support and website make picking a pc really easy and. The specs are amazing for the price and the amazing delivery process. This is by far the best pc ive ever had and i confidently  say lanforge is the best and new wave of pcs",
@@ -338,7 +743,6 @@
         {
           "_id": "69d5711ea7743f4a90cd3c3f",
           "customerName": "Haiyzee",
-          "customerEmail": "haiyzee@lanforge.co",
           "rating": 5,
           "title": "lanforge",
           "comment": "I’ve had an amazing experience getting my PC built by LANForge! From start to finish, Damian was super nice and extremely accommodating. He listened to what I had imagined my PC to look like and made it 10 times better. The entire process is so smooth, easy and stress-free. The PC itself is absolutely perfect! Everything was put together and packaged with so much care and attention to detail. The cable management is impeccable, and everything works perfectly right out of the box. It was delivered exactly when he said it would be, and I couldn’t be happier with how it turned out. I couldn't express my thanks and appreciate it more, thank you again! ",
@@ -351,7 +755,6 @@
         {
           "_id": "69d57107a7743f4a90cd3c3d",
           "customerName": "Abby",
-          "customerEmail": "abby@lanforge.co",
           "rating": 5,
           "title": "Dear LANForge",
           "comment": "I just wanted to take a moment to express my heartfelt gratitude for all the support, Your assistance in helping me get a new pro PC has truly made a difference, and I feel more motivated than ever to pursue my passion. Thank you for believing in me and providing the resources I needed to take my skills to the next level. I appreciate everything you’ve done, and I’m excited to see where this journey takes me! The Pc Feels Amazing! The build itself is so nice i truly thank u so much!💕",
