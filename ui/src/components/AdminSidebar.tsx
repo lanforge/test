@@ -33,7 +33,7 @@ const AdminSidebar: React.FC = () => {
       <div className="p-4">
       </div>
 
-      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto overflow-x-hidden pb-4 scrollbar-hide">
+      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto overflow-x-hidden pb-4 scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {navItems.map((item) => (
           <NavLink
             key={item.name}
