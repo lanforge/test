@@ -29,9 +29,9 @@ const AdminLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#07090e] text-slate-300 font-sans">
+    <div className="h-screen w-screen overflow-hidden bg-[#07090e] text-slate-300 font-sans flex flex-col">
       {/* Admin Header */}
-      <header className="bg-[#0a0c13]/80 backdrop-blur-xl border-b border-[#1f2233] px-6 py-3 sticky top-0 z-50">
+      <header className="bg-[#0a0c13]/80 backdrop-blur-xl border-b border-[#1f2233] px-6 py-3 shrink-0 z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <img 
@@ -119,8 +119,8 @@ const AdminLayout: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Content with Sidebar - Fixed height for independent scrolling */}
-      <div className="flex h-[calc(100vh-53px)] overflow-hidden">
+      {/* Main Content with Sidebar */}
+      <div className="flex flex-1 overflow-hidden">
         <AdminSidebar />
         <main className="flex-1 p-8 overflow-y-auto overflow-x-hidden scrollbar-hide bg-[#07090e]">
           <div className="max-w-[1600px] mx-auto w-full">
