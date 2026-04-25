@@ -619,6 +619,31 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
 
 // ─── ADMIN ROUTES ─────────────────────────────────────────────────────────────
 
+// GET /api/orders/admin/:id — admin/staff: single order with full details (no PII masking)
+router.get('/admin/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const isObjectId = id.match(/^[0-9a-fA-F]{24}$/);
+    
+    const query = isObjectId 
+      ? { $or: [{ _id: id }, { orderNumber: id }] }
+      : { orderNumber: id };
+
+    const order = await Order.findOne(query)
+      .populate('customer')
+      .populate('appliedDiscount', 'code type value');
+
+    if (!order) {
+      res.status(404).json({ message: 'Order not found' });
+      return;
+    }
+
+    res.json({ order });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // GET /api/orders/admin/all — admin/staff: full order list with filters
 router.get('/admin/all', protect, staffOrAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
   try {

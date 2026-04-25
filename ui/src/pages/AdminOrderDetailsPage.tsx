@@ -133,7 +133,7 @@ const AdminOrderDetailsPage: React.FC = () => {
     setIsLoading(true);
     setError('');
     try {
-      const response = await api.get(`/orders/${id}`);
+      const response = await api.get(`/orders/admin/${id}`);
       const data = response.data.order;
       setOrder(data);
       setItems(data.items || []);
@@ -275,7 +275,7 @@ const AdminOrderDetailsPage: React.FC = () => {
         setInvoices(invoicesResponse.data || []);
         
         // Refresh order details to update payment status
-        const orderResponse = await api.get(`/orders/${id}`);
+        const orderResponse = await api.get(`/orders/admin/${id}`);
         setOrder(orderResponse.data.order);
         
         setSuccess('Invoice marked as paid.');
