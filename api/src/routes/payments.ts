@@ -202,7 +202,7 @@ router.post('/webhook/stripe', async (req: Request, res: Response): Promise<void
           console.error('Order confirmation email failed (Webhook):', e);
         }
       }
-    } else if (isManualInvoice) {
+        } else if (isManualInvoice) {
           const invoiceId = intent.metadata?.invoiceId;
           if (invoiceId) {
             const invoice = await Invoice.findByIdAndUpdate(invoiceId, {
@@ -220,6 +220,25 @@ router.post('/webhook/stripe', async (req: Request, res: Response): Promise<void
                 status: 'completed',
                 metadata: intent.metadata
               });
+
+              // Check if the related order needs its payment status updated
+              if (invoice.relatedOrderId) {
+                const order = await Order.findById(invoice.relatedOrderId);
+                if (order) {
+                  const payments = await Payment.find({ order: order._id, status: 'completed' });
+                  const totalPaidFromPayments = payments.reduce((sum, p) => sum + p.amount, 0);
+                  
+                  const invoices = await Invoice.find({ relatedOrderId: order._id, status: 'paid' });
+                  const totalPaidFromInvoices = invoices.reduce((sum, inv) => sum + inv.amount, 0);
+                  
+                  const totalPaid = totalPaidFromPayments + totalPaidFromInvoices;
+                  
+                  if (totalPaid >= order.total && order.paymentStatus !== 'paid') {
+                    order.paymentStatus = 'paid';
+                    await order.save();
+                  }
+                }
+              }
             }
           } else {
             await Payment.create({

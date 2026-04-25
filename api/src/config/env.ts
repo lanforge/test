@@ -9,4 +9,5 @@ export const env = cleanEnv(process.env, {
   JWT_SECRET: str(),
   JWT_REFRESH_SECRET: str(),
   FRONTEND_URL: url({ default: 'http://localhost:3000' }),
+  ALLOWED_ORIGINS: str({ default: '' }),
 });

@@ -267,6 +267,26 @@ const AdminOrderDetailsPage: React.FC = () => {
     }).format(amount || 0);
   };
 
+  const handleMarkInvoicePaid = async (invoiceId: string) => {
+    if (window.confirm('Are you sure you want to mark this invoice as paid manually?')) {
+      try {
+        await api.patch(`/invoices/${invoiceId}/mark-paid`);
+        const invoicesResponse = await api.get(`/invoices?relatedOrderId=${id}`);
+        setInvoices(invoicesResponse.data || []);
+        
+        // Refresh order details to update payment status
+        const orderResponse = await api.get(`/orders/${id}`);
+        setOrder(orderResponse.data.order);
+        
+        setSuccess('Invoice marked as paid.');
+        setTimeout(() => setSuccess(''), 3000);
+      } catch (err: any) {
+        console.error('Failed to mark invoice as paid:', err);
+        setError(err.response?.data?.message || 'Failed to mark invoice as paid.');
+      }
+    }
+  };
+
   if (isLoading) {
     return <div className="p-6 text-white text-center">Loading order details...</div>;
   }
@@ -585,21 +605,34 @@ const AdminOrderDetailsPage: React.FC = () => {
                 </>
               )}
               
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">Status:</span>
-                <div className="flex items-center gap-3">
-                  <span className={`capitalize font-medium ${
-                    order.paymentStatus === 'paid' ? 'text-emerald-400' :
-                    order.paymentStatus === 'pending' ? 'text-amber-400' :
-                    order.paymentStatus === 'failed' ? 'text-red-400' : 'text-gray-400'
-                  }`}>
-                    {order.paymentStatus}
-                  </span>
-                </div>
-              </div>
+              {(() => {
+                const totalPaidFromPayments = payments.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0);
+                const totalPaidFromInvoices = invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.amount, 0);
+                const totalPaid = totalPaidFromPayments + totalPaidFromInvoices;
+                const outstandingBalance = Math.max(0, order.total - totalPaid);
+                const isFullyPaid = outstandingBalance <= 0;
+                const computedPaymentStatus = isFullyPaid ? 'paid' : order.paymentStatus;
+                
+                return (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-400">Status:</span>
+                    <div className="flex items-center gap-3">
+                      <span className={`capitalize font-medium ${
+                        computedPaymentStatus === 'paid' ? 'text-emerald-400' :
+                        computedPaymentStatus === 'pending' ? 'text-amber-400' :
+                        computedPaymentStatus === 'failed' ? 'text-red-400' : 'text-gray-400'
+                      }`}>
+                        {computedPaymentStatus}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
               
               {(() => {
-                const totalPaid = payments.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0);
+                const totalPaidFromPayments = payments.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0);
+                const totalPaidFromInvoices = invoices.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + inv.amount, 0);
+                const totalPaid = totalPaidFromPayments + totalPaidFromInvoices;
                 const outstandingBalance = Math.max(0, order.total - totalPaid);
                 const hasPendingInvoice = invoices.some(inv => inv.status === 'pending' && Math.abs(inv.amount - outstandingBalance) < 0.01);
                 
@@ -692,6 +725,41 @@ const AdminOrderDetailsPage: React.FC = () => {
                         >
                           View Details
                         </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {invoices.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-800">
+                <h3 className="text-sm font-bold text-white mb-3">Invoices</h3>
+                <div className="space-y-3">
+                  {invoices.map(invoice => (
+                    <div key={invoice._id} className="bg-gray-800/50 p-3 rounded-lg border border-gray-700">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-white font-medium text-sm">{invoice.invoiceNumber} - {formatCurrency(invoice.amount)}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          invoice.status === 'paid' ? 'bg-emerald-500/10 text-emerald-400' :
+                          invoice.status === 'pending' ? 'bg-yellow-500/10 text-yellow-400' :
+                          'bg-red-500/10 text-red-400'
+                        }`}>
+                          {invoice.status.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-400 mb-1">
+                        <span>{new Date(invoice.createdAt).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex justify-end gap-2 mt-2">
+                        {invoice.status !== 'paid' && (
+                          <button
+                            onClick={() => handleMarkInvoicePaid(invoice._id)}
+                            className="text-xs text-emerald-400 hover:text-emerald-300 hover:underline"
+                          >
+                            Mark as Paid
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}

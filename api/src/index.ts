@@ -89,7 +89,19 @@ app.use(
 );
 app.use(
   cors({
-    origin: env.FRONTEND_URL || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      const allowedOrigins = [env.FRONTEND_URL || 'http://localhost:3000'];
+      
+      if (env.ALLOWED_ORIGINS) {
+        allowedOrigins.push(...env.ALLOWED_ORIGINS.split(',').map(o => o.trim()));
+      }
+      
+      if (!origin || allowedOrigins.indexOf(origin) !== -1 || env.NODE_ENV === 'development') {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );

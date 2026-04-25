@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import Invoice from '../models/Invoice';
+import Order from '../models/Order';
+import Payment from '../models/Payment';
 import { protect, adminOnly } from '../middleware/auth';
 
 const router = Router();
@@ -54,6 +56,48 @@ router.post('/', protect, adminOnly, async (req: Request, res: Response): Promis
 
     const savedInvoice = await newInvoice.save();
     res.status(201).json(savedInvoice);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// PATCH to mark invoice as paid manually (admin only)
+router.patch('/:id/mark-paid', protect, adminOnly, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const invoice = await Invoice.findById(req.params.id);
+    if (!invoice) {
+      res.status(404).json({ message: 'Invoice not found' });
+      return;
+    }
+
+    if (invoice.status === 'paid') {
+      res.status(400).json({ message: 'Invoice is already paid' });
+      return;
+    }
+
+    invoice.status = 'paid';
+    const updatedInvoice = await invoice.save();
+
+    // Check if the related order needs its payment status updated
+    if (invoice.relatedOrderId) {
+      const order = await Order.findById(invoice.relatedOrderId);
+      if (order) {
+        const payments = await Payment.find({ order: order._id, status: 'completed' });
+        const totalPaidFromPayments = payments.reduce((sum, p) => sum + p.amount, 0);
+        
+        const invoices = await Invoice.find({ relatedOrderId: order._id, status: 'paid' });
+        const totalPaidFromInvoices = invoices.reduce((sum, inv) => sum + inv.amount, 0);
+        
+        const totalPaid = totalPaidFromPayments + totalPaidFromInvoices;
+        
+        if (totalPaid >= order.total && order.paymentStatus !== 'paid') {
+          order.paymentStatus = 'paid';
+          await order.save();
+        }
+      }
+    }
+    
+    res.json({ message: 'Invoice marked as paid successfully', invoice: updatedInvoice });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

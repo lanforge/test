@@ -86,6 +86,18 @@ const AdminInvoicesPage: React.FC = () => {
     }
   };
 
+  const handleMarkPaid = async (id: string) => {
+    if (window.confirm('Are you sure you want to mark this invoice as paid manually?')) {
+      try {
+        await api.patch(`/invoices/${id}/mark-paid`);
+        fetchInvoices();
+      } catch (error: any) {
+        console.error('Error marking invoice as paid', error);
+        alert(error.response?.data?.message || 'Failed to mark invoice as paid');
+      }
+    }
+  };
+
   const copyLink = (id: string) => {
     const link = `${window.location.origin}/invoice?id=${id}`;
     navigator.clipboard.writeText(link);
@@ -140,6 +152,15 @@ const AdminInvoicesPage: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
+                    {invoice.status !== 'paid' && (
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleMarkPaid(invoice._id); }} 
+                        className="text-blue-400 hover:text-blue-300 mr-4"
+                        title="Mark as Paid"
+                      >
+                        <FontAwesomeIcon icon={faCheck} />
+                      </button>
+                    )}
                     <button 
                       onClick={(e) => { e.stopPropagation(); copyLink(invoice._id); }} 
                       className="text-emerald-400 hover:text-emerald-300 mr-4"

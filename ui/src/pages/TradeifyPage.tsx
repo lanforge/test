@@ -33,7 +33,7 @@ const TradeifyPage: React.FC = () => {
                   p.parts.find((part: any) => part.type === 'cpu'),
                   p.parts.find((part: any) => part.type === 'gpu'),
                   p.parts.find((part: any) => part.type === 'ram')
-                ].filter(Boolean).map((part: any) => `${part.type.toUpperCase()}: ${part.partModel || part.name}`)
+                ].filter(Boolean).map((part: any) => `${part.type.toUpperCase()}: ${part.brand ? part.brand + ' ' : ''}${part.partModel || part.name}`)
               : (p.specs ? Object.entries(p.specs).map(([k, v]) => `${k}: ${v}`).slice(0, 3) : [])
           }));
           setProducts(mapped);
@@ -104,7 +104,7 @@ const TradeifyPage: React.FC = () => {
             </h1>
 
             <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-3xl font-light leading-relaxed mx-auto">
-              Purpose-built workstations optimized for Futures & Crypto prop firm trading. Experience ultra-low latency execution to help you tackle evaluations, paired with flagship graphics for high-end gaming when the markets close.
+              Purpose-built workstations optimized for Futures & Crypto prop firm trading. Experience ultra-low latency execution to help you tackle evaluations, paired with flagship graphics for high-end gaming when the markets close. <strong className="text-cyan-400 font-bold">Includes a free Tradeify Select account with every PC.</strong>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center w-full sm:w-auto pb-4">
@@ -172,7 +172,7 @@ const TradeifyPage: React.FC = () => {
             <h3 className="text-5xl md:text-7xl font-black text-white tracking-tighter">Choose Your Trading Edge</h3>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-32 max-w-6xl mx-auto">
             {products.slice(0, 3).map((product, idx) => (
               <motion.div
                 key={product.id}
@@ -193,27 +193,30 @@ const TradeifyPage: React.FC = () => {
                 {/* Hover Glow Behind Card */}
                 <div className="absolute inset-0 bg-cyan-500/0 group-hover:bg-cyan-500/5 blur-xl transition-all duration-500 pointer-events-none" />
 
-                <div className="relative z-10 p-8 h-full flex flex-col">
+                <div className="relative z-10 p-6 h-full flex flex-col">
                   
                   {/* Tier / Title Area */}
-                  <div className="mb-10 text-center">
-                    <div className="text-gray-500 text-[10px] uppercase tracking-[0.3em] font-bold mb-2">Tier {idx + 1}</div>
-                    <h4 className="text-3xl font-black text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-blue-500 transition-all duration-500 tracking-tight">
+                  <div className="mb-6 text-center">
+                    <div className="inline-block px-3 py-1 mb-3 rounded-full border border-cyan-500/30 bg-cyan-950/30 text-cyan-400 text-xs font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                      <span className="text-white font-black">Free</span> {idx === 0 ? "25K Select" : idx === 1 ? "50K Select" : "150K Select"} Account
+                    </div>
+                    <div className="text-gray-500 text-[10px] uppercase tracking-[0.3em] font-bold mb-1">Tier {idx + 1}</div>
+                    <h4 className="text-2xl font-black text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-blue-500 transition-all duration-500 tracking-tight">
                       {product.name}
                     </h4>
                   </div>
 
                   {/* Image Area - Floating Effect */}
-                  <div className="relative aspect-square mb-10 flex items-center justify-center">
-                    <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 blur-3xl rounded-full transition-opacity duration-700 ${hoveredIdx === idx ? 'opacity-100' : 'opacity-0'}`} />
+                  <div className="relative aspect-square max-w-[250px] mx-auto mb-8 flex items-center justify-center">
+                    <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-br from-cyan-500/20 to-blue-600/20 blur-3xl rounded-full transition-opacity duration-700 ${hoveredIdx === idx ? 'opacity-100' : 'opacity-0'}`} />
                     
                     {product.image ? (
                       <motion.img 
-                        animate={{ y: hoveredIdx === idx ? -10 : 0, scale: hoveredIdx === idx ? 1.05 : 1 }}
+                        animate={{ y: hoveredIdx === idx ? -15 : 0, scale: hoveredIdx === idx ? 1.08 : 1 }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
                         src={product.image} 
                         alt={product.name}
-                        className="w-full h-full object-contain filter drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)] relative z-10"
+                        className="w-[120%] h-[120%] max-w-none object-contain filter drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)] relative z-10 scale-125"
                       />
                     ) : (
                       <div className="text-gray-800 text-6xl font-black tracking-tighter relative z-10">LF</div>
@@ -221,12 +224,12 @@ const TradeifyPage: React.FC = () => {
                   </div>
 
                   {/* Specs List - Minimal & Clean */}
-                  <div className="space-y-4 mb-10 flex-grow">
+                  <div className="space-y-3 mb-6 flex-grow">
                     {product.specs.map((spec, i) => {
                       const [label, ...valueParts] = spec.split(':');
                       const value = valueParts.join(':');
                       return (
-                        <div key={i} className="flex flex-col border-b border-gray-800 pb-3">
+                        <div key={i} className="flex flex-col border-b border-gray-800 pb-2">
                           <span className="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold mb-1">{label}</span>
                           <span className="text-gray-200 text-sm font-medium">{value}</span>
                         </div>
@@ -235,15 +238,35 @@ const TradeifyPage: React.FC = () => {
                   </div>
 
                   {/* Price & Action */}
-                  <div className="mt-auto pt-6 flex flex-col gap-6">
-                    <div className="text-4xl font-black text-center text-white tracking-tighter">
+                  <div className="mt-auto pt-4 flex flex-col gap-4">
+                    <div className="text-3xl font-black text-center text-white tracking-tighter">
                       {product.price}
                     </div>
-                    <Link to={`/products/${product.id}`} className="block w-full">
-                      <button className="w-full py-4 border border-gray-700 text-white font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all duration-300 relative overflow-hidden group/btn">
-                        <span className="relative z-10">Configure Trading Rig</span>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button 
+                        onClick={() => {
+                          const event = new CustomEvent('add-to-cart', {
+                            detail: {
+                              productId: product.id,
+                              name: product.name,
+                              price: parseFloat(product.price.replace('$', '')),
+                              image: product.image,
+                              type: 'product',
+                              quantity: 1
+                            }
+                          });
+                          window.dispatchEvent(event);
+                        }}
+                        className="w-full py-4 border border-cyan-500/50 bg-cyan-950/30 text-white font-bold uppercase tracking-widest text-[10px] sm:text-xs hover:bg-cyan-500 hover:text-black transition-all duration-300 relative overflow-hidden group/btn"
+                      >
+                        <span className="relative z-10">Add to Cart</span>
                       </button>
-                    </Link>
+                      <Link to={`/products/${product.id}`} className="block w-full">
+                        <button className="w-full py-4 border border-gray-700 text-white font-bold uppercase tracking-widest text-[10px] sm:text-xs hover:bg-white hover:text-black transition-all duration-300 relative overflow-hidden group/btn">
+                          <span className="relative z-10">Details</span>
+                        </button>
+                      </Link>
+                    </div>
                   </div>
 
                 </div>
@@ -326,11 +349,31 @@ const TradeifyPage: React.FC = () => {
                     <div className="text-6xl font-black text-white tracking-tighter drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                       {products[3].price}
                     </div>
-                    <Link to={`/products/${products[3].id}`} className="w-full sm:w-auto ml-auto">
-                      <button className="w-full sm:w-auto px-12 py-6 bg-white text-black font-black uppercase tracking-[0.2em] text-sm hover:scale-105 transition-transform duration-500 shadow-[0_0_40px_rgba(255,255,255,0.2)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)]">
-                        Claim The Ultimate Edge
+                    <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto ml-auto">
+                      <button 
+                        onClick={() => {
+                          const event = new CustomEvent('add-to-cart', {
+                            detail: {
+                              productId: products[3].id,
+                              name: products[3].name,
+                              price: parseFloat(products[3].price.replace('$', '')),
+                              image: products[3].image,
+                              type: 'product',
+                              quantity: 1
+                            }
+                          });
+                          window.dispatchEvent(event);
+                        }}
+                        className="w-full sm:w-auto px-12 py-6 bg-cyan-500 text-black font-black uppercase tracking-[0.2em] text-sm hover:bg-white transition-colors duration-300 shadow-[0_0_40px_rgba(6,182,212,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)] hover:scale-105 transition-transform"
+                      >
+                        Add to Cart
                       </button>
-                    </Link>
+                      <Link to={`/products/${products[3].id}`} className="w-full sm:w-auto">
+                        <button className="w-full sm:w-auto px-12 py-6 border border-gray-700 bg-transparent text-white font-black uppercase tracking-[0.2em] text-sm hover:bg-white hover:text-black transition-colors duration-300 hover:scale-105 transition-transform">
+                          Details
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
 
