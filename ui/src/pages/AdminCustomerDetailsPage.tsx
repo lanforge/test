@@ -218,7 +218,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
         {/* Left Column: Details & Addresses */}
         <div className="space-y-6 lg:col-span-1">
           {/* Customer Overview */}
-          <div className="admin-card p-6">
+          <div className="admin-admin-admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Overview</h2>
             {isEditing ? (
               <div className="space-y-4">
@@ -315,7 +315,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
           </div>
 
           {/* Addresses */}
-          <div className="admin-card p-6">
+          <div className="admin-admin-admin-card p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-medium text-white">Saved Addresses</h2>
               {isEditing && (
@@ -455,7 +455,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
         <div className="space-y-6 lg:col-span-2">
 
           {/* Orders History */}
-          <div className="admin-card overflow-hidden">
+          <div className="admin-admin-admin-card overflow-hidden">
             <div className="p-6 border-b border-[#1f2233]">
               <h2 className="text-lg font-medium text-white">Recent Orders</h2>
             </div>
@@ -508,7 +508,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
           </div>
 
           {/* Payment History */}
-          <div className="admin-card overflow-hidden">
+          <div className="admin-admin-admin-card overflow-hidden">
             <div className="p-6 border-b border-[#1f2233]">
               <h2 className="text-lg font-medium text-white">Payment History</h2>
             </div>

@@ -83,21 +83,21 @@ const AdminShowcasesPage: React.FC = () => {
         </button>
       </div>
 
-      <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl overflow-hidden">
-        <table className="w-full text-left text-slate-300">
-          <thead className="bg-[#11141d] text-slate-400 text-sm">
+      <div className="admin-card overflow-hidden">
+        <table className="w-full text-left text-sm text-slate-300">
+          <thead className="border-b border-white/5 bg-[#050505] text-xs uppercase text-slate-300">
             <tr>
-              <th className="px-6 py-4 font-medium">Name</th>
-              <th className="px-6 py-4 font-medium">Creator</th>
-              <th className="px-6 py-4 font-medium">Code</th>
-              <th className="px-6 py-4 font-medium">Total</th>
-              <th className="px-6 py-4 font-medium">Status</th>
-              <th className="px-6 py-4 font-medium text-right">Actions</th>
+              <th className="px-6 py-3">Name</th>
+              <th className="px-6 py-3">Creator</th>
+              <th className="px-6 py-3">Code</th>
+              <th className="px-6 py-3">Total</th>
+              <th className="px-6 py-3">Status</th>
+              <th className="px-6 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800">
+          <tbody className="divide-y divide-white/5">
             {showcases.map((sc) => (
-              <tr key={sc._id} className="hover:bg-[#11141d]">
+              <tr key={sc._id} className="hover:bg-white/[0.02] transition-colors">
                 <td className="px-6 py-4">{sc.name}</td>
                 <td className="px-6 py-4">{sc.creatorName}</td>
                 <td className="px-6 py-4">{sc.creatorCode}</td>

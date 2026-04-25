@@ -176,7 +176,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Details */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="admin-card p-6 space-y-6">
+          <div className="admin-admin-admin-card p-6 space-y-6">
             <h2 className="text-lg font-medium text-white mb-4">Partner Details</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -317,7 +317,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="admin-card p-6 space-y-6">
+          <div className="admin-admin-admin-card p-6 space-y-6">
             <h2 className="text-lg font-medium text-white mb-4">Social Links</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -343,7 +343,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="admin-card overflow-hidden">
+          <div className="admin-admin-admin-card overflow-hidden">
             <div className="p-6 border-b border-[#1f2233]">
               <h2 className="text-lg font-medium text-white">Orders Using Code</h2>
             </div>
@@ -392,7 +392,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
 
         {/* Right Column - Stats */}
         <div className="space-y-6">
-          <div className="admin-card p-6">
+          <div className="admin-admin-admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-6">Performance Stats</h2>
             
             <div className="space-y-4">

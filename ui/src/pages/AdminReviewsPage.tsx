@@ -71,7 +71,7 @@ const AdminReviewsPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="admin-card p-4">
+        <div className="admin-admin-admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Total Reviews</p>
@@ -87,7 +87,7 @@ const AdminReviewsPage: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="admin-card p-4">
+      <div className="admin-admin-admin-card p-4">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
@@ -112,7 +112,7 @@ const AdminReviewsPage: React.FC = () => {
       </div>
 
       {/* Reviews table */}
-      <div className="admin-card overflow-hidden">
+      <div className="admin-admin-admin-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

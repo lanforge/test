@@ -117,9 +117,9 @@ const AdminInvoicesPage: React.FC = () => {
         </button>
       </div>
 
-      <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl overflow-hidden">
+      <div className="admin-card overflow-hidden">
         <table className="w-full text-left text-sm text-slate-400">
-          <thead className="bg-[#11141d] text-xs uppercase text-slate-300">
+          <thead className="border-b border-white/5 bg-[#050505] text-xs uppercase text-slate-300">
             <tr>
               <th className="px-6 py-3">Invoice #</th>
               <th className="px-6 py-3">Customer</th>
@@ -129,11 +129,11 @@ const AdminInvoicesPage: React.FC = () => {
               <th className="px-6 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-white/5">
             {invoices.length > 0 ? invoices.map((invoice) => (
               <React.Fragment key={invoice._id}>
                 <tr 
-                  className={`border-b border-[#1f2233] hover:bg-[#11141d] cursor-pointer ${expandedInvoiceId === invoice._id ? 'bg-[#1f2233]/30' : ''}`}
+                  className={`hover:bg-white/[0.02] cursor-pointer transition-colors ${expandedInvoiceId === invoice._id ? 'bg-[#1f2233]/30' : ''}`}
                   onClick={() => toggleInvoiceExpand(invoice._id)}
                 >
                   <td className="px-6 py-4 font-medium text-white">{invoice.invoiceNumber}</td>
@@ -174,9 +174,9 @@ const AdminInvoicesPage: React.FC = () => {
                   </td>
                 </tr>
                 {expandedInvoiceId === invoice._id && (
-                  <tr className="bg-[#0a0c13] border-b border-[#1f2233]">
+                  <tr className="bg-black/20 border-b border-white/5">
                     <td colSpan={6} className="px-6 py-4">
-                      <div className="bg-[#11141d] rounded-lg p-4 border border-[#1f2233]">
+                      <div className="bg-[#0a0c13] rounded-lg p-4 border border-[#1f2233]">
                         <h4 className="text-sm font-medium text-white mb-3">Payment History</h4>
                         {payments[invoice._id] && payments[invoice._id].length > 0 ? (
                           <div className="space-y-2">
@@ -224,55 +224,55 @@ const AdminInvoicesPage: React.FC = () => {
 
       {showAddModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl p-6 max-w-md w-full">
-            <h2 className="text-xl font-medium text-white mb-4">Create Manual Invoice</h2>
+          <div className="admin-card p-6 max-w-md w-full">
+            <h2 className="text-lg font-medium text-white mb-4">Create Manual Invoice</h2>
             <form onSubmit={handleAddSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm text-slate-400 mb-1">Customer Name</label>
+                <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Customer Name</label>
                 <input
                   type="text"
                   required
-                  className="w-full bg-[#11141d] border border-[#1f2233] rounded p-2 text-white focus:outline-none focus:border-emerald-500"
+                  className="admin-input"
                   value={formData.customerName}
                   onChange={e => setFormData({...formData, customerName: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-sm text-slate-400 mb-1">Customer Email</label>
+                <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Customer Email</label>
                 <input
                   type="email"
                   required
-                  className="w-full bg-[#11141d] border border-[#1f2233] rounded p-2 text-white focus:outline-none focus:border-emerald-500"
+                  className="admin-input"
                   value={formData.customerEmail}
                   onChange={e => setFormData({...formData, customerEmail: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-sm text-slate-400 mb-1">Description / Reason</label>
+                <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Description / Reason</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Order #1234 Overage"
-                  className="w-full bg-[#11141d] border border-[#1f2233] rounded p-2 text-white focus:outline-none focus:border-emerald-500"
+                  className="admin-input"
                   value={formData.description}
                   onChange={e => setFormData({...formData, description: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-sm text-slate-400 mb-1">Amount (USD)</label>
+                <label className="block text-xs uppercase tracking-wider text-slate-400 mb-2">Amount (USD)</label>
                 <input
                   type="number"
                   step="0.01"
                   min="1"
                   required
-                  className="w-full bg-[#11141d] border border-[#1f2233] rounded p-2 text-white focus:outline-none focus:border-emerald-500"
+                  className="admin-input"
                   value={formData.amount}
                   onChange={e => setFormData({...formData, amount: e.target.value})}
                 />
               </div>
               <div className="flex justify-end gap-2 mt-6">
-                <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 rounded text-slate-400 hover:text-white">Cancel</button>
-                <button type="submit" className="btn btn-primary btn-small">Create Invoice</button>
+                <button type="button" onClick={() => setShowAddModal(false)} className="px-3 py-1.5 text-sm rounded-md text-slate-400 hover:bg-white/5 transition-colors">Cancel</button>
+                <button type="submit" className="px-3 py-1.5 text-sm bg-white text-black hover:bg-gray-200 rounded-md font-medium transition-colors">Create Invoice</button>
               </div>
             </form>
           </div>

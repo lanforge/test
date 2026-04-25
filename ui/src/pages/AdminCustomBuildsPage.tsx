@@ -74,7 +74,7 @@ const AdminCustomBuildsPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="admin-card p-4">
+        <div className="admin-admin-admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Total Custom Builds</p>
@@ -90,7 +90,7 @@ const AdminCustomBuildsPage: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="admin-card p-4">
+      <div className="admin-admin-admin-card p-4">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
             <div className="flex-1 flex items-center bg-[#07090e] border border-[#1f2233] rounded-md focus-within:border-white/20 transition-all">
@@ -135,7 +135,7 @@ const AdminCustomBuildsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="admin-card overflow-hidden">
+      <div className="admin-admin-admin-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

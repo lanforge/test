@@ -145,7 +145,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Specs */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="admin-card p-6">
+          <div className="admin-admin-admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Specifications / Parts</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {pc.parts && pc.parts.length > 0 ? (
@@ -177,7 +177,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="admin-card p-6">
+          <div className="admin-admin-admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Notes</h2>
             <textarea
               value={notes}
@@ -190,7 +190,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
 
         {/* Right Column: Status & References */}
         <div className="space-y-6">
-          <div className="admin-card p-6">
+          <div className="admin-admin-admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Status & Details</h2>
             <div className="space-y-4">
               <div>
@@ -216,7 +216,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="admin-card p-6">
+          <div className="admin-admin-admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Linked Order</h2>
             {pc.order ? (
               <div className="space-y-3">
@@ -240,7 +240,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
           </div>
 
           {pc.customer && (
-            <div className="admin-card p-6">
+            <div className="admin-admin-admin-card p-6">
               <h2 className="text-lg font-medium text-white mb-4">Customer</h2>
               <div className="space-y-2 text-sm">
                 <div className="text-white font-medium">{pc.customer.firstName} {pc.customer.lastName}</div>

@@ -82,29 +82,29 @@ const AdminBuildRequestsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl overflow-hidden">
+      <div className="admin-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-sm text-left border-collapse">
             <thead>
-              <tr className="bg-[#11141d] border-b border-[#1f2233]">
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Name / Contact</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Budget / Use</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Details</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+              <tr className="border-b border-white/5 bg-[#050505]">
+                <th className="py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
+                <th className="py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Name / Contact</th>
+                <th className="py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Budget / Use</th>
+                <th className="py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Details</th>
+                <th className="py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                <th className="py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-800">
+            <tbody className="divide-y divide-white/5">
               {requests.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 px-6 text-center text-slate-500">
+                  <td colSpan={6} className="py-8 px-6 text-center text-slate-500 text-sm">
                     No build requests found.
                   </td>
                 </tr>
               ) : (
                 requests.map(request => (
-                  <tr key={request._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                  <tr key={request._id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-4 px-6 text-sm text-slate-400 whitespace-nowrap">
                       {new Date(request.createdAt).toLocaleDateString()}
                     </td>

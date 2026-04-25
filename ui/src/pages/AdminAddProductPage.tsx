@@ -275,7 +275,7 @@ const AdminAddProductPage: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* Parts Selection */}
-        <div className="admin-card p-6 space-y-6">
+        <div className="admin-admin-admin-card p-6 space-y-6">
           <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2">Included Parts</h2>
           <p className="text-sm text-slate-400">Select one component for each core category, and as many fans as needed. Cost is auto-calculated.</p>
           
@@ -348,7 +348,7 @@ const AdminAddProductPage: React.FC = () => {
         </div>
 
         {/* General Details */}
-        <div className="admin-card p-6 space-y-6">
+        <div className="admin-admin-admin-card p-6 space-y-6">
           <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2">Product Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">

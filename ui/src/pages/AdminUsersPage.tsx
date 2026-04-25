@@ -78,7 +78,7 @@ const AdminUsersPage: React.FC = () => {
       </div>
 
       {/* Search and filters */}
-      <div className="admin-card p-4 shrink-0">
+      <div className="admin-admin-admin-card p-4 shrink-0">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
             <div className="relative flex-1">
@@ -122,7 +122,7 @@ const AdminUsersPage: React.FC = () => {
       </div>
 
       {/* Users table */}
-      <div className="admin-card overflow-hidden flex-1 flex flex-col">
+      <div className="admin-admin-admin-card overflow-hidden flex-1 flex flex-col">
         <div className="overflow-x-auto flex-1">
           <table className="w-full">
             <thead>
