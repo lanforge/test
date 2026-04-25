@@ -87,7 +87,7 @@ const AdminCustomersPage: React.FC = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="admin-admin-admin-card p-4">
+        <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Total Customers</p>
@@ -101,7 +101,7 @@ const AdminCustomersPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="admin-admin-admin-card p-4">
+        <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Active Users</p>
@@ -115,7 +115,7 @@ const AdminCustomersPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="admin-admin-admin-card p-4">
+        <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Avg. Orders (Page)</p>
@@ -133,7 +133,7 @@ const AdminCustomersPage: React.FC = () => {
       </div>
 
       {/* Search and filters */}
-      <div className="admin-admin-admin-card p-4">
+      <div className="admin-card p-4">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
             <div className="relative flex-1">
@@ -179,7 +179,7 @@ const AdminCustomersPage: React.FC = () => {
       </div>
 
       {/* Customers table */}
-      <div className="admin-admin-admin-card overflow-hidden">
+      <div className="admin-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

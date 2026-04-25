@@ -175,7 +175,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Payment Info */}
-        <div className="admin-admin-admin-card p-6 space-y-4">
+        <div className="admin-card p-6 space-y-4">
           <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2">Transaction Information</h2>
           
           <div className="flex justify-between items-center py-2">
@@ -207,7 +207,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
         </div>
 
         {/* Associated Entities */}
-        <div className="admin-admin-admin-card p-6 space-y-4">
+        <div className="admin-card p-6 space-y-4">
           <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2">Associated Records</h2>
           
           {payment.order && (
@@ -258,7 +258,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
 
         {/* Refund History */}
         {payment.metadata?.refunds && payment.metadata.refunds.length > 0 && (
-          <div className="admin-admin-admin-card p-6 lg:col-span-2">
+          <div className="admin-card p-6 lg:col-span-2">
             <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2 mb-4">Refund History</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left">

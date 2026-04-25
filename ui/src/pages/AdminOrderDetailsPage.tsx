@@ -366,7 +366,7 @@ const AdminOrderDetailsPage: React.FC = () => {
         {/* Left Column: Items & Totals */}
         <div className="lg:col-span-2 space-y-6">
           {/* Items */}
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-medium text-white">Order Items</h2>
               <button 
@@ -449,7 +449,7 @@ const AdminOrderDetailsPage: React.FC = () => {
 
           {/* Purchased PCs section */}
           {purchasedPCs.length > 0 && (
-            <div className="admin-admin-admin-card p-6">
+            <div className="admin-card p-6">
               <h2 className="text-lg font-medium text-white mb-4">Purchased PCs</h2>
               <div className="space-y-4">
                 {purchasedPCs.map((pc: any, idx: number) => (
@@ -487,7 +487,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           )}
 
           {/* Totals */}
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Order Totals</h2>
             <div className="space-y-3">
               <div className="flex justify-between text-slate-400">
@@ -544,7 +544,7 @@ const AdminOrderDetailsPage: React.FC = () => {
         {/* Right Column: Customer, Addresses, Payment */}
         <div className="space-y-6">
           {/* Customer Details */}
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Customer Details</h2>
             {order.customer ? (
               <div className="space-y-2">
@@ -573,7 +573,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           </div>
 
           {/* Payment Details */}
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Payment Information</h2>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
@@ -769,7 +769,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           </div>
 
           {/* Shipping Labels / Purchase Label */}
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Shipping Actions</h2>
             
             {order.status !== 'shipped' && order.status !== 'out-for-delivery' && order.status !== 'delivered' && (
@@ -846,7 +846,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           </div>
 
           {/* Shipping Address */}
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Shipping Address</h2>
             {shippingAddress && (
               <div className="space-y-3">
@@ -912,7 +912,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           </div>
 
           {/* Billing Address */}
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Billing Address</h2>
             {billingAddress && (
               <div className="space-y-3">

@@ -63,7 +63,7 @@ const AdminDashboardPage: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Revenue */}
-        <div className="bg-[#11141d] rounded-md p-5 border border-[#1f2233]">
+        <div className="admin-card p-5">
           <div className="flex items-center justify-between">
             <h3 className="text-slate-400 text-sm">Total Revenue</h3>
             <div className="w-8 h-8 rounded-md bg-emerald-500/10 flex items-center justify-center">
@@ -84,7 +84,7 @@ const AdminDashboardPage: React.FC = () => {
         </div>
 
         {/* Total Orders */}
-        <div className="bg-[#11141d] rounded-md p-5 border border-[#1f2233]">
+        <div className="admin-card p-5">
           <div className="flex items-center justify-between">
             <h3 className="text-slate-400 text-sm">Total Orders</h3>
             <div className="w-8 h-8 rounded-md bg-blue-500/10 flex items-center justify-center">
@@ -105,7 +105,7 @@ const AdminDashboardPage: React.FC = () => {
         </div>
 
         {/* Customers */}
-        <div className="bg-[#11141d] rounded-md p-5 border border-[#1f2233]">
+        <div className="admin-card p-5">
           <div className="flex items-center justify-between">
             <h3 className="text-slate-400 text-sm">Total Customers</h3>
             <div className="w-8 h-8 rounded-md bg-purple-500/10 flex items-center justify-center">
@@ -124,7 +124,7 @@ const AdminDashboardPage: React.FC = () => {
         </div>
 
         {/* Low Stock Alerts */}
-        <div className="bg-[#11141d] rounded-md p-5 border border-[#1f2233]">
+        <div className="admin-card p-5">
           <div className="flex items-center justify-between">
             <h3 className="text-slate-400 text-sm">Inventory Alerts</h3>
             <div className="w-8 h-8 rounded-md bg-amber-500/10 flex items-center justify-center">

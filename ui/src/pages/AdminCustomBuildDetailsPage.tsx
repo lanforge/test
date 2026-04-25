@@ -135,7 +135,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Parts */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Configuration Details</h2>
             <div className="space-y-4">
               {build.parts.map((item, idx) => (
@@ -178,7 +178,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
 
         {/* Right Column: Customer & Totals */}
         <div className="space-y-6">
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Customer Details</h2>
             {build.customer ? (
               <div className="space-y-2">
@@ -211,7 +211,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
             )}
           </div>
 
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Status & Link</h2>
             
             <div className="mb-4">
@@ -264,7 +264,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="admin-admin-admin-card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-medium text-white mb-4">Pricing Summary</h2>
             <div className="space-y-3">
               <div className="flex justify-between text-slate-400">

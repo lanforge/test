@@ -183,7 +183,7 @@ const AdminProductsPage: React.FC = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="admin-admin-admin-card p-4">
+        <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Total Products</p>
@@ -197,7 +197,7 @@ const AdminProductsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="admin-admin-admin-card p-4">
+        <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Out of Stock</p>
@@ -211,7 +211,7 @@ const AdminProductsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="admin-admin-admin-card p-4">
+        <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Low Stock</p>
@@ -225,7 +225,7 @@ const AdminProductsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="admin-admin-admin-card p-4">
+        <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Active Listings</p>
@@ -241,7 +241,7 @@ const AdminProductsPage: React.FC = () => {
       </div>
 
       {/* Search and filters */}
-      <div className="admin-admin-admin-card p-4">
+      <div className="admin-card p-4">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
             <div className="flex-1 flex items-center bg-[#07090e] border border-[#1f2233] rounded-md focus-within:border-white/20 transition-all">
@@ -287,7 +287,7 @@ const AdminProductsPage: React.FC = () => {
       </div>
 
       {/* Products table */}
-      <div className="admin-admin-admin-card overflow-hidden">
+      <div className="admin-card overflow-hidden">
         <div className="p-3 border-b border-[#1f2233] flex items-center justify-between bg-[#07090e]">
           <div className="flex items-center space-x-3">
             <input

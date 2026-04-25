@@ -210,7 +210,7 @@ const AdminPartsPage: React.FC = () => {
 
       {/* Bulk Import Section */}
       {showBulkImport && (
-        <div className="admin-admin-admin-card p-6 bg-[#11141d] border border-blue-500/30">
+        <div className="admin-card p-6 bg-[#11141d] border border-blue-500/30">
           <h2 className="text-lg font-medium text-white mb-2">Bulk Auto-Import Parts</h2>
           <p className="text-slate-500 mb-6 text-xs">Paste product URLs from Amazon or Newegg (one per line). The system will scrape the name, brand, model, and price, then automatically create the parts in your inventory.</p>
           
@@ -289,7 +289,7 @@ const AdminPartsPage: React.FC = () => {
       )}
 
       {/* Search and filters */}
-      <div className="admin-admin-admin-card p-4">
+      <div className="admin-card p-4">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
             <div className="flex-1 flex items-center bg-[#07090e] border border-[#1f2233] rounded-md focus-within:border-white/20 transition-all">
@@ -341,7 +341,7 @@ const AdminPartsPage: React.FC = () => {
       </div>
 
       {/* Parts Table */}
-      <div className="admin-admin-admin-card overflow-hidden">
+      <div className="admin-card overflow-hidden">
         <div className="p-3 border-b border-[#1f2233] flex items-center justify-between bg-[#07090e]">
           <div className="flex items-center space-x-3">
             <input

@@ -150,7 +150,7 @@ const AdminPartnersPage: React.FC = () => {
       {activeTab === 'partners' && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
           {/* Partners list */}
-          <div className="admin-admin-admin-card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#0a0c13]">
@@ -239,7 +239,7 @@ const AdminPartnersPage: React.FC = () => {
       {activeTab === 'affiliates' && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
           {/* Filters */}
-          <div className="admin-admin-admin-card p-4">
+          <div className="admin-card p-4">
             <div className="flex flex-col space-y-3">
               <div className="flex items-center space-x-3">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
@@ -264,7 +264,7 @@ const AdminPartnersPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="admin-admin-admin-card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#0a0c13]">

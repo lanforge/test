@@ -173,7 +173,7 @@ const AdminCartsPage: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="admin-admin-admin-card p-6">
+            <div className="admin-card p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-sm font-medium text-white">Cart Items</h2>
                 <div className="text-slate-500 text-xs">
@@ -246,7 +246,7 @@ const AdminCartsPage: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            <div className="admin-admin-admin-card p-6">
+            <div className="admin-card p-6">
               <h2 className="text-sm font-medium text-white mb-6">Cart Details</h2>
               <div className="space-y-4">
                 <div>
@@ -300,7 +300,7 @@ const AdminCartsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="admin-admin-admin-card p-6">
+            <div className="admin-card p-6">
               <h2 className="text-sm font-medium text-white mb-4">Summary</h2>
               <div className="space-y-2 mb-4 text-sm">
                 <div className="flex justify-between items-center">
@@ -347,7 +347,7 @@ const AdminCartsPage: React.FC = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="admin-admin-admin-card p-4">
+        <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Total Tracked Carts</p>
@@ -360,7 +360,7 @@ const AdminCartsPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="admin-admin-admin-card p-4">
+        <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Abandoned</p>
@@ -373,7 +373,7 @@ const AdminCartsPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="admin-admin-admin-card p-4">
+        <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-500 text-xs uppercase tracking-wider">Recovered</p>
@@ -389,7 +389,7 @@ const AdminCartsPage: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="admin-admin-admin-card p-4">
+      <div className="admin-card p-4">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -414,7 +414,7 @@ const AdminCartsPage: React.FC = () => {
       </div>
 
       {/* Carts table */}
-      <div className="admin-admin-admin-card overflow-hidden">
+      <div className="admin-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

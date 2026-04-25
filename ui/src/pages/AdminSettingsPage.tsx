@@ -298,7 +298,7 @@ const AdminSettingsPage: React.FC = () => {
 
         {/* GENERAL TAB */}
         {activeTab === 'general' && (
-          <div className="admin-admin-admin-card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <div className="p-6 border-b border-[#1f2233]">
               <h2 className="text-lg font-medium text-white flex items-center space-x-2">
                 <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -539,7 +539,7 @@ const AdminSettingsPage: React.FC = () => {
 
         {/* MAINTENANCE TAB */}
         {activeTab === 'maintenance' && (
-          <div className="admin-admin-admin-card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <div className="p-6 border-b border-[#1f2233]">
               <h2 className="text-lg font-medium text-white flex items-center space-x-2">
                 <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -644,7 +644,7 @@ const AdminSettingsPage: React.FC = () => {
 
         {/* TAX & SHIPPING TAB */}
         {activeTab === 'tax' && (
-          <div className="admin-admin-admin-card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <div className="p-6 border-b border-[#1f2233]">
               <h2 className="text-lg font-medium text-white flex items-center space-x-2">
                 <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

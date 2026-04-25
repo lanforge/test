@@ -69,7 +69,7 @@ const AdminAddCustomerPage: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="admin-admin-admin-card p-6 space-y-6">
+        <div className="admin-card p-6 space-y-6">
           <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-4">Customer Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>

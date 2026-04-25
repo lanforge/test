@@ -155,7 +155,7 @@ const AdminPromotionsPage: React.FC = () => {
       {activeTab === 'discounts' && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
           {/* Discount Filters */}
-          <div className="admin-admin-admin-card p-4">
+          <div className="admin-card p-4">
             <div className="flex flex-col space-y-3">
               <div className="flex items-center space-x-3">
                 <div className="relative flex-1">
@@ -195,7 +195,7 @@ const AdminPromotionsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="admin-admin-admin-card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#07090e]">
@@ -340,7 +340,7 @@ const AdminPromotionsPage: React.FC = () => {
           {/* Loyalty Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {['Bronze', 'Silver', 'Gold', 'Platinum'].map(tier => (
-              <div key={tier} className="admin-admin-admin-card p-4 border border-[#1f2233] flex items-center justify-between">
+              <div key={tier} className="admin-card p-4 border border-[#1f2233] flex items-center justify-between">
                 <div>
                   <p className="text-slate-500 text-xs uppercase tracking-wider">{tier} Members</p>
                   <p className="text-xl font-medium text-white mt-1">{tierStats[tier] || 0}</p>
@@ -349,7 +349,7 @@ const AdminPromotionsPage: React.FC = () => {
             ))}
           </div>
 
-          <div className="admin-admin-admin-card p-4">
+          <div className="admin-card p-4">
             <div className="flex flex-col space-y-3">
               <div className="flex items-center space-x-3">
                 <div className="relative flex-1">
@@ -391,7 +391,7 @@ const AdminPromotionsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="admin-admin-admin-card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#07090e]">
