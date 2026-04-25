@@ -764,8 +764,9 @@ router.put('/:id/status', protect, staffOrAdmin, async (req: AuthRequest, res: R
     }
 
     res.json({ order });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+  } catch (error: any) {
+    console.error('Error updating order status:', error);
+    res.status(500).json({ message: 'Server error updating order status: ' + error.message });
   }
 });
 
@@ -867,8 +868,9 @@ router.put('/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response
     
     const updatedOrder = await Order.findById(req.params.id).populate('customer', 'firstName lastName email loyaltyPoints').populate('appliedDiscount', 'code type value');
     res.json({ order: updatedOrder });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+  } catch (error: any) {
+    console.error('Error updating order:', error);
+    res.status(500).json({ message: 'Server error updating order: ' + error.message });
   }
 });
 
