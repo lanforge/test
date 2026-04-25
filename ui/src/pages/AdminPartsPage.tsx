@@ -176,7 +176,7 @@ const AdminPartsPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">PC Parts Management</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage individual components and hardware parts</p>
+          <p className="text-slate-500 text-sm mt-1">Manage individual components and hardware parts</p>
         </div>
         <div className="flex items-center space-x-3">
           <button 
@@ -210,13 +210,13 @@ const AdminPartsPage: React.FC = () => {
 
       {/* Bulk Import Section */}
       {showBulkImport && (
-        <div className="admin-card p-6 bg-[#0a0a0a] border border-blue-500/30">
+        <div className="admin-card p-6 bg-[#11141d] border border-blue-500/30">
           <h2 className="text-lg font-medium text-white mb-2">Bulk Auto-Import Parts</h2>
-          <p className="text-gray-500 mb-6 text-xs">Paste product URLs from Amazon or Newegg (one per line). The system will scrape the name, brand, model, and price, then automatically create the parts in your inventory.</p>
+          <p className="text-slate-500 mb-6 text-xs">Paste product URLs from Amazon or Newegg (one per line). The system will scrape the name, brand, model, and price, then automatically create the parts in your inventory.</p>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-4">
             <div className="md:col-span-3">
-              <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Product URLs (one per line)</label>
+              <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Product URLs (one per line)</label>
               <textarea 
                 className="admin-input h-32" 
                 placeholder="https://amazon.com/dp/...\nhttps://newegg.com/p/..."
@@ -226,7 +226,7 @@ const AdminPartsPage: React.FC = () => {
               ></textarea>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Assign Category</label>
+              <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Assign Category</label>
               <select
                 className="admin-input mb-4"
                 value={bulkCategory}
@@ -245,7 +245,7 @@ const AdminPartsPage: React.FC = () => {
                 <option value="os">Operating System</option>
               </select>
 
-              <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Assign Tags / Colors</label>
+              <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Assign Tags / Colors</label>
               <input
                 type="text"
                 className="admin-input mb-2"
@@ -261,7 +261,7 @@ const AdminPartsPage: React.FC = () => {
               <button 
                 onClick={handleBulkImport}
                 disabled={isBulkImporting || !bulkUrls.trim()}
-                className="w-full mt-2 py-2 bg-white text-black hover:bg-gray-200 disabled:bg-gray-800 disabled:text-gray-500 rounded-md transition-colors text-sm font-medium"
+                className="w-full mt-2 py-2 bg-white text-black hover:bg-gray-200 disabled:bg-[#11141d] disabled:text-slate-500 rounded-md transition-colors text-sm font-medium"
               >
                 {isBulkImporting ? 'Importing...' : 'Start Import'}
               </button>
@@ -269,12 +269,12 @@ const AdminPartsPage: React.FC = () => {
           </div>
           
           {isBulkImporting && (
-            <div className="mt-4 p-4 bg-white/5 rounded-md border border-white/10">
-              <div className="flex justify-between text-xs text-gray-400 mb-2">
+            <div className="mt-4 p-4 bg-[#1f2233]/50 rounded-md border border-[#1f2233]">
+              <div className="flex justify-between text-xs text-slate-400 mb-2">
                 <span>Processing item {bulkProgress.current} of {bulkProgress.total}...</span>
                 <span>{Math.round((bulkProgress.current / bulkProgress.total) * 100)}%</span>
               </div>
-              <div className="w-full bg-[#050505] rounded-full h-1.5 border border-white/5">
+              <div className="w-full bg-[#07090e] rounded-full h-1.5 border border-[#1f2233]">
                 <div className="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%` }}></div>
               </div>
             </div>
@@ -292,20 +292,20 @@ const AdminPartsPage: React.FC = () => {
       <div className="admin-card p-4">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
-            <div className="flex-1 flex items-center bg-[#050505] border border-white/5 rounded-md focus-within:border-white/20 transition-all">
-              <svg className="w-4 h-4 text-gray-500 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex-1 flex items-center bg-[#07090e] border border-[#1f2233] rounded-md focus-within:border-white/20 transition-all">
+              <svg className="w-4 h-4 text-slate-500 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
                 type="text"
                 placeholder="Search parts by name/sku..."
-                className="w-full pl-2 pr-4 py-2 bg-transparent text-sm text-gray-200 placeholder-gray-600 focus:outline-none"
+                className="w-full pl-2 pr-4 py-2 bg-transparent text-sm text-slate-200 placeholder-gray-600 focus:outline-none"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-            <button onClick={fetchParts} className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-md transition-colors" title="Refresh">
+            <button onClick={fetchParts} className="p-2 bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-md transition-colors" title="Refresh">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -342,15 +342,15 @@ const AdminPartsPage: React.FC = () => {
 
       {/* Parts Table */}
       <div className="admin-card overflow-hidden">
-        <div className="p-3 border-b border-white/5 flex items-center justify-between bg-[#050505]">
+        <div className="p-3 border-b border-[#1f2233] flex items-center justify-between bg-[#07090e]">
           <div className="flex items-center space-x-3">
             <input
               type="checkbox"
-              className="w-3.5 h-3.5 rounded bg-[#0a0a0a] border-white/10"
+              className="w-3.5 h-3.5 rounded bg-[#11141d] border-[#1f2233]"
               checked={selectedParts.length === parts.length && parts.length > 0}
               onChange={handleSelectAll}
             />
-            <span className="text-gray-500 text-xs">
+            <span className="text-slate-500 text-xs">
               {selectedParts.length > 0 ? `${selectedParts.length} selected` : `${parts.length} parts (this page)`}
             </span>
           </div>
@@ -369,37 +369,37 @@ const AdminPartsPage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5 bg-[#050505]">
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Part Name</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Type & Brand</th>
-                <th className="text-right py-3 px-4 text-gray-500 font-medium text-xs">Price</th>
-                <th className="text-right py-3 px-4 text-gray-500 font-medium text-xs">Cost</th>
-                <th className="text-right py-3 px-4 text-gray-500 font-medium text-xs">Stock</th>
-                <th className="text-center py-3 px-4 text-gray-500 font-medium text-xs">Status</th>
-                <th className="text-right py-3 px-4 text-gray-500 font-medium text-xs">Actions</th>
+              <tr className="border-b border-[#1f2233] bg-[#07090e]">
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Part Name</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Type & Brand</th>
+                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Price</th>
+                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Cost</th>
+                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Stock</th>
+                <th className="text-center py-3 px-4 text-slate-500 font-medium text-xs">Status</th>
+                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {isLoading ? (
-                <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500 text-sm">Loading parts...</td></tr>
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">Loading parts...</td></tr>
               ) : parts.length === 0 ? (
-                <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500 text-sm">No parts found.</td></tr>
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">No parts found.</td></tr>
               ) : parts.map(part => {
                 const status = getStockStatus(part.stock);
 
                 return (
-                  <tr key={part._id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={part._id} className="hover:bg-[#1f2233]/50 transition-colors">
                     <td className="py-3 px-4">
                       <div className="flex items-center space-x-3 mb-1">
                         <input
                           type="checkbox"
-                          className="w-3.5 h-3.5 rounded bg-[#0a0a0a] border-white/10"
+                          className="w-3.5 h-3.5 rounded bg-[#11141d] border-[#1f2233]"
                           checked={selectedParts.includes(part._id)}
                           onChange={() => handleSelectPart(part._id)}
                         />
-                        <p className="text-gray-200 font-medium">{`${part.brand} ${part.partModel}`}</p>
+                        <p className="text-slate-200 font-medium">{`${part.brand} ${part.partModel}`}</p>
                       </div>
-                      <p className="text-gray-500 text-xs font-mono mt-1">{part.sku}</p>
+                      <p className="text-slate-500 text-xs font-mono mt-1">{part.sku}</p>
                       {(part as any).productUrl && (
                         <div className="flex items-center gap-3 mt-2">
                           <a 
@@ -429,20 +429,20 @@ const AdminPartsPage: React.FC = () => {
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      <p className="text-gray-200">{part.type}</p>
-                      <p className="text-gray-500 text-xs">{part.brand}</p>
+                      <p className="text-slate-200">{part.type}</p>
+                      <p className="text-slate-500 text-xs">{part.brand}</p>
                     </td>
-                    <td className="py-3 px-4 text-right text-gray-200 font-medium">
+                    <td className="py-3 px-4 text-right text-slate-200 font-medium">
                       ${part.price?.toFixed(2)}
                     </td>
                     <td className="py-3 px-4 text-right text-emerald-500 font-medium">
                       {typeof part.cost === 'number' ? `$${part.cost.toFixed(2)}` : 'N/A'}
                     </td>
-                    <td className="py-3 px-4 text-right text-gray-200 font-medium">
+                    <td className="py-3 px-4 text-right text-slate-200 font-medium">
                       {part.stock}
                     </td>
                     <td className="py-3 px-4 text-center">
-                      <span className={`admin-badge ${part.isActive ? status.color : 'bg-gray-500/10 text-gray-400 border-gray-500/20'}`}>
+                      <span className={`admin-badge ${part.isActive ? status.color : 'bg-gray-500/10 text-slate-400 border-gray-500/20'}`}>
                         {part.isActive ? status.text : 'Inactive'}
                       </span>
                     </td>
@@ -450,7 +450,7 @@ const AdminPartsPage: React.FC = () => {
                       <div className="flex items-center justify-end space-x-2">
                         <button 
                           onClick={() => navigate(`/admin/parts/edit/${part._id}`)}
-                          className="p-1.5 text-gray-500 hover:text-white hover:bg-white/10 rounded-md transition-colors"
+                          className="p-1.5 text-slate-500 hover:text-white hover:bg-[#1f2233] rounded-md transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -458,7 +458,7 @@ const AdminPartsPage: React.FC = () => {
                         </button>
                         <button 
                           onClick={() => handleDelete(part._id)} 
-                          className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-white/10 rounded-md transition-colors" 
+                          className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-[#1f2233] rounded-md transition-colors" 
                           title="Delete"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -475,23 +475,23 @@ const AdminPartsPage: React.FC = () => {
         </div>
 
         {/* Pagination */}
-        <div className="p-3 border-t border-white/5 flex items-center justify-between bg-[#050505]">
-          <div className="text-gray-500 text-xs">
+        <div className="p-3 border-t border-[#1f2233] flex items-center justify-between bg-[#07090e]">
+          <div className="text-slate-500 text-xs">
             Showing {parts.length > 0 ? (page - 1) * 20 + 1 : 0} to {Math.min(page * 20, totalParts)} of {totalParts} parts
           </div>
           <div className="flex items-center space-x-2">
             <button 
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors disabled:opacity-50"
             >
               Previous
             </button>
-            <span className="text-gray-500 text-xs px-2">Page {page} of {totalPages || 1}</span>
+            <span className="text-slate-500 text-xs px-2">Page {page} of {totalPages || 1}</span>
             <button 
               disabled={page === totalPages || totalPages === 0}
               onClick={() => setPage(p => p + 1)}
-              className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors disabled:opacity-50"
             >
               Next
             </button>

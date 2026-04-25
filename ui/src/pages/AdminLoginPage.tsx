@@ -20,7 +20,7 @@ const AdminLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#0a0c13] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
           Admin Login
@@ -28,7 +28,7 @@ const AdminLoginPage: React.FC = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-700">
+        <div className="bg-[#11141d] py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-[#1f2233]">
           <form className="space-y-6" onSubmit={handleLogin}>
             {error && (
               <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-md text-sm">
@@ -36,7 +36,7 @@ const AdminLoginPage: React.FC = () => {
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-slate-300">
                 Email address
               </label>
               <div className="mt-1">
@@ -51,7 +51,7 @@ const AdminLoginPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-slate-300">
                 Password
               </label>
               <div className="mt-1">

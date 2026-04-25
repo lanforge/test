@@ -55,7 +55,7 @@ const AdminReviewsPage: React.FC = () => {
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, i) => (
-      <svg key={i} className={`w-4 h-4 ${i < rating ? 'text-amber-400' : 'text-gray-600'}`} fill="currentColor" viewBox="0 0 20 20">
+      <svg key={i} className={`w-4 h-4 ${i < rating ? 'text-amber-400' : 'text-slate-600'}`} fill="currentColor" viewBox="0 0 20 20">
         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
       </svg>
     ));
@@ -66,7 +66,7 @@ const AdminReviewsPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">Product Reviews</h1>
-          <p className="text-gray-500 text-sm mt-1">Moderate customer reviews and feedback</p>
+          <p className="text-slate-500 text-sm mt-1">Moderate customer reviews and feedback</p>
         </div>
       </div>
 
@@ -74,7 +74,7 @@ const AdminReviewsPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Total Reviews</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Total Reviews</p>
               <p className="text-2xl font-medium text-white mt-1">{totalReviews}</p>
             </div>
             <div className="w-8 h-8 bg-blue-500/10 rounded-md flex items-center justify-center">
@@ -116,37 +116,37 @@ const AdminReviewsPage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5 bg-[#050505]">
-                <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Rating / Item</th>
-                <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Customer</th>
-                <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Review</th>
-                <th className="py-3 px-4 text-center text-gray-500 font-medium text-xs">Date</th>
-                <th className="py-3 px-4 text-center text-gray-500 font-medium text-xs">Status</th>
-                <th className="py-3 px-4 text-right text-gray-500 font-medium text-xs">Actions</th>
+              <tr className="border-b border-[#1f2233] bg-[#07090e]">
+                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Rating / Item</th>
+                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Customer</th>
+                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Review</th>
+                <th className="py-3 px-4 text-center text-slate-500 font-medium text-xs">Date</th>
+                <th className="py-3 px-4 text-center text-slate-500 font-medium text-xs">Status</th>
+                <th className="py-3 px-4 text-right text-slate-500 font-medium text-xs">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {isLoading ? (
-                <tr><td colSpan={6} className="p-4 text-center text-gray-500 text-sm">Loading reviews...</td></tr>
+                <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">Loading reviews...</td></tr>
               ) : reviews.length === 0 ? (
-                <tr><td colSpan={6} className="p-4 text-center text-gray-500 text-sm">No reviews found</td></tr>
+                <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">No reviews found</td></tr>
               ) : (
                 reviews.map(review => (
-                  <tr key={review._id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={review._id} className="hover:bg-[#1f2233]/50 transition-colors">
                     <td className="py-3 px-4">
                       <div className="flex items-center space-x-1 mb-1">
                         {renderStars(review.rating)}
                       </div>
-                      <p className="text-gray-500 text-[10px] truncate max-w-[200px] uppercase tracking-wider">
+                      <p className="text-slate-500 text-[10px] truncate max-w-[200px] uppercase tracking-wider">
                         {review.product?.name || review.pcPart?.name || review.accessory?.name || 'Unknown Item'}
                       </p>
                     </td>
-                    <td className="py-3 px-4 text-gray-200 font-medium">{review.customerName}</td>
+                    <td className="py-3 px-4 text-slate-200 font-medium">{review.customerName}</td>
                     <td className="py-3 px-4">
-                      <p className="text-gray-200 font-medium text-sm mb-0.5">{review.title}</p>
-                      <p className="text-gray-500 text-xs truncate max-w-[300px]">{review.comment}</p>
+                      <p className="text-slate-200 font-medium text-sm mb-0.5">{review.title}</p>
+                      <p className="text-slate-500 text-xs truncate max-w-[300px]">{review.comment}</p>
                     </td>
-                    <td className="py-3 px-4 text-gray-500 text-center text-xs">
+                    <td className="py-3 px-4 text-slate-500 text-center text-xs">
                       {new Date(review.createdAt).toLocaleDateString()}
                     </td>
                     <td className="py-3 px-4 text-center">
@@ -157,7 +157,7 @@ const AdminReviewsPage: React.FC = () => {
                     <td className="py-3 px-4 text-right">
                       <button 
                         onClick={() => toggleApproval(review._id, review.isApproved)}
-                        className={`px-2.5 py-1 text-xs rounded-md transition-colors border ${review.isApproved ? 'bg-white/5 border-white/10 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 text-gray-300' : 'bg-white hover:bg-gray-200 text-black border-transparent font-medium'}`}
+                        className={`px-2.5 py-1 text-xs rounded-md transition-colors border ${review.isApproved ? 'bg-[#1f2233]/50 border-[#1f2233] hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 text-slate-300' : 'bg-white hover:bg-gray-200 text-black border-transparent font-medium'}`}
                       >
                         {review.isApproved ? 'Revoke' : 'Approve'}
                       </button>
@@ -170,23 +170,23 @@ const AdminReviewsPage: React.FC = () => {
         </div>
         
         {/* Pagination */}
-        <div className="p-3 border-t border-white/5 flex items-center justify-between bg-[#050505]">
-          <div className="text-gray-500 text-xs">
+        <div className="p-3 border-t border-[#1f2233] flex items-center justify-between bg-[#07090e]">
+          <div className="text-slate-500 text-xs">
             Showing {reviews.length > 0 ? (page - 1) * 20 + 1 : 0} to {Math.min(page * 20, totalReviews)} of {totalReviews}
           </div>
           <div className="flex items-center space-x-2">
             <button 
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors disabled:opacity-50"
             >
               Previous
             </button>
-            <span className="text-gray-500 text-xs px-2">Page {page} of {totalPages || 1}</span>
+            <span className="text-slate-500 text-xs px-2">Page {page} of {totalPages || 1}</span>
             <button 
               disabled={page === totalPages || totalPages === 0}
               onClick={() => setPage(p => p + 1)}
-              className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors disabled:opacity-50"
             >
               Next
             </button>

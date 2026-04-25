@@ -102,9 +102,9 @@ const AdminPromotionsPage: React.FC = () => {
     switch (tier.toLowerCase()) {
       case 'platinum': return 'bg-purple-500/10 text-purple-500 border-purple-500/20';
       case 'gold': return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
-      case 'silver': return 'bg-gray-400/10 text-gray-300 border-gray-400/20';
+      case 'silver': return 'bg-gray-400/10 text-slate-300 border-gray-400/20';
       case 'bronze': return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
-      default: return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+      default: return 'bg-gray-500/10 text-slate-400 border-gray-500/20';
     }
   };
 
@@ -114,7 +114,7 @@ const AdminPromotionsPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">Promotions & Loyalty</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage discounts and customer rewards</p>
+          <p className="text-slate-500 text-sm mt-1">Manage discounts and customer rewards</p>
         </div>
         <div className="flex items-center space-x-4">
           <button 
@@ -127,14 +127,14 @@ const AdminPromotionsPage: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-white/5">
+      <div className="border-b border-[#1f2233]">
         <nav className="flex space-x-6">
           <button
             onClick={() => setActiveTab('discounts')}
             className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'discounts'
                 ? 'border-emerald-500 text-emerald-500'
-                : 'border-transparent text-gray-500 hover:text-gray-300'
+                : 'border-transparent text-slate-500 hover:text-slate-300'
             }`}
           >
             Discount Codes
@@ -144,7 +144,7 @@ const AdminPromotionsPage: React.FC = () => {
             className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'loyalty'
                 ? 'border-emerald-500 text-emerald-500'
-                : 'border-transparent text-gray-500 hover:text-gray-300'
+                : 'border-transparent text-slate-500 hover:text-slate-300'
             }`}
           >
             Loyalty Program
@@ -165,11 +165,11 @@ const AdminPromotionsPage: React.FC = () => {
                     className="admin-input pl-10"
                     disabled
                   />
-                  <svg className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-                <button onClick={fetchDiscounts} className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-md transition-colors" title="Refresh">
+                <button onClick={fetchDiscounts} className="p-2 bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-md transition-colors" title="Refresh">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
@@ -198,37 +198,37 @@ const AdminPromotionsPage: React.FC = () => {
           <div className="admin-card overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/5 bg-[#050505]">
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Code</th>
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Type</th>
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Value</th>
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Usage</th>
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Expires</th>
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Status</th>
+                <tr className="border-b border-[#1f2233] bg-[#07090e]">
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Code</th>
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Type</th>
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Value</th>
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Usage</th>
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Expires</th>
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {isLoading ? (
-                  <tr><td colSpan={6} className="p-4 text-center text-gray-500 text-sm">Loading discounts...</td></tr>
+                  <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">Loading discounts...</td></tr>
                 ) : discounts.length === 0 ? (
-                  <tr><td colSpan={6} className="p-4 text-center text-gray-500 text-sm">No discounts found</td></tr>
+                  <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">No discounts found</td></tr>
                 ) : (
                   discounts.map(d => (
-                    <tr key={d._id} className="hover:bg-white/[0.02]">
+                    <tr key={d._id} className="hover:bg-[#1f2233]/50">
                       <td className="py-3 px-4 font-mono text-emerald-500 font-medium">{d.code}</td>
-                      <td className="py-3 px-4 text-gray-400 capitalize">{d.type.replace('_', ' ')}</td>
-                      <td className="py-3 px-4 text-gray-200">
+                      <td className="py-3 px-4 text-slate-400 capitalize">{d.type.replace('_', ' ')}</td>
+                      <td className="py-3 px-4 text-slate-200">
                         {d.type === 'percentage' ? `${d.value}%` : d.type === 'fixed' ? `$${d.value}` : 'Free'}
                       </td>
-                      <td className="py-3 px-4 text-gray-400">
+                      <td className="py-3 px-4 text-slate-400">
                         {d.usedCount} / {d.usageLimit || '∞'}
                       </td>
-                      <td className="py-3 px-4 text-gray-400">
+                      <td className="py-3 px-4 text-slate-400">
                         {d.expiresAt ? new Date(d.expiresAt).toLocaleDateString() : 'Never'}
                       </td>
                       <td className="py-3 px-4">
                         <span className={`admin-badge ${
-                          d.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+                          d.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-gray-500/10 text-slate-400 border-gray-500/20'
                         }`}>
                           {d.status}
                         </span>
@@ -244,16 +244,16 @@ const AdminPromotionsPage: React.FC = () => {
 
       {isDiscountModalOpen && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 animate-in fade-in">
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-md w-full max-w-md overflow-hidden">
-            <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#050505]">
+          <div className="bg-[#11141d] border border-[#1f2233] rounded-md w-full max-w-md overflow-hidden">
+            <div className="p-4 border-b border-[#1f2233] flex justify-between items-center bg-[#07090e]">
               <h2 className="text-sm font-medium text-white">Create Discount</h2>
-              <button onClick={() => setIsDiscountModalOpen(false)} className="text-gray-500 hover:text-white transition-colors">
+              <button onClick={() => setIsDiscountModalOpen(false)} className="text-slate-500 hover:text-white transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <form onSubmit={handleCreateDiscount} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Code</label>
+                <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Code</label>
                 <input 
                   type="text" 
                   value={newDiscount.code}
@@ -264,7 +264,7 @@ const AdminPromotionsPage: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Type</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Type</label>
                   <select 
                     value={newDiscount.type}
                     onChange={(e) => setNewDiscount({...newDiscount, type: e.target.value as any})}
@@ -277,7 +277,7 @@ const AdminPromotionsPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">
+                  <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">
                     {newDiscount.type === 'percentage' ? 'Percentage %' : newDiscount.type === 'fixed' ? 'Amount $' : 'Value (N/A)'}
                   </label>
                   <input 
@@ -292,7 +292,7 @@ const AdminPromotionsPage: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Min Order $</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Min Order $</label>
                   <input 
                     type="number" 
                     value={newDiscount.minOrder}
@@ -302,7 +302,7 @@ const AdminPromotionsPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Usage Limit</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Usage Limit</label>
                   <input 
                     type="number" 
                     value={newDiscount.usageLimit}
@@ -313,7 +313,7 @@ const AdminPromotionsPage: React.FC = () => {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Expires At</label>
+                <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Expires At</label>
                 <input 
                   type="date" 
                   value={newDiscount.expiresAt}
@@ -323,7 +323,7 @@ const AdminPromotionsPage: React.FC = () => {
                 />
               </div>
               <div className="pt-4 flex space-x-3">
-                <button type="button" onClick={() => setIsDiscountModalOpen(false)} className="flex-1 py-2 px-4 border border-white/10 rounded-md text-gray-400 hover:bg-white/5 transition-colors text-sm">
+                <button type="button" onClick={() => setIsDiscountModalOpen(false)} className="flex-1 py-2 px-4 border border-[#1f2233] rounded-md text-slate-400 hover:bg-[#1f2233]/50 transition-colors text-sm">
                   Cancel
                 </button>
                 <button type="submit" className="flex-1 py-2 px-4 bg-white hover:bg-gray-200 text-black rounded-md transition-colors text-sm font-medium">
@@ -340,9 +340,9 @@ const AdminPromotionsPage: React.FC = () => {
           {/* Loyalty Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {['Bronze', 'Silver', 'Gold', 'Platinum'].map(tier => (
-              <div key={tier} className="admin-card p-4 border border-white/5 flex items-center justify-between">
+              <div key={tier} className="admin-card p-4 border border-[#1f2233] flex items-center justify-between">
                 <div>
-                  <p className="text-gray-500 text-xs uppercase tracking-wider">{tier} Members</p>
+                  <p className="text-slate-500 text-xs uppercase tracking-wider">{tier} Members</p>
                   <p className="text-xl font-medium text-white mt-1">{tierStats[tier] || 0}</p>
                 </div>
               </div>
@@ -359,11 +359,11 @@ const AdminPromotionsPage: React.FC = () => {
                     className="admin-input pl-10"
                     disabled
                   />
-                  <svg className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-                <button onClick={fetchLoyalty} className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-md transition-colors" title="Refresh">
+                <button onClick={fetchLoyalty} className="p-2 bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-md transition-colors" title="Refresh">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
@@ -394,31 +394,31 @@ const AdminPromotionsPage: React.FC = () => {
           <div className="admin-card overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/5 bg-[#050505]">
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Member</th>
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Email</th>
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Points</th>
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Tier</th>
-                  <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Total Spent</th>
+                <tr className="border-b border-[#1f2233] bg-[#07090e]">
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Member</th>
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Email</th>
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Points</th>
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Tier</th>
+                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Total Spent</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {isLoading ? (
-                  <tr><td colSpan={5} className="p-4 text-center text-gray-500 text-sm">Loading members...</td></tr>
+                  <tr><td colSpan={5} className="p-4 text-center text-slate-500 text-sm">Loading members...</td></tr>
                 ) : members.length === 0 ? (
-                  <tr><td colSpan={5} className="p-4 text-center text-gray-500 text-sm">No members found</td></tr>
+                  <tr><td colSpan={5} className="p-4 text-center text-slate-500 text-sm">No members found</td></tr>
                 ) : (
                   members.map(m => (
-                    <tr key={m._id} className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 text-gray-200 font-medium">{m.firstName} {m.lastName}</td>
-                      <td className="py-3 px-4 text-gray-400">{m.email}</td>
+                    <tr key={m._id} className="hover:bg-[#1f2233]/50">
+                      <td className="py-3 px-4 text-slate-200 font-medium">{m.firstName} {m.lastName}</td>
+                      <td className="py-3 px-4 text-slate-400">{m.email}</td>
                       <td className="py-3 px-4 text-emerald-500 font-medium">{m.loyaltyPoints}</td>
                       <td className="py-3 px-4">
                         <span className={`admin-badge ${getTierColor(m.loyaltyTier)}`}>
                           {(m.loyaltyTier || 'Bronze')}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-gray-200">${m.totalSpent?.toFixed(2) || '0.00'}</td>
+                      <td className="py-3 px-4 text-slate-200">${m.totalSpent?.toFixed(2) || '0.00'}</td>
                     </tr>
                   ))
                 )}

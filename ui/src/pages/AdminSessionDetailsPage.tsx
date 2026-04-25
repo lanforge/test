@@ -54,16 +54,16 @@ const AdminSessionDetailsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4 border-b border-gray-800 pb-4">
+      <div className="flex items-center gap-4 border-b border-[#1f2233] pb-4">
         <button 
           onClick={() => navigate('/admin/analytics')}
-          className="w-10 h-10 rounded-full bg-gray-900 hover:bg-gray-800 flex items-center justify-center text-gray-400 transition-colors"
+          className="w-10 h-10 rounded-full bg-[#0a0c13] hover:bg-[#11141d] flex items-center justify-center text-slate-400 transition-colors"
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <div>
           <h1 className="text-xl font-medium text-white">Session Details</h1>
-          <p className="text-sm text-gray-500">ID: {session.sessionId}</p>
+          <p className="text-sm text-slate-500">ID: {session.sessionId}</p>
         </div>
       </div>
 
@@ -71,23 +71,23 @@ const AdminSessionDetailsPage: React.FC = () => {
         {/* Left Column: Context / User / Cart */}
         <div className="lg:col-span-1 space-y-6">
           {/* Summary Card */}
-          <div className="bg-[#111111] p-6 rounded-xl border border-white/5">
-            <h3 className="text-lg font-bold text-white mb-4">Overview</h3>
+          <div className="bg-[#111111] p-6 rounded-xl border border-[#1f2233]">
+            <h3 className="text-lg font-medium text-white mb-4">Overview</h3>
             <div className="space-y-3">
               <div className="flex items-start gap-3 text-sm">
-                <FontAwesomeIcon icon={faClock} className="text-gray-400 mt-1 w-4" />
+                <FontAwesomeIcon icon={faClock} className="text-slate-400 mt-1 w-4" />
                 <div>
-                  <div className="text-gray-400">Duration</div>
+                  <div className="text-slate-400">Duration</div>
                   <div className="text-white">{formatDuration(session.startTime, session.endTime)}</div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-slate-500 mt-1">
                     {new Date(session.startTime).toLocaleTimeString()} - {new Date(session.endTime).toLocaleTimeString()}
                   </div>
                 </div>
               </div>
               <div className="flex items-start gap-3 text-sm">
-                <div className="w-4 flex justify-center text-gray-400 mt-1">#</div>
+                <div className="w-4 flex justify-center text-slate-400 mt-1">#</div>
                 <div>
-                  <div className="text-gray-400">Total Events</div>
+                  <div className="text-slate-400">Total Events</div>
                   <div className="text-white">{session.events.length}</div>
                 </div>
               </div>
@@ -100,10 +100,10 @@ const AdminSessionDetailsPage: React.FC = () => {
               <div className="absolute top-0 right-0 p-4 opacity-10">
                 <FontAwesomeIcon icon={faUser} className="text-5xl text-emerald-500" />
               </div>
-              <h3 className="text-lg font-bold text-emerald-400 mb-4 relative z-10">Known User</h3>
+              <h3 className="text-lg font-medium text-emerald-400 mb-4 relative z-10">Known User</h3>
               <div className="relative z-10 space-y-2">
                 <p className="text-white font-medium">{session.user.firstName} {session.user.lastName}</p>
-                <p className="text-gray-400 text-sm">{session.user.email}</p>
+                <p className="text-slate-400 text-sm">{session.user.email}</p>
               </div>
             </div>
           )}
@@ -114,10 +114,10 @@ const AdminSessionDetailsPage: React.FC = () => {
               <div className="absolute top-0 right-0 p-4 opacity-10">
                 <FontAwesomeIcon icon={faTag} className="text-5xl text-yellow-500" />
               </div>
-              <h3 className="text-lg font-bold text-yellow-400 mb-4 relative z-10">Active Discounts</h3>
+              <h3 className="text-lg font-medium text-yellow-400 mb-4 relative z-10">Active Discounts</h3>
               <div className="relative z-10 flex flex-wrap gap-2">
                 {session.discountCodes.map((code: string, idx: number) => (
-                  <span key={idx} className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-bold border border-yellow-500/30">
+                  <span key={idx} className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-medium border border-yellow-500/30">
                     {code}
                   </span>
                 ))}
@@ -131,24 +131,24 @@ const AdminSessionDetailsPage: React.FC = () => {
               <div className="absolute top-0 right-0 p-4 opacity-10">
                 <FontAwesomeIcon icon={faShoppingCart} className="text-5xl text-blue-500" />
               </div>
-              <h3 className="text-lg font-bold text-blue-400 mb-4 relative z-10">Shopping Cart</h3>
+              <h3 className="text-lg font-medium text-blue-400 mb-4 relative z-10">Shopping Cart</h3>
               
               <div className="relative z-10">
                 {session.cart.items && session.cart.items.length > 0 ? (
                   <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
                     {session.cart.items.map((item: any, idx: number) => (
-                      <div key={idx} className="bg-black/40 p-3 rounded border border-white/5 text-sm">
+                      <div key={idx} className="bg-black/40 p-3 rounded border border-[#1f2233] text-sm">
                         <div className="flex justify-between font-medium">
-                          <span className="text-gray-200 line-clamp-1">
+                          <span className="text-slate-200 line-clamp-1">
                             {item.product?.name || item.pcPart?.name || item.accessory?.name || item.customBuild?.name || 'Unknown Item'}
                           </span>
                           <span className="text-blue-400 ml-2">x{item.quantity}</span>
                         </div>
-                        {item.notes && <div className="text-xs text-gray-500 mt-1">{item.notes}</div>}
+                        {item.notes && <div className="text-xs text-slate-500 mt-1">{item.notes}</div>}
                       </div>
                     ))}
                     
-                    <div className="pt-3 mt-3 border-t border-white/10 flex justify-between font-bold">
+                    <div className="pt-3 mt-3 border-t border-[#1f2233] flex justify-between font-medium">
                       <span className="text-white">Cart Total</span>
                       <span className="text-blue-400">
                         ${(session.cart.total || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -156,7 +156,7 @@ const AdminSessionDetailsPage: React.FC = () => {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-gray-400 text-sm">Cart is currently empty.</p>
+                  <p className="text-slate-400 text-sm">Cart is currently empty.</p>
                 )}
               </div>
             </div>
@@ -164,12 +164,12 @@ const AdminSessionDetailsPage: React.FC = () => {
         </div>
 
         {/* Right Column: Path / Event Timeline */}
-        <div className="lg:col-span-2 bg-[#111111] p-6 rounded-xl border border-white/5">
-          <h3 className="text-lg font-bold text-white mb-6">User Journey Map</h3>
+        <div className="lg:col-span-2 bg-[#111111] p-6 rounded-xl border border-[#1f2233]">
+          <h3 className="text-lg font-medium text-white mb-6">User Journey Map</h3>
           
           <div className="relative pl-6 space-y-6">
             {/* Timeline line */}
-            <div className="absolute left-2.5 top-2 bottom-2 w-0.5 bg-gray-800"></div>
+            <div className="absolute left-2.5 top-2 bottom-2 w-0.5 bg-[#11141d]"></div>
             
             {session.events.map((event: any, index: number) => {
               const isAddToCart = event.eventType === 'add_to_cart';
@@ -184,18 +184,18 @@ const AdminSessionDetailsPage: React.FC = () => {
                   <div className={`p-4 rounded-lg border transition-colors ${
                     isAddToCart 
                       ? 'bg-emerald-500/5 border-emerald-500/20' 
-                      : 'bg-black/30 border-white/5 hover:border-white/10'
+                      : 'bg-black/30 border-[#1f2233] hover:border-[#1f2233]'
                   }`}>
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <span className={`text-xs font-bold px-2 py-1 rounded uppercase tracking-wider ${
+                        <span className={`text-xs font-medium px-2 py-1 rounded uppercase tracking-wider ${
                           isAddToCart ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
                         }`}>
                           {event.eventType.replace('_', ' ')}
                         </span>
-                        <span className="text-gray-300 font-medium break-all">{event.pageUrl}</span>
+                        <span className="text-slate-300 font-medium break-all">{event.pageUrl}</span>
                       </div>
-                      <span className="text-xs text-gray-500 whitespace-nowrap">
+                      <span className="text-xs text-slate-500 whitespace-nowrap">
                         {new Date(event.timestamp).toLocaleTimeString()}
                       </span>
                     </div>

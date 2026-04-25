@@ -86,7 +86,7 @@ const AdminInventoryPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">Inventory Management</h1>
-          <p className="text-gray-500 text-sm mt-1">Track and manage product stock levels</p>
+          <p className="text-slate-500 text-sm mt-1">Track and manage product stock levels</p>
         </div>
         <div className="flex items-center space-x-4">
           <button
@@ -103,7 +103,7 @@ const AdminInventoryPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Total Items</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Total Items</p>
               <p className="text-2xl font-medium text-white mt-1">{stats.totalItems || 0}</p>
             </div>
             <div className="w-8 h-8 bg-blue-500/10 rounded-md flex items-center justify-center">
@@ -117,7 +117,7 @@ const AdminInventoryPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Total Value</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Total Value</p>
               <p className="text-2xl font-medium text-white mt-1">{formatCurrency(stats.totalValue || 0)}</p>
             </div>
             <div className="w-8 h-8 bg-emerald-500/10 rounded-md flex items-center justify-center">
@@ -131,7 +131,7 @@ const AdminInventoryPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Low Stock Items</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Low Stock Items</p>
               <p className="text-2xl font-medium text-white mt-1">{stats.lowStock || 0}</p>
             </div>
             <div className="w-8 h-8 bg-amber-500/10 rounded-md flex items-center justify-center">
@@ -145,7 +145,7 @@ const AdminInventoryPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Out of Stock</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Out of Stock</p>
               <p className="text-2xl font-medium text-white mt-1">{stats.outOfStock || 0}</p>
             </div>
             <div className="w-8 h-8 bg-red-500/10 rounded-md flex items-center justify-center">
@@ -161,20 +161,20 @@ const AdminInventoryPage: React.FC = () => {
       <div className="admin-card p-4">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
-            <div className="flex-1 flex items-center bg-[#050505] border border-white/5 rounded-md focus-within:border-white/20 transition-all">
-              <svg className="w-4 h-4 text-gray-500 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex-1 flex items-center bg-[#07090e] border border-[#1f2233] rounded-md focus-within:border-white/20 transition-all">
+              <svg className="w-4 h-4 text-slate-500 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
                 type="text"
                 placeholder="Search inventory..."
-                className="w-full pl-2 pr-4 py-2 bg-transparent text-sm text-gray-200 placeholder-gray-600 focus:outline-none"
+                className="w-full pl-2 pr-4 py-2 bg-transparent text-sm text-slate-200 placeholder-gray-600 focus:outline-none"
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && fetchInventory()}
               />
             </div>
-            <button onClick={fetchInventory} className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-md transition-colors" title="Refresh">
+            <button onClick={fetchInventory} className="p-2 bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-md transition-colors" title="Refresh">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -209,39 +209,39 @@ const AdminInventoryPage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5 bg-[#050505]">
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Product Name</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">SKU / Location</th>
-                <th className="text-right py-3 px-4 text-gray-500 font-medium text-xs">In Stock</th>
-                <th className="text-right py-3 px-4 text-gray-500 font-medium text-xs">Reserved</th>
-                <th className="text-right py-3 px-4 text-gray-500 font-medium text-xs">Available</th>
-                <th className="text-center py-3 px-4 text-gray-500 font-medium text-xs">Status</th>
-                <th className="text-right py-3 px-4 text-gray-500 font-medium text-xs">Actions</th>
+              <tr className="border-b border-[#1f2233] bg-[#07090e]">
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Product Name</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">SKU / Location</th>
+                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">In Stock</th>
+                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Reserved</th>
+                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Available</th>
+                <th className="text-center py-3 px-4 text-slate-500 font-medium text-xs">Status</th>
+                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {isLoading ? (
-                <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500 text-sm">Loading inventory...</td></tr>
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">Loading inventory...</td></tr>
               ) : filteredInventory.length === 0 ? (
-                <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500 text-sm">No items found.</td></tr>
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">No items found.</td></tr>
               ) : filteredInventory.map(item => {
                 const available = item.stock - (item.reserved || 0);
                 const status = getStockStatus(item);
 
                 return (
-                  <tr key={item._id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={item._id} className="hover:bg-[#1f2233]/50 transition-colors">
                     <td className="py-3 px-4">
-                      <p className="text-gray-200 font-medium">{item.name}</p>
-                      <p className="text-gray-500 text-xs">{item.category}</p>
+                      <p className="text-slate-200 font-medium">{item.name}</p>
+                      <p className="text-slate-500 text-xs">{item.category}</p>
                     </td>
                     <td className="py-3 px-4">
-                      <p className="text-gray-400 font-mono text-xs">{item.sku}</p>
-                      <p className="text-gray-500 text-[10px] mt-1">{item.location || 'No location set'}</p>
+                      <p className="text-slate-400 font-mono text-xs">{item.sku}</p>
+                      <p className="text-slate-500 text-[10px] mt-1">{item.location || 'No location set'}</p>
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <span className="text-gray-200 font-medium">{item.stock}</span>
+                      <span className="text-slate-200 font-medium">{item.stock}</span>
                     </td>
-                    <td className="py-3 px-4 text-right text-gray-500">
+                    <td className="py-3 px-4 text-right text-slate-500">
                       {item.reserved || 0}
                     </td>
                     <td className="py-3 px-4 text-right">
@@ -256,7 +256,7 @@ const AdminInventoryPage: React.FC = () => {
                     </td>
                     <td className="py-3 px-4 text-right">
                       <button 
-                        className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors"
+                        className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors"
                         onClick={() => {
                           setEditingItem(item);
                           const { _id, __v, createdAt, updatedAt, ...rest } = item as any;
@@ -277,13 +277,13 @@ const AdminInventoryPage: React.FC = () => {
       {/* Edit Item Modal */}
       {editingItem && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#0a0a0a] border border-white/10 rounded-md max-w-2xl w-full p-6">
+          <div className="bg-[#11141d] border border-[#1f2233] rounded-md max-w-2xl w-full p-6">
             <h2 className="text-lg font-medium text-white mb-2">Edit Inventory Item</h2>
-            <p className="text-sm text-gray-500 mb-6">{editingItem.name}</p>
+            <p className="text-sm text-slate-500 mb-6">{editingItem.name}</p>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Raw JSON Editor (Edit any property)</label>
+                <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Raw JSON Editor (Edit any property)</label>
                 <textarea
                   rows={15}
                   value={editJson}
@@ -297,7 +297,7 @@ const AdminInventoryPage: React.FC = () => {
             <div className="flex justify-end gap-3 mt-8">
               <button
                 onClick={() => setEditingItem(null)}
-                className="px-3 py-1.5 text-sm text-gray-400 hover:text-white transition-colors"
+                className="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors"
               >
                 Cancel
               </button>

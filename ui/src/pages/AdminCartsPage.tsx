@@ -51,7 +51,7 @@ const AdminCartsPage: React.FC = () => {
       case 'converted': return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
       case 'active': return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
       case 'abandoned': return 'bg-red-500/10 text-red-500 border-red-500/20';
-      default: return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+      default: return 'bg-gray-500/10 text-slate-400 border-gray-500/20';
     }
   };
 
@@ -154,13 +154,13 @@ const AdminCartsPage: React.FC = () => {
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setSelectedCart(null)}
-              className="text-gray-400 hover:text-white text-sm transition-colors"
+              className="text-slate-400 hover:text-white text-sm transition-colors"
             >
               ← Back
             </button>
             <div>
               <h1 className="text-xl font-medium text-white">Edit Cart</h1>
-              <p className="text-gray-500 text-xs mt-1">Session: {selectedCart.sessionId}</p>
+              <p className="text-slate-500 text-xs mt-1">Session: {selectedCart.sessionId}</p>
             </div>
           </div>
           <button
@@ -176,7 +176,7 @@ const AdminCartsPage: React.FC = () => {
             <div className="admin-card p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-sm font-medium text-white">Cart Items</h2>
-                <div className="text-gray-500 text-xs">
+                <div className="text-slate-500 text-xs">
                   {editItems.reduce((acc, i) => acc + (i.quantity || 1), 0)} items
                 </div>
               </div>
@@ -190,16 +190,16 @@ const AdminCartsPage: React.FC = () => {
                   placeholder="Search to add product..."
                 />
                 {searchResults.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-[#0a0a0a] border border-white/10 rounded-md shadow-xl max-h-64 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 bg-[#11141d] border border-[#1f2233] rounded-md shadow-xl max-h-64 overflow-y-auto">
                     {searchResults.map(prod => (
                       <button
                         key={prod._id}
                         onClick={() => handleAddItem(prod)}
-                        className="w-full text-left px-4 py-3 hover:bg-white/5 text-sm text-gray-300 flex justify-between items-center border-b border-white/5 last:border-0"
+                        className="w-full text-left px-4 py-3 hover:bg-[#1f2233]/50 text-sm text-slate-300 flex justify-between items-center border-b border-[#1f2233] last:border-0"
                       >
                         <div className="flex flex-col">
                           <span className="font-medium text-white">{prod.name}</span>
-                          <span className="text-[10px] text-gray-500">{prod.brand} - {prod.category}</span>
+                          <span className="text-[10px] text-slate-500">{prod.brand} - {prod.category}</span>
                         </div>
                         <span className="text-emerald-500 font-medium">{formatCurrency(prod.price)}</span>
                       </button>
@@ -209,8 +209,8 @@ const AdminCartsPage: React.FC = () => {
               </div>
 
               {editItems.length === 0 ? (
-                <div className="text-center py-12 border border-dashed border-white/10 rounded-md">
-                  <p className="text-gray-600 text-sm">Cart is empty.</p>
+                <div className="text-center py-12 border border-dashed border-[#1f2233] rounded-md">
+                  <p className="text-slate-600 text-sm">Cart is empty.</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -218,21 +218,21 @@ const AdminCartsPage: React.FC = () => {
                     const itemName = item.product?.name || item.customBuild?.name || 'Unknown Item';
                     const itemPrice = item.product?.price || item.customBuild?.total || 0;
                     return (
-                      <div key={idx} className="flex items-center justify-between bg-[#050505] p-3 rounded-md border border-white/5">
+                      <div key={idx} className="flex items-center justify-between bg-[#07090e] p-3 rounded-md border border-[#1f2233]">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-[#0a0a0a] rounded-md flex items-center justify-center text-gray-500">
+                          <div className="w-10 h-10 bg-[#11141d] rounded-md flex items-center justify-center text-slate-500">
                             {item.product ? <FontAwesomeIcon icon={faBox} /> : <FontAwesomeIcon icon={faScrewdriverWrench} />}
                           </div>
                           <div>
-                            <div className="font-medium text-gray-200 text-sm">{itemName}</div>
-                            <div className="text-xs text-gray-500 mt-0.5">Quantity: {item.quantity}</div>
+                            <div className="font-medium text-slate-200 text-sm">{itemName}</div>
+                            <div className="text-xs text-slate-500 mt-0.5">Quantity: {item.quantity}</div>
                           </div>
                         </div>
                         <div className="flex items-center gap-4">
-                          <span className="font-medium text-gray-200">{formatCurrency(itemPrice)}</span>
+                          <span className="font-medium text-slate-200">{formatCurrency(itemPrice)}</span>
                           <button 
                             onClick={() => handleRemoveItem(idx)}
-                            className="w-6 h-6 rounded-md bg-white/5 text-gray-400 hover:text-red-400 hover:bg-white/10 flex items-center justify-center transition-colors"
+                            className="w-6 h-6 rounded-md bg-[#1f2233]/50 text-slate-400 hover:text-red-400 hover:bg-[#1f2233] flex items-center justify-center transition-colors"
                           >
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                           </button>
@@ -250,7 +250,7 @@ const AdminCartsPage: React.FC = () => {
               <h2 className="text-sm font-medium text-white mb-6">Cart Details</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Status</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Status</label>
                   <select
                     value={editStatus}
                     onChange={(e) => setEditStatus(e.target.value as any)}
@@ -264,7 +264,7 @@ const AdminCartsPage: React.FC = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Discount Code</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Discount Code</label>
                   <input
                     type="text"
                     value={editDiscountCode}
@@ -275,7 +275,7 @@ const AdminCartsPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Custom Discount ($)</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Custom Discount ($)</label>
                   <input
                     type="number"
                     min="0"
@@ -288,7 +288,7 @@ const AdminCartsPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Creator Code</label>
+                  <label className="block text-xs font-medium text-slate-400 mb-2 uppercase tracking-wider">Creator Code</label>
                   <input
                     type="text"
                     value={editCreatorCode}
@@ -304,8 +304,8 @@ const AdminCartsPage: React.FC = () => {
               <h2 className="text-sm font-medium text-white mb-4">Summary</h2>
               <div className="space-y-2 mb-4 text-sm">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-500">Subtotal</span>
-                  <span className="text-gray-300">
+                  <span className="text-slate-500">Subtotal</span>
+                  <span className="text-slate-300">
                     {formatCurrency(editItems.reduce((total, item) => {
                       const price = item.product?.price || item.customBuild?.total || 0;
                       return total + (price * (item.quantity || 1));
@@ -314,13 +314,13 @@ const AdminCartsPage: React.FC = () => {
                 </div>
                 {editCustomDiscount > 0 && (
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-500">Custom Discount</span>
+                    <span className="text-slate-500">Custom Discount</span>
                     <span className="text-emerald-500">-{formatCurrency(editCustomDiscount)}</span>
                   </div>
                 )}
               </div>
-              <div className="flex justify-between items-center pt-4 border-t border-white/5">
-                <span className="text-gray-400 text-sm">Calculated Total</span>
+              <div className="flex justify-between items-center pt-4 border-t border-[#1f2233]">
+                <span className="text-slate-400 text-sm">Calculated Total</span>
                 <span className="text-lg font-medium text-white">
                   {formatCurrency(Math.max(0, editItems.reduce((total, item) => {
                     const price = item.product?.price || item.customBuild?.total || 0;
@@ -341,7 +341,7 @@ const AdminCartsPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">Active & Abandoned Carts</h1>
-          <p className="text-gray-500 text-sm mt-1">Monitor shopping cart activity</p>
+          <p className="text-slate-500 text-sm mt-1">Monitor shopping cart activity</p>
         </div>
       </div>
 
@@ -350,7 +350,7 @@ const AdminCartsPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Total Tracked Carts</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Total Tracked Carts</p>
               <p className="text-2xl font-medium text-white mt-1">{totalCarts}</p>
             </div>
             <div className="w-8 h-8 bg-blue-500/10 rounded-md flex items-center justify-center">
@@ -363,7 +363,7 @@ const AdminCartsPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Abandoned</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Abandoned</p>
               <p className="text-2xl font-medium text-amber-500 mt-1">{carts.filter(c => c.status === 'abandoned').length}</p>
             </div>
             <div className="w-8 h-8 bg-amber-500/10 rounded-md flex items-center justify-center">
@@ -376,7 +376,7 @@ const AdminCartsPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Recovered</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Recovered</p>
               <p className="text-2xl font-medium text-emerald-500 mt-1">{carts.filter(c => c.status === 'recovered').length}</p>
             </div>
             <div className="w-8 h-8 bg-emerald-500/10 rounded-md flex items-center justify-center">
@@ -404,7 +404,7 @@ const AdminCartsPage: React.FC = () => {
                 <option value="converted">Converted</option>
               </select>
             </div>
-            <button onClick={fetchCarts} className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-md transition-colors" title="Refresh">
+            <button onClick={fetchCarts} className="p-2 bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-md transition-colors" title="Refresh">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -418,35 +418,35 @@ const AdminCartsPage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5 bg-[#050505]">
-                <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Session/User</th>
-                <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Items</th>
-                <th className="py-3 px-4 text-right text-gray-500 font-medium text-xs">Value</th>
-                <th className="py-3 px-4 text-left text-gray-500 font-medium text-xs">Last Active</th>
-                <th className="py-3 px-4 text-center text-gray-500 font-medium text-xs">Status</th>
-                <th className="py-3 px-4 text-right text-gray-500 font-medium text-xs">Actions</th>
+              <tr className="border-b border-[#1f2233] bg-[#07090e]">
+                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Session/User</th>
+                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Items</th>
+                <th className="py-3 px-4 text-right text-slate-500 font-medium text-xs">Value</th>
+                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Last Active</th>
+                <th className="py-3 px-4 text-center text-slate-500 font-medium text-xs">Status</th>
+                <th className="py-3 px-4 text-right text-slate-500 font-medium text-xs">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {isLoading ? (
-                <tr><td colSpan={6} className="p-4 text-center text-gray-500 text-sm">Loading carts...</td></tr>
+                <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">Loading carts...</td></tr>
               ) : carts.length === 0 ? (
-                <tr><td colSpan={6} className="p-4 text-center text-gray-500 text-sm">No carts found</td></tr>
+                <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">No carts found</td></tr>
               ) : (
                 carts.map(cart => (
-                  <tr key={cart._id} className="hover:bg-white/[0.02]">
+                  <tr key={cart._id} className="hover:bg-[#1f2233]/50">
                     <td className="py-3 px-4">
-                      <p className="text-gray-200 font-medium">{cart.user ? `${cart.user.firstName} ${cart.user.lastName}` : 'Guest'}</p>
-                      <p className="text-gray-500 text-[10px] font-mono truncate max-w-[150px]">{cart.sessionId}</p>
+                      <p className="text-slate-200 font-medium">{cart.user ? `${cart.user.firstName} ${cart.user.lastName}` : 'Guest'}</p>
+                      <p className="text-slate-500 text-[10px] font-mono truncate max-w-[150px]">{cart.sessionId}</p>
                     </td>
-                    <td className="py-3 px-4 text-gray-400">{calculateCartItemsCount(cart)} items</td>
-                    <td className="py-3 px-4 text-right font-medium text-gray-200">
+                    <td className="py-3 px-4 text-slate-400">{calculateCartItemsCount(cart)} items</td>
+                    <td className="py-3 px-4 text-right font-medium text-slate-200">
                       {formatCurrency(calculateCartTotal(cart))}
                       {cart.appliedDiscount && (
                         <div className="text-[10px] text-emerald-500 mt-1">{cart.appliedDiscount.code}</div>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-gray-500 text-xs">
+                    <td className="py-3 px-4 text-slate-500 text-xs">
                       {new Date(cart.updatedAt).toLocaleString()}
                     </td>
                     <td className="py-3 px-4 text-center">
@@ -458,7 +458,7 @@ const AdminCartsPage: React.FC = () => {
                       <div className="flex items-center justify-end space-x-2">
                         <button 
                           onClick={() => handleEditClick(cart)}
-                          className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors"
+                          className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors"
                         >
                           Edit
                         </button>
@@ -477,23 +477,23 @@ const AdminCartsPage: React.FC = () => {
         </div>
         
         {/* Pagination */}
-        <div className="p-3 border-t border-white/5 flex items-center justify-between bg-[#050505]">
-          <div className="text-gray-500 text-xs">
+        <div className="p-3 border-t border-[#1f2233] flex items-center justify-between bg-[#07090e]">
+          <div className="text-slate-500 text-xs">
             Showing {carts.length > 0 ? (page - 1) * 20 + 1 : 0} to {Math.min(page * 20, totalCarts)} of {totalCarts}
           </div>
           <div className="flex items-center space-x-2">
             <button 
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors disabled:opacity-50"
             >
               Previous
             </button>
-            <span className="text-gray-500 text-xs px-2">Page {page} of {totalPages || 1}</span>
+            <span className="text-slate-500 text-xs px-2">Page {page} of {totalPages || 1}</span>
             <button 
               disabled={page === totalPages || totalPages === 0}
               onClick={() => setPage(p => p + 1)}
-              className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors disabled:opacity-50"
             >
               Next
             </button>

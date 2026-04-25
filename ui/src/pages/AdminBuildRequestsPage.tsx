@@ -70,7 +70,7 @@ const AdminBuildRequestsPage: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="text-gray-400 p-8 text-center animate-pulse">Loading build requests...</div>;
+    return <div className="text-slate-400 p-8 text-center animate-pulse">Loading build requests...</div>;
   }
 
   return (
@@ -78,57 +78,57 @@ const AdminBuildRequestsPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">Build Requests</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage incoming custom build requests</p>
+          <p className="text-slate-500 text-sm mt-1">Manage incoming custom build requests</p>
         </div>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-800/50 border-b border-gray-800">
-                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Date</th>
-                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Name / Contact</th>
-                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Budget / Use</th>
-                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Details</th>
-                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
-                <th className="py-4 px-6 text-xs font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
+              <tr className="bg-[#11141d] border-b border-[#1f2233]">
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Name / Contact</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Budget / Use</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Details</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
               {requests.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 px-6 text-center text-gray-500">
+                  <td colSpan={6} className="py-8 px-6 text-center text-slate-500">
                     No build requests found.
                   </td>
                 </tr>
               ) : (
                 requests.map(request => (
-                  <tr key={request._id} className="hover:bg-gray-800/30 transition-colors">
-                    <td className="py-4 px-6 text-sm text-gray-400 whitespace-nowrap">
+                  <tr key={request._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                    <td className="py-4 px-6 text-sm text-slate-400 whitespace-nowrap">
                       {new Date(request.createdAt).toLocaleDateString()}
                     </td>
                     <td className="py-4 px-6">
                       <div className="text-sm font-medium text-white">{request.name}</div>
-                      <div className="text-xs text-gray-400">{request.email}</div>
-                      {request.phone && <div className="text-xs text-gray-400">{request.phone}</div>}
+                      <div className="text-xs text-slate-400">{request.email}</div>
+                      {request.phone && <div className="text-xs text-slate-400">{request.phone}</div>}
                     </td>
-                    <td className="py-4 px-6 text-sm text-gray-300 whitespace-nowrap">
+                    <td className="py-4 px-6 text-sm text-slate-300 whitespace-nowrap">
                       <div>{request.budget || 'No budget'}</div>
-                      <div className="text-xs text-gray-400 mt-1">{request.usage || 'Usage not specified'}</div>
+                      <div className="text-xs text-slate-400 mt-1">{request.usage || 'Usage not specified'}</div>
                     </td>
                     <td className="py-4 px-6">
-                      <div className="text-sm text-gray-300 max-w-xs truncate" title={request.details}>
+                      <div className="text-sm text-slate-300 max-w-xs truncate" title={request.details}>
                         {request.details}
                       </div>
                       {(request.preferredBrands || request.timeline) && (
-                        <div className="text-xs text-gray-400 mt-1 flex gap-2">
+                        <div className="text-xs text-slate-400 mt-1 flex gap-2">
                           {request.preferredBrands && <span>Brands: {request.preferredBrands}</span>}
                           {request.timeline && <span>Timeline: {request.timeline}</span>}
                         </div>
                       )}
                       {request.address && request.address.city && (
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className="text-xs text-slate-500 mt-1">
                           Loc: {request.address.city}, {request.address.state}
                         </div>
                       )}
@@ -145,11 +145,11 @@ const AdminBuildRequestsPage: React.FC = () => {
                           'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                         }`}
                       >
-                        <option value="pending" className="bg-gray-900 text-white">Pending</option>
-                        <option value="reviewed" className="bg-gray-900 text-white">Reviewed</option>
-                        <option value="contacted" className="bg-gray-900 text-white">Contacted</option>
-                        <option value="completed" className="bg-gray-900 text-white">Completed</option>
-                        <option value="unbuildable" className="bg-gray-900 text-white">Unbuildable</option>
+                        <option value="pending" className="bg-[#0a0c13] text-white">Pending</option>
+                        <option value="reviewed" className="bg-[#0a0c13] text-white">Reviewed</option>
+                        <option value="contacted" className="bg-[#0a0c13] text-white">Contacted</option>
+                        <option value="completed" className="bg-[#0a0c13] text-white">Completed</option>
+                        <option value="unbuildable" className="bg-[#0a0c13] text-white">Unbuildable</option>
                       </select>
                     </td>
                     <td className="py-4 px-6 text-right">

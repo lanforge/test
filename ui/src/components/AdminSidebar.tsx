@@ -43,7 +43,7 @@ const AdminSidebar: React.FC = () => {
               `flex items-center space-x-2.5 px-3 py-2 rounded-lg transition-colors text-sm ${
                 isActive
                   ? 'bg-emerald-500/10 text-emerald-400 font-medium'
-                  : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                  : 'text-slate-400 hover:bg-[#1f2233]/50 hover:text-slate-200'
               }`
             }
           >

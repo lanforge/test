@@ -137,25 +137,25 @@ const AdminPaymentDetailsPage: React.FC = () => {
         <div className="flex items-center space-x-4">
           <button 
             onClick={() => navigate(-1)}
-            className="p-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg transition-colors"
+            className="p-2 bg-[#11141d] hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-lg transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-4">
+            <h1 className="text-2xl font-medium text-white flex items-center gap-4">
               Payment Details
               <span className={`text-sm px-3 py-1 rounded-full ${
                 payment.status === 'completed' ? 'bg-emerald-500/10 text-emerald-400' :
                 payment.status === 'refunded' ? 'bg-amber-500/10 text-amber-400' :
                 payment.status === 'failed' ? 'bg-red-500/10 text-red-400' :
-                'bg-gray-500/10 text-gray-400'
+                'bg-gray-500/10 text-slate-400'
               }`}>
                 {payment.status.toUpperCase()}
               </span>
             </h1>
-            <p className="text-gray-400 mt-1 font-mono text-sm">
+            <p className="text-slate-400 mt-1 font-mono text-sm">
               {payment._id}
             </p>
           </div>
@@ -176,56 +176,56 @@ const AdminPaymentDetailsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Payment Info */}
         <div className="admin-card p-6 space-y-4">
-          <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2">Transaction Information</h2>
+          <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2">Transaction Information</h2>
           
           <div className="flex justify-between items-center py-2">
-            <span className="text-gray-400">Amount</span>
-            <span className="text-xl font-bold text-white">{formatCurrency(payment.amount)} {payment.currency.toUpperCase()}</span>
+            <span className="text-slate-400">Amount</span>
+            <span className="text-xl font-medium text-white">{formatCurrency(payment.amount)} {payment.currency.toUpperCase()}</span>
           </div>
           
-          <div className="flex justify-between items-center py-2 border-t border-gray-800/50">
-            <span className="text-gray-400">Date</span>
+          <div className="flex justify-between items-center py-2 border-t border-[#1f2233]/50">
+            <span className="text-slate-400">Date</span>
             <span className="text-white">{new Date(payment.createdAt).toLocaleString()}</span>
           </div>
           
-          <div className="flex justify-between items-center py-2 border-t border-gray-800/50">
-            <span className="text-gray-400">Payment Method</span>
+          <div className="flex justify-between items-center py-2 border-t border-[#1f2233]/50">
+            <span className="text-slate-400">Payment Method</span>
             <span className="text-white capitalize">{payment.paymentMethod}</span>
           </div>
           
-          <div className="flex justify-between items-center py-2 border-t border-gray-800/50">
-            <span className="text-gray-400">Gateway Transaction ID</span>
-            <span className="text-gray-300 font-mono text-sm">{payment.gatewayTransactionId}</span>
+          <div className="flex justify-between items-center py-2 border-t border-[#1f2233]/50">
+            <span className="text-slate-400">Gateway Transaction ID</span>
+            <span className="text-slate-300 font-mono text-sm">{payment.gatewayTransactionId}</span>
           </div>
 
           {totalRefunded > 0 && (
-            <div className="flex justify-between items-center py-2 border-t border-gray-800 bg-amber-500/5 p-3 rounded-lg mt-4">
+            <div className="flex justify-between items-center py-2 border-t border-[#1f2233] bg-amber-500/5 p-3 rounded-lg mt-4">
               <span className="text-amber-400 font-medium">Total Refunded</span>
-              <span className="text-amber-400 font-bold">{formatCurrency(totalRefunded)} {payment.currency.toUpperCase()}</span>
+              <span className="text-amber-400 font-medium">{formatCurrency(totalRefunded)} {payment.currency.toUpperCase()}</span>
             </div>
           )}
         </div>
 
         {/* Associated Entities */}
         <div className="admin-card p-6 space-y-4">
-          <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2">Associated Records</h2>
+          <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2">Associated Records</h2>
           
           {payment.order && (
             <div className="py-2">
-              <span className="block text-gray-400 text-sm mb-1">Order</span>
+              <span className="block text-slate-400 text-sm mb-1">Order</span>
               <button 
                 onClick={() => navigate(`/admin/orders/${payment.order?._id}`)}
                 className="text-blue-400 hover:text-blue-300 hover:underline font-medium"
               >
                 Order #{payment.order.orderNumber}
               </button>
-              <span className="text-gray-500 text-sm ml-3">({formatCurrency(payment.order.total)})</span>
+              <span className="text-slate-500 text-sm ml-3">({formatCurrency(payment.order.total)})</span>
             </div>
           )}
 
           {payment.invoice && (
-            <div className="py-2 border-t border-gray-800/50">
-              <span className="block text-gray-400 text-sm mb-1">Invoice</span>
+            <div className="py-2 border-t border-[#1f2233]/50">
+              <span className="block text-slate-400 text-sm mb-1">Invoice</span>
               <button 
                 onClick={() => navigate(`/admin/invoices`)}
                 className="text-blue-400 hover:text-blue-300 hover:underline font-medium"
@@ -236,22 +236,22 @@ const AdminPaymentDetailsPage: React.FC = () => {
           )}
 
           {payment.customer ? (
-            <div className="py-2 border-t border-gray-800/50">
-              <span className="block text-gray-400 text-sm mb-1">Customer</span>
+            <div className="py-2 border-t border-[#1f2233]/50">
+              <span className="block text-slate-400 text-sm mb-1">Customer</span>
               <button 
                 onClick={() => navigate(`/admin/customers/${payment.customer?._id}`)}
                 className="text-white hover:text-emerald-400 hover:underline transition-colors font-medium block"
               >
                 {payment.customer.firstName} {payment.customer.lastName}
               </button>
-              <a href={`mailto:${payment.customer.email}`} className="text-gray-400 text-sm hover:text-white transition-colors">
+              <a href={`mailto:${payment.customer.email}`} className="text-slate-400 text-sm hover:text-white transition-colors">
                 {payment.customer.email}
               </a>
             </div>
           ) : (
-            <div className="py-2 border-t border-gray-800/50">
-              <span className="block text-gray-400 text-sm mb-1">Customer</span>
-              <span className="text-gray-500 italic">No customer record associated</span>
+            <div className="py-2 border-t border-[#1f2233]/50">
+              <span className="block text-slate-400 text-sm mb-1">Customer</span>
+              <span className="text-slate-500 italic">No customer record associated</span>
             </div>
           )}
         </div>
@@ -259,11 +259,11 @@ const AdminPaymentDetailsPage: React.FC = () => {
         {/* Refund History */}
         {payment.metadata?.refunds && payment.metadata.refunds.length > 0 && (
           <div className="admin-card p-6 lg:col-span-2">
-            <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2 mb-4">Refund History</h2>
+            <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2 mb-4">Refund History</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="text-gray-400 border-b border-gray-800">
+                  <tr className="text-slate-400 border-b border-[#1f2233]">
                     <th className="pb-3 font-medium">Date</th>
                     <th className="pb-3 font-medium">Amount</th>
                     <th className="pb-3 font-medium">Reason</th>
@@ -273,7 +273,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-gray-800/50">
                   {payment.metadata.refunds.map((refund: any, idx: number) => (
-                    <tr key={idx} className="text-gray-300">
+                    <tr key={idx} className="text-slate-300">
                       <td className="py-3">{new Date(refund.createdAt).toLocaleString()}</td>
                       <td className="py-3 font-medium text-amber-400">{formatCurrency(refund.amount)}</td>
                       <td className="py-3 capitalize">{refund.reason?.replace(/_/g, ' ') || 'N/A'}</td>
@@ -281,7 +281,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
                         <span className={`text-xs px-2 py-0.5 rounded-full ${
                           refund.status === 'succeeded' ? 'bg-emerald-500/10 text-emerald-400' :
                           refund.status === 'pending' ? 'bg-amber-500/10 text-amber-400' :
-                          'bg-gray-500/10 text-gray-400'
+                          'bg-gray-500/10 text-slate-400'
                         }`}>
                           {refund.status}
                         </span>
@@ -299,32 +299,32 @@ const AdminPaymentDetailsPage: React.FC = () => {
       {/* Refund Modal */}
       {showRefundModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-md w-full shadow-2xl">
-            <h3 className="text-xl font-bold text-white mb-4">Issue Refund</h3>
+          <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl p-6 max-w-md w-full shadow-2xl">
+            <h3 className="text-xl font-medium text-white mb-4">Issue Refund</h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Amount to Refund (Max: {formatCurrency(remainingBalance)})</label>
+                <label className="block text-sm text-slate-400 mb-1">Amount to Refund (Max: {formatCurrency(remainingBalance)})</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-gray-500">$</span>
+                  <span className="absolute left-3 top-2.5 text-slate-500">$</span>
                   <input
                     type="number"
                     step="0.01"
                     max={remainingBalance}
                     value={refundAmount}
                     onChange={(e) => setRefundAmount(e.target.value ? Number(e.target.value) : '')}
-                    className="admin-input w-full pl-8 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                    className="admin-input w-full pl-8 pr-4 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white"
                     placeholder={remainingBalance.toString()}
                   />
                 </div>
               </div>
               
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Reason</label>
+                <label className="block text-sm text-slate-400 mb-1">Reason</label>
                 <select
                   value={refundReason}
                   onChange={(e) => setRefundReason(e.target.value)}
-                  className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                  className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white"
                 >
                   <option value="requested_by_customer">Requested by Customer</option>
                   <option value="duplicate">Duplicate Charge</option>
@@ -340,9 +340,9 @@ const AdminPaymentDetailsPage: React.FC = () => {
                   id="forceLocal" 
                   checked={forceLocal}
                   onChange={(e) => setForceLocal(e.target.checked)}
-                  className="w-4 h-4 bg-gray-800 border-gray-700 rounded text-amber-500 focus:ring-amber-500 focus:ring-offset-gray-900"
+                  className="w-4 h-4 bg-[#11141d] border-[#1f2233] rounded text-amber-500 focus:ring-amber-500 focus:ring-offset-gray-900"
                 />
-                <label htmlFor="forceLocal" className="text-sm text-gray-400">
+                <label htmlFor="forceLocal" className="text-sm text-slate-400">
                   Force local refund (Bypass Stripe, useful for testing)
                 </label>
               </div>
@@ -357,7 +357,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowRefundModal(false)}
-                className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 bg-[#11141d] hover:bg-[#1f2233] text-white rounded-lg transition-colors"
                 disabled={isRefunding}
               >
                 Cancel

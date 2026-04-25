@@ -111,7 +111,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
         <div className="flex items-center space-x-4">
           <button 
             onClick={() => navigate(-1)}
-            className="p-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg transition-colors"
+            className="p-2 bg-[#11141d] hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-lg transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -119,11 +119,11 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
           </button>
           <div>
             <h1 className="text-xl font-medium text-white">{pc.name}</h1>
-            <p className="text-gray-400 mt-1 font-mono">
+            <p className="text-slate-400 mt-1 font-mono">
               S/N: {pc.serialNumber}
             </p>
             {pc.color && (
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-slate-500 text-sm mt-1">
                 Color: <span className="text-emerald-400">{pc.color}</span>
               </p>
             )}
@@ -146,18 +146,18 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
         {/* Left Column: Specs */}
         <div className="lg:col-span-2 space-y-6">
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Specifications / Parts</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Specifications / Parts</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {pc.parts && pc.parts.length > 0 ? (
                 pc.parts.map((p, idx) => (
-                  <div key={idx} className="bg-gray-800/50 p-3 rounded-lg border border-gray-700">
-                    <div className="text-xs text-gray-400 capitalize mb-1 flex justify-between">
+                  <div key={idx} className="bg-[#11141d] p-3 rounded-lg border border-[#1f2233]">
+                    <div className="text-xs text-slate-400 capitalize mb-1 flex justify-between">
                       <span>{p.partType.replace(/([A-Z])/g, ' $1').trim()}</span>
                       {typeof p.price === 'number' && <span className="text-emerald-400 font-mono">${p.price.toFixed(2)}</span>}
                     </div>
                     <div className="text-sm text-white font-medium break-words">{p.name || 'Unknown Part'}</div>
                     {p.part && (
-                      <div className="text-xs text-gray-600 mt-1 cursor-pointer hover:text-gray-400" onClick={() => navigate(`/admin/parts/edit/${p.part}`)}>
+                      <div className="text-xs text-slate-600 mt-1 cursor-pointer hover:text-slate-400" onClick={() => navigate(`/admin/parts/edit/${p.part}`)}>
                         ID: {p.part}
                       </div>
                     )}
@@ -165,25 +165,25 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
                 ))
               ) : (
                 Object.entries(pc.specs || {}).map(([key, val]) => (
-                  <div key={key} className="bg-gray-800/50 p-3 rounded-lg border border-gray-700">
-                    <div className="text-xs text-gray-400 capitalize mb-1">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                  <div key={key} className="bg-[#11141d] p-3 rounded-lg border border-[#1f2233]">
+                    <div className="text-xs text-slate-400 capitalize mb-1">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
                     <div className="text-sm text-white font-medium break-words">{val}</div>
                   </div>
                 ))
               )}
               {((!pc.parts || pc.parts.length === 0) && (!pc.specs || Object.keys(pc.specs).length === 0)) && (
-                <div className="text-gray-500 col-span-full">No specifications available.</div>
+                <div className="text-slate-500 col-span-full">No specifications available.</div>
               )}
             </div>
           </div>
 
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Notes</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Notes</h2>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add any notes about this PC build, testing results, or issues..."
-              className="w-full h-32 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white resize-none"
+              className="w-full h-32 px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white resize-none"
             />
           </div>
         </div>
@@ -191,14 +191,14 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
         {/* Right Column: Status & References */}
         <div className="space-y-6">
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Status & Details</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Status & Details</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Build Status</label>
+                <label className="block text-xs text-slate-500 mb-1">Build Status</label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                  className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white"
                 >
                   <option value="building">Building</option>
                   <option value="benchmarking">Benchmarking</option>
@@ -210,18 +210,18 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
               </div>
               
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Created On</label>
+                <label className="block text-xs text-slate-500 mb-1">Created On</label>
                 <div className="text-white text-sm">{new Date(pc.createdAt).toLocaleString()}</div>
               </div>
             </div>
           </div>
 
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Linked Order</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Linked Order</h2>
             {pc.order ? (
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-400">Order #:</span>
+                  <span className="text-slate-400">Order #:</span>
                   <button 
                     onClick={() => navigate(`/admin/orders/${pc.order?._id}`)}
                     className="text-blue-400 hover:text-blue-300 font-medium"
@@ -230,21 +230,21 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
                   </button>
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-400">Order Status:</span>
+                  <span className="text-slate-400">Order Status:</span>
                   <span className="text-white capitalize">{pc.order.status}</span>
                 </div>
               </div>
             ) : (
-              <div className="text-gray-500 text-sm">No linked order.</div>
+              <div className="text-slate-500 text-sm">No linked order.</div>
             )}
           </div>
 
           {pc.customer && (
             <div className="admin-card p-6">
-              <h2 className="text-lg font-bold text-white mb-4">Customer</h2>
+              <h2 className="text-lg font-medium text-white mb-4">Customer</h2>
               <div className="space-y-2 text-sm">
                 <div className="text-white font-medium">{pc.customer.firstName} {pc.customer.lastName}</div>
-                <div className="text-gray-400 flex items-center gap-2">
+                <div className="text-slate-400 flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>

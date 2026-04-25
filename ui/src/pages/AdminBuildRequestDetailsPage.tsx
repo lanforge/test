@@ -343,7 +343,7 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/admin/build-requests')}
-            className="flex items-center text-gray-400 hover:text-white transition-colors"
+            className="flex items-center text-slate-400 hover:text-white transition-colors"
           >
             <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -361,7 +361,7 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
               Mark Unbuildable
             </button>
           )}
-          <div className="px-3 py-1 bg-gray-800 rounded-full text-sm font-medium">
+          <div className="px-3 py-1 bg-[#11141d] rounded-full text-sm font-medium">
             Status: <span className={`capitalize ${request.status === 'unbuildable' ? 'text-red-400' : 'text-emerald-400'}`}>{request.status}</span>
           </div>
         </div>
@@ -370,69 +370,69 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
       {request.status === 'unbuildable' && (
         <div className="bg-red-900/20 border border-red-500/30 p-4 rounded-xl">
           <h3 className="text-red-400 font-medium mb-1">Marked as Unbuildable</h3>
-          <p className="text-gray-300 text-sm">Reason sent to customer: {request.rejectionReason || 'No reason provided'}</p>
+          <p className="text-slate-300 text-sm">Reason sent to customer: {request.rejectionReason || 'No reason provided'}</p>
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden h-max">
-          <div className="px-6 py-4 border-b border-gray-800">
+        <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl overflow-hidden h-max">
+          <div className="px-6 py-4 border-b border-[#1f2233]">
             <h2 className="text-lg font-medium text-white">Customer Info</h2>
           </div>
           <div className="p-6 space-y-4">
             <div>
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Name</div>
+              <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Name</div>
               <div className="font-medium text-white">{request.name}</div>
             </div>
             <div>
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Email</div>
+              <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Email</div>
               <div className="font-medium text-white">
                 <a href={`mailto:${request.email}`} className="text-emerald-400 hover:underline">{request.email}</a>
               </div>
             </div>
             {request.phone && (
               <div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Phone</div>
+                <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Phone</div>
                 <div className="font-medium text-white">{request.phone}</div>
               </div>
             )}
             <div>
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Budget</div>
+              <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Budget</div>
               <div className="font-medium text-emerald-400">{request.budget || 'Not specified'}</div>
             </div>
             <div>
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Submitted</div>
-              <div className="text-sm text-gray-300">{new Date(request.createdAt).toLocaleString()}</div>
+              <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Submitted</div>
+              <div className="text-sm text-slate-300">{new Date(request.createdAt).toLocaleString()}</div>
             </div>
-            <div className="pt-4 border-t border-gray-800">
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Usage</div>
-              <div className="text-sm text-gray-300">{request.usage || 'Not specified'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Preferred Brands</div>
-              <div className="text-sm text-gray-300">{request.preferredBrands || 'Not specified'}</div>
+            <div className="pt-4 border-t border-[#1f2233]">
+              <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Usage</div>
+              <div className="text-sm text-slate-300">{request.usage || 'Not specified'}</div>
             </div>
             <div>
-              <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Timeline</div>
-              <div className="text-sm text-gray-300">{request.timeline || 'Not specified'}</div>
+              <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Preferred Brands</div>
+              <div className="text-sm text-slate-300">{request.preferredBrands || 'Not specified'}</div>
+            </div>
+            <div>
+              <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Timeline</div>
+              <div className="text-sm text-slate-300">{request.timeline || 'Not specified'}</div>
             </div>
           </div>
         </div>
 
         <div className="md:col-span-2 space-y-6">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-800">
+          <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-[#1f2233]">
               <h2 className="text-lg font-medium text-white">Request Details</h2>
             </div>
             <div className="p-6">
-              <div className="whitespace-pre-wrap text-gray-300 text-sm bg-gray-950 p-4 rounded-lg border border-gray-800">
+              <div className="whitespace-pre-wrap text-slate-300 text-sm bg-gray-950 p-4 rounded-lg border border-[#1f2233]">
                 {request.details}
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-800 flex justify-between items-center">
+          <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-[#1f2233] flex justify-between items-center">
               <h2 className="text-lg font-medium text-white">Quote Builder</h2>
             </div>
             <div className="p-6">
@@ -454,9 +454,9 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
                   
                   return (
                     <div key={category}>
-                      <label className="block text-sm font-medium text-gray-400 mb-1">{category}</label>
+                      <label className="block text-sm font-medium text-slate-400 mb-1">{category}</label>
                       <select
-                        className="w-full bg-gray-900 border border-gray-700 focus:border-emerald-500 rounded-md h-10 px-3 text-sm text-white"
+                        className="w-full bg-[#0a0c13] border border-[#1f2233] focus:border-emerald-500 rounded-md h-10 px-3 text-sm text-white"
                         value={selectedParts[category.toLowerCase()] || ''}
                         onChange={(e) => setSelectedParts({...selectedParts, [category.toLowerCase()]: e.target.value})}
                       >
@@ -469,9 +469,9 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
                   );
                 })}
 
-                <div className="md:col-span-2 mt-2 pt-4 border-t border-gray-800">
+                <div className="md:col-span-2 mt-2 pt-4 border-t border-[#1f2233]">
                   <div className="flex justify-between items-center mb-2">
-                    <label className="block text-sm font-medium text-gray-400">Case Fans</label>
+                    <label className="block text-sm font-medium text-slate-400">Case Fans</label>
                     <button
                       type="button"
                       onClick={() => setSelectedCaseFans([...selectedCaseFans, ''])}
@@ -484,7 +484,7 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
                     {selectedCaseFans.map((fanId, idx) => (
                       <div key={idx} className="flex gap-2 items-center">
                         <select
-                          className="flex-1 bg-gray-900 border border-gray-700 focus:border-emerald-500 rounded-md h-10 px-3 text-sm text-white"
+                          className="flex-1 bg-[#0a0c13] border border-[#1f2233] focus:border-emerald-500 rounded-md h-10 px-3 text-sm text-white"
                           value={fanId}
                           onChange={(e) => {
                             const newFans = [...selectedCaseFans];
@@ -516,15 +516,15 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
                       </div>
                     ))}
                     {selectedCaseFans.length === 0 && (
-                      <div className="text-xs text-gray-500 italic">No extra case fans added.</div>
+                      <div className="text-xs text-slate-500 italic">No extra case fans added.</div>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 pt-6 border-t border-gray-800">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 pt-6 border-t border-[#1f2233]">
                 <div className="space-y-4">
-                  <h4 className="font-medium text-gray-300">Shipping Details</h4>
+                  <h4 className="font-medium text-slate-300">Shipping Details</h4>
                   
                   <div className="flex items-center gap-2 mb-2">
                     <input 
@@ -532,69 +532,69 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
                       id="manualShipping" 
                       checked={useManualShipping} 
                       onChange={(e) => setUseManualShipping(e.target.checked)}
-                      className="rounded border-gray-700 bg-gray-900 text-emerald-500 focus:ring-emerald-500"
+                      className="rounded border-[#1f2233] bg-[#0a0c13] text-emerald-500 focus:ring-emerald-500"
                     />
-                    <label htmlFor="manualShipping" className="text-sm text-gray-300">Enter shipping manually</label>
+                    <label htmlFor="manualShipping" className="text-sm text-slate-300">Enter shipping manually</label>
                   </div>
                   
                   {useManualShipping ? (
-                    <div className="space-y-3 bg-gray-800 p-4 rounded-lg">
+                    <div className="space-y-3 bg-[#11141d] p-4 rounded-lg">
                       <div>
-                        <label className="text-xs text-gray-400 uppercase tracking-wider block mb-1">Provider / Service</label>
+                        <label className="text-xs text-slate-400 uppercase tracking-wider block mb-1">Provider / Service</label>
                         <input 
                           type="text"
                           value={manualShipping?.serviceLevel || ''}
                           onChange={(e) => setManualShipping({...manualShipping, serviceLevel: e.target.value})}
-                          className="w-full bg-gray-900 border border-gray-700 rounded-md h-9 px-3 text-sm text-white"
+                          className="w-full bg-[#0a0c13] border border-[#1f2233] rounded-md h-9 px-3 text-sm text-white"
                           placeholder="e.g. UPS Ground"
                         />
                       </div>
                       <div>
-                        <label className="text-xs text-gray-400 uppercase tracking-wider block mb-1">Cost ($)</label>
+                        <label className="text-xs text-slate-400 uppercase tracking-wider block mb-1">Cost ($)</label>
                         <input 
                           type="number"
                           value={manualShipping?.amount || 0}
                           onChange={(e) => setManualShipping({...manualShipping, amount: parseFloat(e.target.value) || 0})}
-                          className="w-full bg-gray-900 border border-gray-700 rounded-md h-9 px-3 text-sm text-white"
+                          className="w-full bg-[#0a0c13] border border-[#1f2233] rounded-md h-9 px-3 text-sm text-white"
                         />
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-3 bg-gray-800 p-4 rounded-lg">
+                    <div className="space-y-3 bg-[#11141d] p-4 rounded-lg">
                       <div>
-                        <label className="text-xs text-gray-400 uppercase tracking-wider block mb-1">Street</label>
+                        <label className="text-xs text-slate-400 uppercase tracking-wider block mb-1">Street</label>
                         <input 
                           type="text"
                           value={address.street1} 
                           onChange={e => setAddress({...address, street1: e.target.value})} 
-                          className="w-full bg-gray-900 border border-gray-700 rounded-md h-9 px-3 text-sm text-white"
+                          className="w-full bg-[#0a0c13] border border-[#1f2233] rounded-md h-9 px-3 text-sm text-white"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <label className="text-xs text-gray-400 uppercase tracking-wider block mb-1">City</label>
+                          <label className="text-xs text-slate-400 uppercase tracking-wider block mb-1">City</label>
                           <input 
                             type="text"
                             value={address.city} 
                             onChange={e => setAddress({...address, city: e.target.value})} 
-                            className="w-full bg-gray-900 border border-gray-700 rounded-md h-9 px-3 text-sm text-white"
+                            className="w-full bg-[#0a0c13] border border-[#1f2233] rounded-md h-9 px-3 text-sm text-white"
                           />
                         </div>
                         <div>
-                          <label className="text-xs text-gray-400 uppercase tracking-wider block mb-1">State / ZIP</label>
+                          <label className="text-xs text-slate-400 uppercase tracking-wider block mb-1">State / ZIP</label>
                           <div className="flex gap-2">
                             <input 
                               type="text"
                               value={address.state} 
                               onChange={e => setAddress({...address, state: e.target.value})} 
-                              className="w-16 bg-gray-900 border border-gray-700 rounded-md h-9 px-2 text-center text-sm text-white" 
+                              className="w-16 bg-[#0a0c13] border border-[#1f2233] rounded-md h-9 px-2 text-center text-sm text-white" 
                               placeholder="FL" 
                             />
                             <input 
                               type="text"
                               value={address.zip} 
                               onChange={e => setAddress({...address, zip: e.target.value})} 
-                              className="flex-1 bg-gray-900 border border-gray-700 rounded-md h-9 px-3 text-sm text-white" 
+                              className="flex-1 bg-[#0a0c13] border border-[#1f2233] rounded-md h-9 px-3 text-sm text-white" 
                             />
                           </div>
                         </div>
@@ -619,11 +619,11 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
                       
                       {shippingRates.length > 0 && (
                         <div className="mt-3">
-                          <label className="text-xs text-gray-400 uppercase tracking-wider block mb-1">Select Rate</label>
+                          <label className="text-xs text-slate-400 uppercase tracking-wider block mb-1">Select Rate</label>
                           <select 
                             value={selectedShippingRate?.objectId || ''} 
                             onChange={(e) => setSelectedShippingRate(shippingRates.find(r => r.objectId === e.target.value))}
-                            className="w-full bg-gray-900 border border-gray-700 rounded-md h-9 px-3 text-sm text-white"
+                            className="w-full bg-[#0a0c13] border border-[#1f2233] rounded-md h-9 px-3 text-sm text-white"
                           >
                             <option value="">Select a rate</option>
                             {shippingRates.map((rate: any) => (
@@ -641,7 +641,7 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
                 <div className="space-y-4 flex flex-col justify-between">
                   <div>
                     <div className="flex justify-between items-center mb-4">
-                      <h4 className="font-medium text-gray-300">Quote Summary</h4>
+                      <h4 className="font-medium text-slate-300">Quote Summary</h4>
                       <button
                         onClick={handleAutoCalculateLabor}
                         className="text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 px-2 py-1 rounded transition-colors"
@@ -649,30 +649,30 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
                         Auto-Calc Labor
                       </button>
                     </div>
-                    <div className="bg-gray-950 p-4 rounded-lg border border-gray-800 space-y-3 text-sm">
-                      <div className="flex justify-between text-gray-400">
+                    <div className="bg-gray-950 p-4 rounded-lg border border-[#1f2233] space-y-3 text-sm">
+                      <div className="flex justify-between text-slate-400">
                         <span>Parts Total:</span>
                         <span className="text-white font-medium">${partsTotal.toFixed(2)}</span>
                       </div>
-                      <div className="flex justify-between text-gray-400 items-center">
+                      <div className="flex justify-between text-slate-400 items-center">
                         <span>Labor Cost:</span>
                         <div className="w-24">
                           <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
                             <input 
                               type="number" 
                               value={laborCost} 
                               onChange={(e) => setLaborCost(parseFloat(e.target.value) || 0)} 
-                              className="w-full bg-gray-900 border border-gray-700 rounded-md h-8 pl-7 pr-2 text-right text-white" 
+                              className="w-full bg-[#0a0c13] border border-[#1f2233] rounded-md h-8 pl-7 pr-2 text-right text-white" 
                             />
                           </div>
                         </div>
                       </div>
-                      <div className="flex justify-between text-gray-400">
+                      <div className="flex justify-between text-slate-400">
                         <span>Shipping:</span>
                         <span className="text-white font-medium">${shippingCost.toFixed(2)}</span>
                       </div>
-                      <div className="border-t border-gray-800 pt-3 mt-3 flex justify-between font-bold text-base">
+                      <div className="border-t border-[#1f2233] pt-3 mt-3 flex justify-between font-medium text-base">
                         <span className="text-white">Total:</span>
                         <span className="text-emerald-400">${totalPrice.toFixed(2)}</span>
                       </div>
@@ -698,7 +698,7 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
                     </button>
                     
                     {request.quote && request.quote.sentAt && (
-                      <p className="text-xs text-center text-gray-500 mt-2">
+                      <p className="text-xs text-center text-slate-500 mt-2">
                         Last quote sent on {new Date(request.quote.sentAt).toLocaleString()}
                       </p>
                     )}
@@ -712,16 +712,16 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
 
       {showRejectModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-lg w-full">
-            <h3 className="text-xl font-bold text-white mb-2">Mark Request as Unbuildable</h3>
-            <p className="text-sm text-gray-400 mb-4">
+          <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl p-6 max-w-lg w-full">
+            <h3 className="text-xl font-medium text-white mb-2">Mark Request as Unbuildable</h3>
+            <p className="text-sm text-slate-400 mb-4">
               This will update the request status and send an email to the customer letting them know why we cannot fulfill their request.
             </p>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Reason for Customer</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Reason for Customer</label>
                 <textarea
-                  className="w-full bg-gray-950 border border-gray-800 rounded-lg p-3 text-white h-32 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                  className="w-full bg-gray-950 border border-[#1f2233] rounded-lg p-3 text-white h-32 focus:border-red-500 focus:ring-1 focus:ring-red-500"
                   placeholder="e.g. The requested budget is too low for the parts specified..."
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
@@ -730,7 +730,7 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   onClick={() => setShowRejectModal(false)}
-                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-medium transition-colors"
+                  className="px-4 py-2 bg-[#11141d] hover:bg-[#1f2233] text-white rounded-lg text-sm font-medium transition-colors"
                 >
                   Cancel
                 </button>

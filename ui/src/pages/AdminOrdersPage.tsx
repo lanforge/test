@@ -73,7 +73,7 @@ const AdminOrdersPage: React.FC = () => {
       case 'delivered': return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
       case 'returned': return 'bg-red-500/10 text-red-400 border border-red-500/30';
       case 'cancelled': return 'bg-red-500/10 text-red-400 border border-red-500/30';
-      default: return 'bg-gray-500/10 text-gray-400 border border-gray-500/30';
+      default: return 'bg-gray-500/10 text-slate-400 border border-gray-500/30';
     }
   };
 
@@ -82,8 +82,8 @@ const AdminOrdersPage: React.FC = () => {
       case 'paid': return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
       case 'pending': return 'bg-amber-500/10 text-amber-400 border border-amber-500/30';
       case 'failed': return 'bg-red-500/10 text-red-400 border border-red-500/30';
-      case 'refunded': return 'bg-gray-500/10 text-gray-400 border border-gray-500/30';
-      default: return 'bg-gray-500/10 text-gray-400 border border-gray-500/30';
+      case 'refunded': return 'bg-gray-500/10 text-slate-400 border border-gray-500/30';
+      default: return 'bg-gray-500/10 text-slate-400 border border-gray-500/30';
     }
   };
 
@@ -100,7 +100,7 @@ const AdminOrdersPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">Orders Management</h1>
-          <p className="text-gray-500 text-sm mt-1">View and manage customer orders</p>
+          <p className="text-slate-500 text-sm mt-1">View and manage customer orders</p>
         </div>
         <div className="flex items-center space-x-4">
           <button 
@@ -117,10 +117,10 @@ const AdminOrdersPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Total Orders</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Total Orders</p>
               <p className="text-2xl font-medium text-white mt-1">{totalOrders}</p>
             </div>
-            <div className="w-8 h-8 bg-white/5 rounded-md flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#1f2233]/50 rounded-md flex items-center justify-center">
               <svg className="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
@@ -133,20 +133,20 @@ const AdminOrdersPage: React.FC = () => {
       <div className="admin-card p-4">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
-            <div className="flex-1 flex items-center bg-[#050505] border border-white/5 rounded-md focus-within:border-white/20 transition-all">
-              <svg className="w-4 h-4 text-gray-500 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex-1 flex items-center bg-[#07090e] border border-[#1f2233] rounded-md focus-within:border-white/20 transition-all">
+              <svg className="w-4 h-4 text-slate-500 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
                 type="text"
                 placeholder="Search orders..."
-                className="w-full pl-2 pr-4 py-2 bg-transparent text-sm text-gray-200 placeholder-gray-600 focus:outline-none"
+                className="w-full pl-2 pr-4 py-2 bg-transparent text-sm text-slate-200 placeholder-gray-600 focus:outline-none"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-            <button onClick={fetchOrders} className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-md transition-colors" title="Refresh">
+            <button onClick={fetchOrders} className="p-2 bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-md transition-colors" title="Refresh">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -184,33 +184,33 @@ const AdminOrdersPage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5 bg-[#050505]">
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Order Number</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Customer</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Date</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Status</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Payment</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Total</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Actions</th>
+              <tr className="border-b border-[#1f2233] bg-[#07090e]">
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Order Number</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Customer</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Date</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Status</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Payment</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Total</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {isLoading ? (
-                <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500 text-sm">Loading orders...</td></tr>
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">Loading orders...</td></tr>
               ) : orders.length === 0 ? (
-                <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500 text-sm">No orders found.</td></tr>
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">No orders found.</td></tr>
               ) : orders.map((order) => (
-                <tr key={order._id} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="py-3 px-4 text-gray-300">
+                <tr key={order._id} className="hover:bg-[#1f2233]/50 transition-colors">
+                  <td className="py-3 px-4 text-slate-300">
                     <span className="font-medium">{order.orderNumber || order._id.slice(-8).toUpperCase()}</span>
                   </td>
                   <td className="py-3 px-4">
                     <div>
-                      <p className="text-gray-300">{order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : 'Guest'}</p>
-                      <p className="text-gray-500 text-xs">{order.customer?.email}</p>
+                      <p className="text-slate-300">{order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : 'Guest'}</p>
+                      <p className="text-slate-500 text-xs">{order.customer?.email}</p>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-gray-400">
+                  <td className="py-3 px-4 text-slate-400">
                     {new Date(order.createdAt).toLocaleDateString()}
                   </td>
                   <td className="py-3 px-4">
@@ -223,13 +223,13 @@ const AdminOrdersPage: React.FC = () => {
                       {(order.paymentStatus || 'unknown')}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-gray-300 font-medium">
+                  <td className="py-3 px-4 text-slate-300 font-medium">
                     {formatCurrency(order.total)}
                   </td>
                   <td className="py-3 px-4">
                     <button 
                       onClick={() => navigate(`/admin/orders/${order._id}`)}
-                      className="p-1.5 text-gray-500 hover:text-white hover:bg-white/10 rounded-md transition-colors" 
+                      className="p-1.5 text-slate-500 hover:text-white hover:bg-[#1f2233] rounded-md transition-colors" 
                       title="View Details"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,23 +245,23 @@ const AdminOrdersPage: React.FC = () => {
         </div>
         
         {/* Pagination */}
-        <div className="p-3 border-t border-white/5 flex items-center justify-between bg-[#050505]">
-          <div className="text-gray-500 text-xs">
+        <div className="p-3 border-t border-[#1f2233] flex items-center justify-between bg-[#07090e]">
+          <div className="text-slate-500 text-xs">
             Showing {orders.length > 0 ? (page - 1) * 20 + 1 : 0} to {Math.min(page * 20, totalOrders)} of {totalOrders} orders
           </div>
           <div className="flex items-center space-x-2">
             <button 
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors disabled:opacity-50"
             >
               Previous
             </button>
-            <span className="text-gray-500 text-xs px-2">Page {page} of {totalPages || 1}</span>
+            <span className="text-slate-500 text-xs px-2">Page {page} of {totalPages || 1}</span>
             <button 
               disabled={page === totalPages || totalPages === 0}
               onClick={() => setPage(p => p + 1)}
-              className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors disabled:opacity-50"
             >
               Next
             </button>

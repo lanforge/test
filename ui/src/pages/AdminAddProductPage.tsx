@@ -255,7 +255,7 @@ const AdminAddProductPage: React.FC = () => {
         <div>
           <button 
             onClick={() => navigate('/admin/products')}
-            className="text-gray-400 hover:text-white flex items-center space-x-2 text-sm mb-2 transition-colors"
+            className="text-slate-400 hover:text-white flex items-center space-x-2 text-sm mb-2 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -276,8 +276,8 @@ const AdminAddProductPage: React.FC = () => {
         
         {/* Parts Selection */}
         <div className="admin-card p-6 space-y-6">
-          <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2">Included Parts</h2>
-          <p className="text-sm text-gray-400">Select one component for each core category, and as many fans as needed. Cost is auto-calculated.</p>
+          <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2">Included Parts</h2>
+          <p className="text-sm text-slate-400">Select one component for each core category, and as many fans as needed. Cost is auto-calculated.</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
@@ -292,9 +292,9 @@ const AdminAddProductPage: React.FC = () => {
               { id: 'os', label: 'Operating System' },
             ].map(category => (
               <div key={category.id}>
-                <label className="block text-sm font-medium text-gray-400 mb-2">{category.label}</label>
+                <label className="block text-sm font-medium text-slate-400 mb-2">{category.label}</label>
                 <select
-                  className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                  className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                   value={selectedCoreParts[category.id]}
                   onChange={e => handleCorePartSelect(category.id, e.target.value)}
                 >
@@ -309,33 +309,33 @@ const AdminAddProductPage: React.FC = () => {
             ))}
           </div>
 
-          <div className="border-t border-gray-800 pt-4">
-            <label className="block text-sm font-medium text-gray-400 mb-2">Case Fans (Select Multiple)</label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto p-2 bg-gray-900 rounded-xl border border-gray-700">
+          <div className="border-t border-[#1f2233] pt-4">
+            <label className="block text-sm font-medium text-slate-400 mb-2">Case Fans (Select Multiple)</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto p-2 bg-[#0a0c13] rounded-xl border border-[#1f2233]">
               {availableParts.filter(p => p.type === 'fan').map(part => (
-                <label key={part._id} className="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors">
+                <label key={part._id} className="flex items-center space-x-3 p-2 hover:bg-[#11141d] rounded-lg cursor-pointer transition-colors">
                   <input 
                     type="checkbox" 
-                    className="w-4 h-4 rounded bg-gray-800 border-gray-700 text-emerald-500 focus:ring-emerald-500/20"
+                    className="w-4 h-4 rounded bg-[#11141d] border-[#1f2233] text-emerald-500 focus:ring-emerald-500/20"
                     checked={selectedFans.includes(part._id)}
                     onChange={() => toggleFan(part._id)}
                   />
                   <div className="flex-1 truncate">
                     <span className="text-white text-sm font-medium truncate block">{part.brand} {part.partModel}</span>
                   </div>
-                  <span className="text-gray-400 text-xs">${(part.cost || part.price || 0).toFixed(2)}</span>
+                  <span className="text-slate-400 text-xs">${(part.cost || part.price || 0).toFixed(2)}</span>
                 </label>
               ))}
               {availableParts.filter(p => p.type === 'fan').length === 0 && (
-                <div className="text-gray-500 text-sm p-2 col-span-2">No fans available in inventory.</div>
+                <div className="text-slate-500 text-sm p-2 col-span-2">No fans available in inventory.</div>
               )}
             </div>
           </div>
 
-          <div className="flex justify-between items-center bg-gray-800 p-4 rounded-xl border border-gray-700 mt-6">
+          <div className="flex justify-between items-center bg-[#11141d] p-4 rounded-xl border border-[#1f2233] mt-6">
             <div>
-              <p className="text-xs text-gray-400 uppercase tracking-wider">Internal Parts Cost</p>
-              <p className="text-xl font-bold text-white">${calculatedCost.toFixed(2)}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-wider">Internal Parts Cost</p>
+              <p className="text-xl font-medium text-white">${calculatedCost.toFixed(2)}</p>
             </div>
             <button 
               type="button" 
@@ -349,15 +349,15 @@ const AdminAddProductPage: React.FC = () => {
 
         {/* General Details */}
         <div className="admin-card p-6 space-y-6">
-          <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2">Product Details</h2>
+          <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2">Product Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-400 mb-2">Product Name *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Product Name *</label>
               <input
                 type="text"
                 name="name"
                 required
-                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.name}
                 onChange={handleChange}
                 onBlur={generateSlug}
@@ -365,34 +365,34 @@ const AdminAddProductPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Slug *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Slug *</label>
               <input
                 type="text"
                 name="slug"
                 required
-                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.slug}
                 onChange={handleChange}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">SKU *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">SKU *</label>
               <input
                 type="text"
                 name="sku"
                 required
-                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl uppercase"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl uppercase"
                 value={formData.sku}
                 onChange={handleChange}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Category *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Category *</label>
               <select
                 name="category"
-                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.category}
                 onChange={handleChange}
               >
@@ -406,47 +406,47 @@ const AdminAddProductPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Retail Price ($) *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Retail Price ($) *</label>
               <input
                 type="number"
                 name="price"
                 step="0.01"
                 required
-                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl font-bold text-emerald-400"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl font-medium text-emerald-400"
                 value={formData.price}
                 onChange={handleChange}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Total Cost ($)</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Total Cost ($)</label>
               <input
                 type="number"
                 name="cost"
                 step="0.01"
-                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-gray-400"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-slate-400"
                 value={formData.cost}
                 onChange={handleChange}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Initial Stock *</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Initial Stock *</label>
               <input
                 type="number"
                 name="stock"
                 required
-                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.stock}
                 onChange={handleChange}
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-400 mb-2">Product Tag</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Product Tag</label>
               <select
                 name="tags"
-                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.tags}
                 onChange={handleChange}
               >
@@ -460,62 +460,62 @@ const AdminAddProductPage: React.FC = () => {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-400 mb-2">Short Description</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Short Description</label>
               <input
                 type="text"
                 name="shortDescription"
-                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.shortDescription}
                 onChange={handleChange}
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-400 mb-2">Full Description</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Full Description</label>
               <textarea
                 name="description"
                 rows={4}
-                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.description}
                 onChange={handleChange}
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-400 mb-2">Product Images</label>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Product Images</label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                 {formData.images.map((img, idx) => (
-                  <div key={idx} className={`relative rounded-xl overflow-hidden border-2 ${idx === 0 ? 'border-emerald-500' : 'border-gray-700'}`}>
+                  <div key={idx} className={`relative rounded-xl overflow-hidden border-2 ${idx === 0 ? 'border-emerald-500' : 'border-[#1f2233]'}`}>
                     <img src={img} alt={`Product ${idx}`} className="w-full h-32 object-cover" />
                     <div className="absolute top-2 right-2 flex space-x-1">
                       {idx !== 0 && (
-                        <button type="button" onClick={() => setPrimaryImage(idx)} className="p-1 bg-gray-900/80 text-emerald-400 hover:text-emerald-300 rounded" title="Set as Primary">
+                        <button type="button" onClick={() => setPrimaryImage(idx)} className="p-1 bg-[#0a0c13]/80 text-emerald-400 hover:text-emerald-300 rounded" title="Set as Primary">
                           <FontAwesomeIcon icon={faStar} />
                         </button>
                       )}
-                      <button type="button" onClick={() => removeImage(idx)} className="p-1 bg-gray-900/80 text-red-400 hover:text-red-300 rounded" title="Remove">
+                      <button type="button" onClick={() => removeImage(idx)} className="p-1 bg-[#0a0c13]/80 text-red-400 hover:text-red-300 rounded" title="Remove">
                         ×
                       </button>
                     </div>
-                    {idx === 0 && <div className="absolute bottom-0 left-0 right-0 bg-emerald-500/80 text-center text-xs text-white py-1 font-bold">Primary</div>}
+                    {idx === 0 && <div className="absolute bottom-0 left-0 right-0 bg-emerald-500/80 text-center text-xs text-white py-1 font-medium">Primary</div>}
                   </div>
                 ))}
-                <label className="flex items-center justify-center border-2 border-dashed border-gray-700 rounded-xl h-32 cursor-pointer hover:border-emerald-500 hover:bg-gray-800/50 transition-colors">
+                <label className="flex items-center justify-center border-2 border-dashed border-[#1f2233] rounded-xl h-32 cursor-pointer hover:border-emerald-500 hover:bg-[#11141d] transition-colors">
                   <div className="text-center">
                     <span className="text-2xl block mb-1">+</span>
-                    <span className="text-xs text-gray-400">Upload Images</span>
+                    <span className="text-xs text-slate-400">Upload Images</span>
                   </div>
                   <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
                 </label>
               </div>
             </div>
 
-            <div className="md:col-span-2 pt-4 border-t border-gray-800">
-              <label className="flex items-center space-x-3 cursor-pointer text-gray-300 hover:text-white transition-colors">
+            <div className="md:col-span-2 pt-4 border-t border-[#1f2233]">
+              <label className="flex items-center space-x-3 cursor-pointer text-slate-300 hover:text-white transition-colors">
                 <input 
                   type="checkbox" 
                   name="isActive"
-                  className="w-5 h-5 rounded bg-gray-900 border-gray-700 text-emerald-500 focus:ring-emerald-500/20" 
+                  className="w-5 h-5 rounded bg-[#0a0c13] border-[#1f2233] text-emerald-500 focus:ring-emerald-500/20" 
                   checked={formData.isActive}
                   onChange={handleChange}
                 />
@@ -529,7 +529,7 @@ const AdminAddProductPage: React.FC = () => {
           <button
             type="button"
             onClick={() => navigate('/admin/products')}
-            className="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl transition-colors font-medium"
+            className="px-6 py-2.5 bg-[#11141d] hover:bg-[#1f2233] text-slate-300 rounded-xl transition-colors font-medium"
           >
             Cancel
           </button>

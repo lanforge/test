@@ -163,14 +163,14 @@ const AdminCustomerDetailsPage: React.FC = () => {
         <div className="flex items-center space-x-4">
           <button
             onClick={() => navigate('/admin/customers')}
-            className="p-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg transition-colors"
+            className="p-2 bg-[#11141d] hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-lg transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+            <h1 className="text-2xl font-medium text-white flex items-center gap-3">
               {customer.firstName} {customer.lastName}
               {!customer.isActive && (
                 <span className="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded-full border border-red-500/20">
@@ -178,7 +178,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                 </span>
               )}
             </h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-slate-500 text-sm mt-1">
               Customer since {new Date(customer.createdAt).toLocaleDateString()}
             </p>
           </div>
@@ -188,7 +188,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => { setIsEditing(false); setEditForm(customer); }}
-                className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm"
+                className="px-4 py-2 bg-[#11141d] hover:bg-[#1f2233] text-white rounded-lg transition-colors text-sm"
               >
                 Cancel
               </button>
@@ -219,54 +219,54 @@ const AdminCustomerDetailsPage: React.FC = () => {
         <div className="space-y-6 lg:col-span-1">
           {/* Customer Overview */}
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Overview</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Overview</h2>
             {isEditing ? (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">First Name</label>
+                    <label className="block text-xs text-slate-500 mb-1">First Name</label>
                     <input 
                       type="text" 
                       value={editForm.firstName || ''} 
                       onChange={(e) => setEditForm({...editForm, firstName: e.target.value})}
-                      className="admin-input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-[#0a0c13] border border-[#1f2233] rounded-lg text-white text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Last Name</label>
+                    <label className="block text-xs text-slate-500 mb-1">Last Name</label>
                     <input 
                       type="text" 
                       value={editForm.lastName || ''} 
                       onChange={(e) => setEditForm({...editForm, lastName: e.target.value})}
-                      className="admin-input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-[#0a0c13] border border-[#1f2233] rounded-lg text-white text-sm"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Email Address</label>
+                  <label className="block text-xs text-slate-500 mb-1">Email Address</label>
                   <input 
                     type="email" 
                     value={editForm.email || ''} 
                     onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                    className="admin-input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                    className="admin-input w-full px-3 py-2 bg-[#0a0c13] border border-[#1f2233] rounded-lg text-white text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Phone Number</label>
+                  <label className="block text-xs text-slate-500 mb-1">Phone Number</label>
                   <input 
                     type="text" 
                     value={editForm.phone || ''} 
                     onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                    className="admin-input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                    className="admin-input w-full px-3 py-2 bg-[#0a0c13] border border-[#1f2233] rounded-lg text-white text-sm"
                   />
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Email Address</p>
+                  <p className="text-sm text-slate-500 mb-1">Email Address</p>
                   <div className="flex items-center gap-2 text-white">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                     {customer.email}
@@ -275,9 +275,9 @@ const AdminCustomerDetailsPage: React.FC = () => {
 
                 {customer.phone && (
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">Phone Number</p>
+                    <p className="text-sm text-slate-500 mb-1">Phone Number</p>
                     <div className="flex items-center gap-2 text-white">
-                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
                       {customer.phone}
@@ -287,24 +287,24 @@ const AdminCustomerDetailsPage: React.FC = () => {
               </div>
             )}
 
-            <div className="pt-4 mt-4 border-t border-gray-800 grid grid-cols-2 gap-4">
+            <div className="pt-4 mt-4 border-t border-[#1f2233] grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-gray-500 mb-1">Total Spent</p>
-                <p className="text-xl font-bold text-white">{formatCurrency(customer.totalSpent)}</p>
+                <p className="text-sm text-slate-500 mb-1">Total Spent</p>
+                <p className="text-xl font-medium text-white">{formatCurrency(customer.totalSpent)}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500 mb-1">Total Orders</p>
-                <p className="text-xl font-bold text-white">{customer.totalOrders}</p>
+                <p className="text-sm text-slate-500 mb-1">Total Orders</p>
+                <p className="text-xl font-medium text-white">{customer.totalOrders}</p>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-gray-800 mt-4">
-              <p className="text-sm text-gray-500 mb-1">Loyalty Tier & Points</p>
+            <div className="pt-4 border-t border-[#1f2233] mt-4">
+              <p className="text-sm text-slate-500 mb-1">Loyalty Tier & Points</p>
               <div className="flex items-center gap-3 mt-2">
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                   customer.loyaltyTier === 'Platinum' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/50' :
                   customer.loyaltyTier === 'Gold' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50' :
-                  customer.loyaltyTier === 'Silver' ? 'bg-gray-300/20 text-gray-300 border border-gray-400/50' :
+                  customer.loyaltyTier === 'Silver' ? 'bg-gray-300/20 text-slate-300 border border-gray-400/50' :
                   'bg-amber-700/20 text-amber-600 border border-amber-700/50'
                 }`}>
                   {customer.loyaltyTier}
@@ -317,7 +317,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
           {/* Addresses */}
           <div className="admin-card p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-white">Saved Addresses</h2>
+              <h2 className="text-lg font-medium text-white">Saved Addresses</h2>
               {isEditing && (
                 <button 
                   onClick={addAddress}
@@ -332,10 +332,10 @@ const AdminCustomerDetailsPage: React.FC = () => {
               <div className="space-y-4">
                 {editForm.addresses && editForm.addresses.length > 0 ? (
                   editForm.addresses.map((address, idx) => (
-                    <div key={idx} className="bg-gray-900/50 p-4 rounded-lg border border-gray-800 space-y-3 relative">
+                    <div key={idx} className="bg-[#0a0c13] p-4 rounded-lg border border-[#1f2233] space-y-3 relative">
                       <button 
                         onClick={() => removeAddress(idx)}
-                        className="absolute top-2 right-2 p-1 text-gray-500 hover:text-red-400 transition-colors"
+                        className="absolute top-2 right-2 p-1 text-slate-500 hover:text-red-400 transition-colors"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -343,11 +343,11 @@ const AdminCustomerDetailsPage: React.FC = () => {
                       </button>
                       
                       <div>
-                        <label className="block text-xs text-gray-500 mb-1">Type</label>
+                        <label className="block text-xs text-slate-500 mb-1">Type</label>
                         <select 
                           value={address.type}
                           onChange={(e) => updateAddress(idx, 'type', e.target.value)}
-                          className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                          className="admin-input w-full px-2 py-1.5 bg-[#11141d] border border-[#1f2233] rounded text-white text-xs"
                         >
                           <option value="shipping">Shipping</option>
                           <option value="billing">Billing</option>
@@ -357,64 +357,64 @@ const AdminCustomerDetailsPage: React.FC = () => {
                       
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <label className="block text-xs text-gray-500 mb-1">First Name</label>
+                          <label className="block text-xs text-slate-500 mb-1">First Name</label>
                           <input 
                             type="text" 
                             value={address.firstName || ''} 
                             onChange={(e) => updateAddress(idx, 'firstName', e.target.value)}
                             placeholder={editForm.firstName}
-                            className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                            className="admin-input w-full px-2 py-1.5 bg-[#11141d] border border-[#1f2233] rounded text-white text-xs"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-500 mb-1">Last Name</label>
+                          <label className="block text-xs text-slate-500 mb-1">Last Name</label>
                           <input 
                             type="text" 
                             value={address.lastName || ''} 
                             onChange={(e) => updateAddress(idx, 'lastName', e.target.value)}
                             placeholder={editForm.lastName}
-                            className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                            className="admin-input w-full px-2 py-1.5 bg-[#11141d] border border-[#1f2233] rounded text-white text-xs"
                           />
                         </div>
                       </div>
                       
                       <div>
-                        <label className="block text-xs text-gray-500 mb-1">Street</label>
+                        <label className="block text-xs text-slate-500 mb-1">Street</label>
                         <input 
                           type="text" 
                           value={address.street || ''} 
                           onChange={(e) => updateAddress(idx, 'street', e.target.value)}
-                          className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                          className="admin-input w-full px-2 py-1.5 bg-[#11141d] border border-[#1f2233] rounded text-white text-xs"
                         />
                       </div>
                       
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <label className="block text-xs text-gray-500 mb-1">City</label>
+                          <label className="block text-xs text-slate-500 mb-1">City</label>
                           <input 
                             type="text" 
                             value={address.city || ''} 
                             onChange={(e) => updateAddress(idx, 'city', e.target.value)}
-                            className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                            className="admin-input w-full px-2 py-1.5 bg-[#11141d] border border-[#1f2233] rounded text-white text-xs"
                           />
                         </div>
                         <div className="flex gap-2">
                           <div className="w-1/2">
-                            <label className="block text-xs text-gray-500 mb-1">State</label>
+                            <label className="block text-xs text-slate-500 mb-1">State</label>
                             <input 
                               type="text" 
                               value={address.state || ''} 
                               onChange={(e) => updateAddress(idx, 'state', e.target.value)}
-                              className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                              className="admin-input w-full px-2 py-1.5 bg-[#11141d] border border-[#1f2233] rounded text-white text-xs"
                             />
                           </div>
                           <div className="w-1/2">
-                            <label className="block text-xs text-gray-500 mb-1">Zip</label>
+                            <label className="block text-xs text-slate-500 mb-1">Zip</label>
                             <input 
                               type="text" 
                               value={address.zip || ''} 
                               onChange={(e) => updateAddress(idx, 'zip', e.target.value)}
-                              className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                              className="admin-input w-full px-2 py-1.5 bg-[#11141d] border border-[#1f2233] rounded text-white text-xs"
                             />
                           </div>
                         </div>
@@ -422,20 +422,20 @@ const AdminCustomerDetailsPage: React.FC = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-500 italic text-sm">No saved addresses</p>
+                  <p className="text-slate-500 italic text-sm">No saved addresses</p>
                 )}
               </div>
             ) : (
               <div className="space-y-4">
                 {customer.addresses && customer.addresses.length > 0 ? (
                   customer.addresses.map((address, idx) => (
-                    <div key={idx} className="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                    <div key={idx} className="bg-[#0a0c13] p-4 rounded-lg border border-[#1f2233]">
                       <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">
+                        <span className="text-xs font-medium uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">
                           {address.type}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-300 space-y-1">
+                      <div className="text-sm text-slate-300 space-y-1">
                         <p className="font-medium text-white">{address.firstName || customer.firstName} {address.lastName || customer.lastName}</p>
                         <p>{address.street}</p>
                         <p>{address.city}, {address.state} {address.zip}</p>
@@ -444,7 +444,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-500 italic text-sm">No saved addresses</p>
+                  <p className="text-slate-500 italic text-sm">No saved addresses</p>
                 )}
               </div>
             )}
@@ -456,32 +456,32 @@ const AdminCustomerDetailsPage: React.FC = () => {
 
           {/* Orders History */}
           <div className="admin-card overflow-hidden">
-            <div className="p-6 border-b border-gray-800">
-              <h2 className="text-lg font-bold text-white">Recent Orders</h2>
+            <div className="p-6 border-b border-[#1f2233]">
+              <h2 className="text-lg font-medium text-white">Recent Orders</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-900/50">
-                    <th className="text-left py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Order</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Payment</th>
-                    <th className="text-right py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Total</th>
+                  <tr className="bg-[#0a0c13]">
+                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Order</th>
+                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Date</th>
+                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
+                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Payment</th>
+                    <th className="text-right py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Total</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800">
                   {orders.length > 0 ? (
                     orders.map(order => (
-                      <tr key={order._id} className="hover:bg-gray-800/30 cursor-pointer transition-colors" onClick={() => navigate(`/admin/orders/${order._id}`)}>
+                      <tr key={order._id} className="hover:bg-[#1f2233]/30 cursor-pointer transition-colors" onClick={() => navigate(`/admin/orders/${order._id}`)}>
                         <td className="py-4 px-6">
                           <span className="text-emerald-400 hover:underline font-medium">{order.orderNumber}</span>
                         </td>
-                        <td className="py-4 px-6 text-sm text-gray-300">
+                        <td className="py-4 px-6 text-sm text-slate-300">
                           {new Date(order.createdAt).toLocaleDateString()}
                         </td>
                         <td className="py-4 px-6">
-                          <span className="text-xs capitalize px-2 py-1 rounded-full bg-gray-800 text-gray-300">
+                          <span className="text-xs capitalize px-2 py-1 rounded-full bg-[#11141d] text-slate-300">
                             {(order.status || 'unknown').replace(/-/g, ' ')}
                           </span>
                         </td>
@@ -497,7 +497,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5} className="py-8 text-center text-gray-500">
+                      <td colSpan={5} className="py-8 text-center text-slate-500">
                         No orders found for this customer.
                       </td>
                     </tr>
@@ -509,31 +509,31 @@ const AdminCustomerDetailsPage: React.FC = () => {
 
           {/* Payment History */}
           <div className="admin-card overflow-hidden">
-            <div className="p-6 border-b border-gray-800">
-              <h2 className="text-lg font-bold text-white">Payment History</h2>
+            <div className="p-6 border-b border-[#1f2233]">
+              <h2 className="text-lg font-medium text-white">Payment History</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-900/50">
-                    <th className="text-left py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Transaction ID</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Method</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                    <th className="text-right py-3 px-6 text-xs font-medium text-gray-400 uppercase tracking-wider">Amount</th>
+                  <tr className="bg-[#0a0c13]">
+                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Transaction ID</th>
+                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Date</th>
+                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Method</th>
+                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
+                    <th className="text-right py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Amount</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800">
                   {payments.length > 0 ? (
                     payments.map(payment => (
-                      <tr key={payment._id} className="hover:bg-gray-800/30 transition-colors">
-                        <td className="py-4 px-6 text-sm font-mono text-gray-400">
+                      <tr key={payment._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                        <td className="py-4 px-6 text-sm font-mono text-slate-400">
                           {payment.gatewayTransactionId}
                         </td>
-                        <td className="py-4 px-6 text-sm text-gray-300">
+                        <td className="py-4 px-6 text-sm text-slate-300">
                           {new Date(payment.createdAt).toLocaleDateString()}
                         </td>
-                        <td className="py-4 px-6 text-sm capitalize text-gray-300">
+                        <td className="py-4 px-6 text-sm capitalize text-slate-300">
                           {payment.paymentMethod}
                         </td>
                         <td className="py-4 px-6">
@@ -552,7 +552,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5} className="py-8 text-center text-gray-500">
+                      <td colSpan={5} className="py-8 text-center text-slate-500">
                         No payments found for this customer.
                       </td>
                     </tr>

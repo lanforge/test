@@ -97,7 +97,7 @@ const AdminPartnersPage: React.FC = () => {
       case 'approved': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
       case 'pending': return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
       case 'rejected': return 'bg-red-500/10 text-red-400 border-red-500/30';
-      default: return 'bg-gray-500/10 text-gray-400 border-gray-500/30';
+      default: return 'bg-gray-500/10 text-slate-400 border-gray-500/30';
     }
   };
 
@@ -107,7 +107,7 @@ const AdminPartnersPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">Partners & Affiliates</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage brand partners and affiliate applications</p>
+          <p className="text-slate-500 text-sm mt-1">Manage brand partners and affiliate applications</p>
         </div>
         {activeTab === 'partners' && (
           <div className="flex items-center space-x-4">
@@ -122,14 +122,14 @@ const AdminPartnersPage: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-800">
+      <div className="border-b border-[#1f2233]">
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveTab('partners')}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'partners'
                 ? 'border-emerald-500 text-emerald-400'
-                : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-700'
+                : 'border-transparent text-slate-400 hover:text-slate-300 hover:border-[#1f2233]'
             }`}
           >
             Partners
@@ -139,7 +139,7 @@ const AdminPartnersPage: React.FC = () => {
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'affiliates'
                 ? 'border-emerald-500 text-emerald-400'
-                : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-700'
+                : 'border-transparent text-slate-400 hover:text-slate-300 hover:border-[#1f2233]'
             }`}
           >
             Affiliate Applications
@@ -153,29 +153,29 @@ const AdminPartnersPage: React.FC = () => {
           <div className="admin-card overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-800 bg-gray-900/50">
-                  <th className="py-3 px-4 text-left text-gray-400 font-medium">Order</th>
-                  <th className="py-3 px-4 text-left text-gray-400 font-medium">Partner Name</th>
-                  <th className="py-3 px-4 text-left text-gray-400 font-medium">Type</th>
-                  <th className="py-3 px-4 text-left text-gray-400 font-medium">Website</th>
-                  <th className="py-3 px-4 text-left text-gray-400 font-medium">Status</th>
-                  <th className="py-3 px-4 text-right text-gray-400 font-medium">Actions</th>
+                <tr className="border-b border-[#1f2233] bg-[#0a0c13]">
+                  <th className="py-3 px-4 text-left text-slate-400 font-medium">Order</th>
+                  <th className="py-3 px-4 text-left text-slate-400 font-medium">Partner Name</th>
+                  <th className="py-3 px-4 text-left text-slate-400 font-medium">Type</th>
+                  <th className="py-3 px-4 text-left text-slate-400 font-medium">Website</th>
+                  <th className="py-3 px-4 text-left text-slate-400 font-medium">Status</th>
+                  <th className="py-3 px-4 text-right text-slate-400 font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
                 {isLoadingPartners ? (
-                  <tr><td colSpan={6} className="p-6 text-center text-gray-500">Loading partners...</td></tr>
+                  <tr><td colSpan={6} className="p-6 text-center text-slate-500">Loading partners...</td></tr>
                 ) : partners.length === 0 ? (
-                  <tr><td colSpan={6} className="p-6 text-center text-gray-500">No partners found</td></tr>
+                  <tr><td colSpan={6} className="p-6 text-center text-slate-500">No partners found</td></tr>
                 ) : (
                   partners.map((p, index) => (
-                    <tr key={p._id} className="hover:bg-gray-800/30">
+                    <tr key={p._id} className="hover:bg-[#1f2233]/30">
                       <td className="py-3 px-4">
                         <div className="flex flex-col space-y-1 w-6">
                           <button
                             onClick={() => handleReorder(index, 'up')}
                             disabled={index === 0}
-                            className={`p-1 rounded flex items-center justify-center transition-colors ${index === 0 ? 'text-gray-700 cursor-not-allowed' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}
+                            className={`p-1 rounded flex items-center justify-center transition-colors ${index === 0 ? 'text-gray-700 cursor-not-allowed' : 'text-slate-400 hover:bg-[#1f2233] hover:text-white'}`}
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -184,7 +184,7 @@ const AdminPartnersPage: React.FC = () => {
                           <button
                             onClick={() => handleReorder(index, 'down')}
                             disabled={index === partners.length - 1}
-                            className={`p-1 rounded flex items-center justify-center transition-colors ${index === partners.length - 1 ? 'text-gray-700 cursor-not-allowed' : 'text-gray-400 hover:bg-gray-700 hover:text-white'}`}
+                            className={`p-1 rounded flex items-center justify-center transition-colors ${index === partners.length - 1 ? 'text-gray-700 cursor-not-allowed' : 'text-slate-400 hover:bg-[#1f2233] hover:text-white'}`}
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -196,7 +196,7 @@ const AdminPartnersPage: React.FC = () => {
                         {p.logo ? (
                           <img src={p.logo} alt={p.name} className="w-8 h-8 object-contain bg-white rounded p-1" />
                         ) : (
-                          <div className="w-8 h-8 bg-gray-800 rounded flex items-center justify-center text-xs font-bold text-gray-400">
+                          <div className="w-8 h-8 bg-[#11141d] rounded flex items-center justify-center text-xs font-medium text-slate-400">
                             {p.name.charAt(0)}
                           </div>
                         )}
@@ -204,23 +204,23 @@ const AdminPartnersPage: React.FC = () => {
                           {p.name}
                         </Link>
                       </td>
-                      <td className="py-3 px-4 text-gray-300 text-sm capitalize">
+                      <td className="py-3 px-4 text-slate-300 text-sm capitalize">
                         {(p as any).partnerType || (p.isActive ? 'partner' : 'affiliate')}
                       </td>
                       <td className="py-3 px-4 text-emerald-400 text-sm">
                         {p.website ? (
                           <a href={p.website} target="_blank" rel="noreferrer" className="hover:underline">{p.website}</a>
                         ) : (
-                          <span className="text-gray-500">-</span>
+                          <span className="text-slate-500">-</span>
                         )}
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${p.isActive ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-gray-500/10 text-gray-400 border-gray-500/30'}`}>
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${p.isActive ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-gray-500/10 text-slate-400 border-gray-500/30'}`}>
                           {p.isActive ? 'Active' : 'Hidden'}
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <Link to={`/admin/partners/${p._id}`} className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors inline-block" title="View Details">
+                        <Link to={`/admin/partners/${p._id}`} className="p-1.5 text-slate-400 hover:text-white hover:bg-[#11141d] rounded-lg transition-colors inline-block" title="View Details">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -246,7 +246,7 @@ const AdminPartnersPage: React.FC = () => {
                   <select
                     value={affiliateStatus}
                     onChange={(e) => setAffiliateStatus(e.target.value)}
-                    className="admin-input px-3 py-2 bg-gray-900/70 border-gray-700 text-sm rounded-lg"
+                    className="admin-input px-3 py-2 bg-[#0a0c13] border-[#1f2233] text-sm rounded-lg"
                   >
                     <option value="all">All Statuses</option>
                     <option value="pending">Pending</option>
@@ -267,34 +267,34 @@ const AdminPartnersPage: React.FC = () => {
           <div className="admin-card overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-800 bg-gray-900/50">
-                  <th className="py-3 px-4 text-left text-gray-400 font-medium text-sm">Applicant</th>
-                  <th className="py-3 px-4 text-left text-gray-400 font-medium text-sm">Audience Size</th>
-                  <th className="py-3 px-4 text-left text-gray-400 font-medium text-sm">Socials</th>
-                  <th className="py-3 px-4 text-left text-gray-400 font-medium text-sm">Date</th>
-                  <th className="py-3 px-4 text-left text-gray-400 font-medium text-sm">Status</th>
-                  <th className="py-3 px-4 text-right text-gray-400 font-medium text-sm">Actions</th>
+                <tr className="border-b border-[#1f2233] bg-[#0a0c13]">
+                  <th className="py-3 px-4 text-left text-slate-400 font-medium text-sm">Applicant</th>
+                  <th className="py-3 px-4 text-left text-slate-400 font-medium text-sm">Audience Size</th>
+                  <th className="py-3 px-4 text-left text-slate-400 font-medium text-sm">Socials</th>
+                  <th className="py-3 px-4 text-left text-slate-400 font-medium text-sm">Date</th>
+                  <th className="py-3 px-4 text-left text-slate-400 font-medium text-sm">Status</th>
+                  <th className="py-3 px-4 text-right text-slate-400 font-medium text-sm">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
                 {isLoadingAffiliates ? (
-                  <tr><td colSpan={6} className="p-6 text-center text-gray-500">Loading applications...</td></tr>
+                  <tr><td colSpan={6} className="p-6 text-center text-slate-500">Loading applications...</td></tr>
                 ) : affiliates.length === 0 ? (
-                  <tr><td colSpan={6} className="p-6 text-center text-gray-500">No applications found</td></tr>
+                  <tr><td colSpan={6} className="p-6 text-center text-slate-500">No applications found</td></tr>
                 ) : (
                   affiliates.map(app => (
-                    <tr key={app._id} className="hover:bg-gray-800/30">
+                    <tr key={app._id} className="hover:bg-[#1f2233]/30">
                       <td className="py-3 px-4">
                         <p className="text-white font-medium">{app.name}</p>
-                        <p className="text-gray-400 text-sm">{app.email}</p>
+                        <p className="text-slate-400 text-sm">{app.email}</p>
                       </td>
-                      <td className="py-3 px-4 text-gray-300">{app.audienceSize}</td>
+                      <td className="py-3 px-4 text-slate-300">{app.audienceSize}</td>
                       <td className="py-3 px-4 text-blue-400 text-sm">
                         {app.socialLinks.map((link, idx) => (
                           <a key={idx} href={link} target="_blank" rel="noreferrer" className="block hover:underline truncate max-w-[150px]">{link}</a>
                         ))}
                       </td>
-                      <td className="py-3 px-4 text-gray-400 text-sm">
+                      <td className="py-3 px-4 text-slate-400 text-sm">
                         {new Date(app.createdAt).toLocaleDateString()}
                       </td>
                       <td className="py-3 px-4">
@@ -303,7 +303,7 @@ const AdminPartnersPage: React.FC = () => {
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <button className="px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors border border-gray-700">
+                        <button className="px-3 py-1.5 text-sm bg-[#11141d] hover:bg-[#1f2233] text-white rounded-lg transition-colors border border-[#1f2233]">
                           Review
                         </button>
                       </td>

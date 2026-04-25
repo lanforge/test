@@ -54,9 +54,9 @@ const AdminCustomersPage: React.FC = () => {
     switch (tier.toLowerCase()) {
       case 'platinum': return 'bg-purple-500/10 text-purple-400 border border-purple-500/30';
       case 'gold': return 'bg-amber-500/10 text-amber-400 border border-amber-500/30';
-      case 'silver': return 'bg-gray-400/10 text-gray-300 border border-gray-400/30';
+      case 'silver': return 'bg-gray-400/10 text-slate-300 border border-gray-400/30';
       case 'bronze': return 'bg-orange-500/10 text-orange-400 border border-orange-500/30';
-      default: return 'bg-gray-500/10 text-gray-400 border border-gray-500/30';
+      default: return 'bg-gray-500/10 text-slate-400 border border-gray-500/30';
     }
   };
 
@@ -73,7 +73,7 @@ const AdminCustomersPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">Customers Management</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage your customer database</p>
+          <p className="text-slate-500 text-sm mt-1">Manage your customer database</p>
         </div>
         <div className="flex items-center space-x-4">
           <button
@@ -90,7 +90,7 @@ const AdminCustomersPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Total Customers</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Total Customers</p>
               <p className="text-2xl font-medium text-white mt-1">{totalCustomers}</p>
             </div>
             <div className="w-8 h-8 bg-blue-500/10 rounded-md flex items-center justify-center">
@@ -104,7 +104,7 @@ const AdminCustomersPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Active Users</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Active Users</p>
               <p className="text-2xl font-medium text-white mt-1">{customers.filter(c => c.isActive).length} (Page)</p>
             </div>
             <div className="w-8 h-8 bg-emerald-500/10 rounded-md flex items-center justify-center">
@@ -118,7 +118,7 @@ const AdminCustomersPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Avg. Orders (Page)</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Avg. Orders (Page)</p>
               <p className="text-2xl font-medium text-white mt-1">
                 {customers.length > 0 ? (customers.reduce((sum, c) => sum + (c.totalOrders || 0), 0) / customers.length).toFixed(1) : 0}
               </p>
@@ -145,11 +145,11 @@ const AdminCustomersPage: React.FC = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <svg className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <button onClick={fetchCustomers} className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-md transition-colors" title="Refresh">
+            <button onClick={fetchCustomers} className="p-2 bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-md transition-colors" title="Refresh">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -183,34 +183,34 @@ const AdminCustomersPage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5 bg-[#050505]">
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Customer ID</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Name</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Email</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Join Date</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Orders</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Total Spent</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Tier</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Actions</th>
+              <tr className="border-b border-[#1f2233] bg-[#07090e]">
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Customer ID</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Name</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Email</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Join Date</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Orders</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Total Spent</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Tier</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {isLoading ? (
-                <tr><td colSpan={8} className="px-4 py-8 text-center text-gray-500 text-sm">Loading customers...</td></tr>
+                <tr><td colSpan={8} className="px-4 py-8 text-center text-slate-500 text-sm">Loading customers...</td></tr>
               ) : customers.length === 0 ? (
-                <tr><td colSpan={8} className="px-4 py-8 text-center text-gray-500 text-sm">No customers found.</td></tr>
+                <tr><td colSpan={8} className="px-4 py-8 text-center text-slate-500 text-sm">No customers found.</td></tr>
               ) : customers.map((customer) => (
-                <tr key={customer._id} className="hover:bg-white/[0.02] transition-colors">
+                <tr key={customer._id} className="hover:bg-[#1f2233]/50 transition-colors">
                   <td className="py-3 px-4">
-                    <span className="font-medium text-gray-200">{customer._id.slice(-6).toUpperCase()}</span>
+                    <span className="font-medium text-slate-200">{customer._id.slice(-6).toUpperCase()}</span>
                   </td>
                   <td className="py-3 px-4">
-                    <p className="text-gray-200 font-medium">{customer.firstName} {customer.lastName}</p>
+                    <p className="text-slate-200 font-medium">{customer.firstName} {customer.lastName}</p>
                   </td>
-                  <td className="py-3 px-4 text-gray-400">{customer.email}</td>
-                  <td className="py-3 px-4 text-gray-400">{new Date(customer.createdAt).toLocaleDateString()}</td>
-                  <td className="py-3 px-4 text-gray-400">{customer.totalOrders || 0}</td>
-                  <td className="py-3 px-4 text-gray-200 font-medium">{formatCurrency(customer.totalSpent || 0)}</td>
+                  <td className="py-3 px-4 text-slate-400">{customer.email}</td>
+                  <td className="py-3 px-4 text-slate-400">{new Date(customer.createdAt).toLocaleDateString()}</td>
+                  <td className="py-3 px-4 text-slate-400">{customer.totalOrders || 0}</td>
+                  <td className="py-3 px-4 text-slate-200 font-medium">{formatCurrency(customer.totalSpent || 0)}</td>
                   <td className="py-3 px-4">
                     <span className={`admin-badge ${getTierColor(customer.loyaltyTier || 'bronze')}`}>
                       {(customer.loyaltyTier || 'bronze')}
@@ -218,13 +218,13 @@ const AdminCustomersPage: React.FC = () => {
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-2">
-                      <button onClick={() => navigate(`/admin/customers/${customer._id}`)} className="p-1.5 text-gray-500 hover:text-white hover:bg-white/10 rounded-md transition-colors" title="View">
+                      <button onClick={() => navigate(`/admin/customers/${customer._id}`)} className="p-1.5 text-slate-500 hover:text-white hover:bg-[#1f2233] rounded-md transition-colors" title="View">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
                       </button>
-                      <button className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-white/10 rounded-md transition-colors" title="Deactivate">
+                      <button className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-[#1f2233] rounded-md transition-colors" title="Deactivate">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                         </svg>
@@ -238,23 +238,23 @@ const AdminCustomersPage: React.FC = () => {
         </div>
         
         {/* Pagination */}
-        <div className="p-3 border-t border-white/5 flex items-center justify-between bg-[#050505]">
-          <div className="text-gray-500 text-xs">
+        <div className="p-3 border-t border-[#1f2233] flex items-center justify-between bg-[#07090e]">
+          <div className="text-slate-500 text-xs">
             Showing {customers.length > 0 ? (page - 1) * 20 + 1 : 0} to {Math.min(page * 20, totalCustomers)} of {totalCustomers} customers
           </div>
           <div className="flex items-center space-x-2">
             <button 
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors disabled:opacity-50"
             >
               Previous
             </button>
-            <span className="text-gray-500 text-xs px-2">Page {page} of {totalPages || 1}</span>
+            <span className="text-slate-500 text-xs px-2">Page {page} of {totalPages || 1}</span>
             <button 
               disabled={page === totalPages || totalPages === 0}
               onClick={() => setPage(p => p + 1)}
-              className="px-2.5 py-1 text-xs bg-white/5 hover:bg-white/10 text-gray-300 rounded-md transition-colors disabled:opacity-50"
+              className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors disabled:opacity-50"
             >
               Next
             </button>

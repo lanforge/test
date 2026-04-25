@@ -203,27 +203,27 @@ const AdminShowcaseDetailsPage: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="p-8 text-gray-400">Loading details...</div>;
+  if (loading) return <div className="p-8 text-slate-400">Loading details...</div>;
 
   return (
     <div className="p-8 max-w-4xl mx-auto pb-20">
       {errorMsg && (
         <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-xl text-sm mb-4">
           {errorMsg}
-          <button onClick={() => setErrorMsg(null)} className="float-right text-gray-400 hover:text-white">x</button>
+          <button onClick={() => setErrorMsg(null)} className="float-right text-slate-400 hover:text-white">x</button>
         </div>
       )}
       {successMsg && (
         <div className="bg-emerald-500/10 border border-emerald-500/50 text-emerald-400 p-4 rounded-xl text-sm mb-4">
           {successMsg}
-          <button onClick={() => setSuccessMsg(null)} className="float-right text-gray-400 hover:text-white">x</button>
+          <button onClick={() => setSuccessMsg(null)} className="float-right text-slate-400 hover:text-white">x</button>
         </div>
       )}
       <div className="flex items-center justify-between mb-6">
         <div>
           <button 
             onClick={() => navigate('/admin/showcases')}
-            className="text-gray-400 hover:text-white flex items-center space-x-2 text-sm mb-2"
+            className="text-slate-400 hover:text-white flex items-center space-x-2 text-sm mb-2"
           >
             &larr; Back to Showcases
           </button>
@@ -239,43 +239,43 @@ const AdminShowcaseDetailsPage: React.FC = () => {
       </div>
 
       <div className="space-y-6">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
-          <h2 className="text-lg font-bold text-white mb-4">Showcase Info</h2>
+        <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl p-6 space-y-4">
+          <h2 className="text-lg font-medium text-white mb-4">Showcase Info</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Showcase Name</label>
+              <label className="block text-sm text-slate-400 mb-1">Showcase Name</label>
               <input
                 type="text"
-                className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
+                className="admin-input w-full bg-[#11141d] border-[#1f2233] rounded-lg text-white"
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Creator Name</label>
+              <label className="block text-sm text-slate-400 mb-1">Creator Name</label>
               <input
                 type="text"
-                className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
+                className="admin-input w-full bg-[#11141d] border-[#1f2233] rounded-lg text-white"
                 value={formData.creatorName}
                 onChange={e => setFormData({ ...formData, creatorName: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Creator Code (URL slug)</label>
+              <label className="block text-sm text-slate-400 mb-1">Creator Code (URL slug)</label>
               <input
                 type="text"
-                className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white lowercase"
+                className="admin-input w-full bg-[#11141d] border-[#1f2233] rounded-lg text-white lowercase"
                 value={formData.creatorCode}
                 onChange={e => setFormData({ ...formData, creatorCode: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Labor Fee ($)</label>
+              <label className="block text-sm text-slate-400 mb-1">Labor Fee ($)</label>
               <div className="flex gap-2">
                 <input
                   type="number"
                   step="0.01"
-                  className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
+                  className="admin-input w-full bg-[#11141d] border-[#1f2233] rounded-lg text-white"
                   value={formData.laborFee}
                   onChange={e => setFormData({ ...formData, laborFee: e.target.value })}
                 />
@@ -289,9 +289,9 @@ const AdminShowcaseDetailsPage: React.FC = () => {
               </div>
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm text-gray-400 mb-1">Description</label>
+              <label className="block text-sm text-slate-400 mb-1">Description</label>
               <textarea
-                className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
+                className="admin-input w-full bg-[#11141d] border-[#1f2233] rounded-lg text-white"
                 rows={3}
                 value={formData.description}
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
@@ -299,23 +299,23 @@ const AdminShowcaseDetailsPage: React.FC = () => {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm text-gray-400 mb-2">Showcase Images (Streamer/PC Photos)</label>
+              <label className="block text-sm text-slate-400 mb-2">Showcase Images (Streamer/PC Photos)</label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                 {formData.images.map((img, idx) => (
-                  <div key={idx} className="relative rounded-xl overflow-hidden border border-gray-700">
+                  <div key={idx} className="relative rounded-xl overflow-hidden border border-[#1f2233]">
                     <img src={img} alt={`Showcase ${idx}`} className="w-full h-32 object-cover" />
                     <button 
                       type="button" 
                       onClick={() => removeImage(idx)} 
-                      className="absolute top-2 right-2 p-1 bg-gray-900/80 text-red-400 hover:text-red-300 rounded" 
+                      className="absolute top-2 right-2 p-1 bg-[#0a0c13]/80 text-red-400 hover:text-red-300 rounded" 
                     >
                       ×
                     </button>
                   </div>
                 ))}
-                <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-700 rounded-xl h-32 cursor-pointer hover:border-emerald-500 hover:bg-gray-800/50 transition-colors">
-                  <span className="text-2xl text-gray-400 mb-1">+</span>
-                  <span className="text-xs text-gray-400">Upload Photos</span>
+                <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#1f2233] rounded-xl h-32 cursor-pointer hover:border-emerald-500 hover:bg-[#11141d] transition-colors">
+                  <span className="text-2xl text-slate-400 mb-1">+</span>
+                  <span className="text-xs text-slate-400">Upload Photos</span>
                   <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
                 </label>
               </div>
@@ -325,7 +325,7 @@ const AdminShowcaseDetailsPage: React.FC = () => {
               <input
                 type="checkbox"
                 id="isActive"
-                className="w-4 h-4 rounded bg-gray-800 border-gray-700 text-emerald-500"
+                className="w-4 h-4 rounded bg-[#11141d] border-[#1f2233] text-emerald-500"
                 checked={formData.isActive}
                 onChange={e => setFormData({ ...formData, isActive: e.target.checked })}
               />
@@ -334,8 +334,8 @@ const AdminShowcaseDetailsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
-          <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2">PC Parts</h2>
+        <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl p-6 space-y-6">
+          <h2 className="text-lg font-medium text-white border-b border-[#1f2233] pb-2">PC Parts</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { id: 'cpu', label: 'CPU' },
@@ -349,9 +349,9 @@ const AdminShowcaseDetailsPage: React.FC = () => {
               { id: 'os', label: 'Operating System' },
             ].map(category => (
               <div key={category.id}>
-                <label className="block text-sm font-medium text-gray-400 mb-1">{category.label}</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">{category.label}</label>
                 <select
-                  className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
+                  className="admin-input w-full bg-[#11141d] border-[#1f2233] rounded-lg text-white"
                   value={selectedCoreParts[category.id]}
                   onChange={e => handleCorePartSelect(category.id, e.target.value)}
                 >
@@ -366,9 +366,9 @@ const AdminShowcaseDetailsPage: React.FC = () => {
             ))}
           </div>
 
-          <div className="border-t border-gray-800 pt-4">
-            <label className="block text-sm font-medium text-gray-400 mb-2">Case Fans</label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-gray-800 rounded-lg">
+          <div className="border-t border-[#1f2233] pt-4">
+            <label className="block text-sm font-medium text-slate-400 mb-2">Case Fans</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-[#11141d] rounded-lg">
               {availableParts.filter(p => p.type === 'fan').map(part => (
                 <label key={part._id} className="flex items-center space-x-2 cursor-pointer p-1">
                   <input 

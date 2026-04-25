@@ -313,19 +313,19 @@ const AdminOrderDetailsPage: React.FC = () => {
         <div className="flex items-center space-x-4">
           <button 
             onClick={() => navigate('/admin/orders')}
-            className="p-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg transition-colors"
+            className="p-2 bg-[#11141d] hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-lg transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-4">
+            <h1 className="text-2xl font-medium text-white flex items-center gap-4">
               Order {order.orderNumber}
               <select 
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className={`text-sm px-3 py-1 font-medium bg-gray-800 border border-gray-700 rounded-lg outline-none ${
+                className={`text-sm px-3 py-1 font-medium bg-[#11141d] border border-[#1f2233] rounded-lg outline-none ${
                   status === 'delivered' ? 'text-emerald-400' :
                   status === 'shipped' || status === 'out-for-delivery' ? 'text-indigo-400' :
                   status === 'building' ? 'text-blue-400' :
@@ -334,17 +334,17 @@ const AdminOrderDetailsPage: React.FC = () => {
                   'text-amber-400'
                 }`}
               >
-                <option value="order-confirmed" className="text-amber-400 bg-gray-900">Order Confirmed</option>
-                <option value="building" className="text-blue-400 bg-gray-900">Building</option>
-                <option value="benchmarking" className="text-purple-400 bg-gray-900">Benchmarking</option>
-                <option value="shipped" className="text-indigo-400 bg-gray-900">Shipped</option>
-                <option value="out-for-delivery" className="text-indigo-400 bg-gray-900">Out for Delivery</option>
-                <option value="delivered" className="text-emerald-400 bg-gray-900">Delivered</option>
-                <option value="returned" className="text-red-400 bg-gray-900">Returned</option>
-                <option value="cancelled" className="text-red-400 bg-gray-900">Cancelled</option>
+                <option value="order-confirmed" className="text-amber-400 bg-[#0a0c13]">Order Confirmed</option>
+                <option value="building" className="text-blue-400 bg-[#0a0c13]">Building</option>
+                <option value="benchmarking" className="text-purple-400 bg-[#0a0c13]">Benchmarking</option>
+                <option value="shipped" className="text-indigo-400 bg-[#0a0c13]">Shipped</option>
+                <option value="out-for-delivery" className="text-indigo-400 bg-[#0a0c13]">Out for Delivery</option>
+                <option value="delivered" className="text-emerald-400 bg-[#0a0c13]">Delivered</option>
+                <option value="returned" className="text-red-400 bg-[#0a0c13]">Returned</option>
+                <option value="cancelled" className="text-red-400 bg-[#0a0c13]">Cancelled</option>
               </select>
             </h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-slate-500 text-sm mt-1">
               Placed on {new Date(order.createdAt).toLocaleString()}
             </p>
           </div>
@@ -368,7 +368,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           {/* Items */}
           <div className="admin-card p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-white">Order Items</h2>
+              <h2 className="text-lg font-medium text-white">Order Items</h2>
               <button 
                 onClick={handleAddItem}
                 className="text-sm px-3 py-1.5 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 rounded-lg transition-colors"
@@ -378,48 +378,48 @@ const AdminOrderDetailsPage: React.FC = () => {
             </div>
             <div className="space-y-4">
               {items.map((item, idx) => (
-                <div key={idx} className="flex gap-4 p-4 border border-gray-800 rounded-lg bg-gray-900/50">
+                <div key={idx} className="flex gap-4 p-4 border border-[#1f2233] rounded-lg bg-[#0a0c13]">
                   <div className="flex-1 space-y-3">
                     <div className="flex gap-3">
                       <div className="flex-1">
-                        <label className="block text-xs text-gray-500 mb-1">Name</label>
+                        <label className="block text-xs text-slate-500 mb-1">Name</label>
                         <input 
                           type="text" 
                           value={item.name} 
                           onChange={(e) => handleItemChange(idx, 'name', e.target.value)}
-                          className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                          className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white"
                         />
                         {item.notes && <div className="text-xs text-emerald-400 mt-1">{item.notes}</div>}
                       </div>
                       <div className="w-1/3">
-                        <label className="block text-xs text-gray-500 mb-1">SKU</label>
+                        <label className="block text-xs text-slate-500 mb-1">SKU</label>
                         <input 
                           type="text" 
                           value={item.sku} 
                           onChange={(e) => handleItemChange(idx, 'sku', e.target.value)}
-                          className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                          className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white"
                         />
                       </div>
                     </div>
                     <div className="flex gap-3">
                       <div className="w-1/3">
-                        <label className="block text-xs text-gray-500 mb-1">Price ($)</label>
+                        <label className="block text-xs text-slate-500 mb-1">Price ($)</label>
                         <input 
                           type="number" 
                           step="0.01"
                           value={item.price} 
                           onChange={(e) => handleItemChange(idx, 'price', parseFloat(e.target.value))}
-                          className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                          className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white"
                         />
                       </div>
                       <div className="w-1/3">
-                        <label className="block text-xs text-gray-500 mb-1">Quantity</label>
+                        <label className="block text-xs text-slate-500 mb-1">Quantity</label>
                         <input 
                           type="number" 
                           min="1"
                           value={item.quantity} 
                           onChange={(e) => handleItemChange(idx, 'quantity', parseInt(e.target.value))}
-                          className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                          className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white"
                         />
                       </div>
                       <div className="w-1/3 flex items-end">
@@ -442,7 +442,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                 </div>
               ))}
               {items.length === 0 && (
-                <div className="text-center py-6 text-gray-500">No items in this order.</div>
+                <div className="text-center py-6 text-slate-500">No items in this order.</div>
               )}
             </div>
           </div>
@@ -450,12 +450,12 @@ const AdminOrderDetailsPage: React.FC = () => {
           {/* Purchased PCs section */}
           {purchasedPCs.length > 0 && (
             <div className="admin-card p-6">
-              <h2 className="text-lg font-bold text-white mb-4">Purchased PCs</h2>
+              <h2 className="text-lg font-medium text-white mb-4">Purchased PCs</h2>
               <div className="space-y-4">
                 {purchasedPCs.map((pc: any, idx: number) => (
-                  <div key={idx} className="flex flex-col gap-2 p-4 border border-gray-800 rounded-lg bg-gray-900/50">
+                  <div key={idx} className="flex flex-col gap-2 p-4 border border-[#1f2233] rounded-lg bg-[#0a0c13]">
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-white">{pc.name}</span>
+                      <span className="font-medium text-white">{pc.name}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
                         pc.status === 'delivered' ? 'bg-emerald-500/10 text-emerald-400' :
                         pc.status === 'shipped' ? 'bg-blue-500/10 text-blue-400' :
@@ -466,7 +466,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-400">Serial Number:</span>
+                      <span className="text-slate-400">Serial Number:</span>
                       <button 
                         onClick={() => navigate(`/admin/purchased-pcs/${pc._id}`)}
                         className="text-blue-400 hover:text-blue-300 underline font-mono"
@@ -476,7 +476,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                     </div>
                     {pc.color && (
                       <div className="flex justify-between items-center text-sm mt-1">
-                        <span className="text-gray-400">Color:</span>
+                        <span className="text-slate-400">Color:</span>
                         <span className="text-emerald-400">{pc.color}</span>
                       </div>
                     )}
@@ -488,13 +488,13 @@ const AdminOrderDetailsPage: React.FC = () => {
 
           {/* Totals */}
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Order Totals</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Order Totals</h2>
             <div className="space-y-3">
-              <div className="flex justify-between text-gray-400">
+              <div className="flex justify-between text-slate-400">
                 <span>Subtotal</span>
                 <span>{formatCurrency(order.subtotal)}</span>
               </div>
-              <div className="flex justify-between items-center text-gray-400">
+              <div className="flex justify-between items-center text-slate-400">
                 <span>Shipping</span>
                 <div className="flex items-center">
                   <span className="mr-2">$</span>
@@ -503,11 +503,11 @@ const AdminOrderDetailsPage: React.FC = () => {
                     step="0.01"
                     value={shipping}
                     onChange={(e) => setShipping(parseFloat(e.target.value) || 0)}
-                    className="admin-input w-24 px-2 py-1 bg-gray-800 border border-gray-700 rounded-lg text-white text-right"
+                    className="admin-input w-24 px-2 py-1 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-right"
                   />
                 </div>
               </div>
-              <div className="flex justify-between text-gray-400">
+              <div className="flex justify-between text-slate-400">
                 <span>Tax</span>
                 <span>{formatCurrency(order.tax)}</span>
               </div>
@@ -517,7 +517,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                   <span>-{formatCurrency(order.discount)}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center text-gray-400 border-t border-gray-800 pt-3">
+              <div className="flex justify-between items-center text-slate-400 border-t border-[#1f2233] pt-3">
                 <span>Donation Amount</span>
                 <div className="flex items-center">
                   <span className="mr-2">$</span>
@@ -526,16 +526,16 @@ const AdminOrderDetailsPage: React.FC = () => {
                     step="0.01"
                     value={donationAmount}
                     onChange={(e) => setDonationAmount(parseFloat(e.target.value) || 0)}
-                    className="admin-input w-24 px-2 py-1 bg-gray-800 border border-gray-700 rounded-lg text-white text-right"
+                    className="admin-input w-24 px-2 py-1 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-right"
                   />
                 </div>
               </div>
-              <div className="flex justify-between text-white font-bold text-lg pt-3 border-t border-gray-800 mt-3">
+              <div className="flex justify-between text-white font-medium text-lg pt-3 border-t border-[#1f2233] mt-3">
                 <span>Total</span>
                 <span>{formatCurrency(order.total)}</span>
               </div>
             </div>
-            <div className="mt-4 text-xs text-gray-500 text-center">
+            <div className="mt-4 text-xs text-slate-500 text-center">
               Click "Save Changes" to recalculate tax and totals.
             </div>
           </div>
@@ -545,24 +545,24 @@ const AdminOrderDetailsPage: React.FC = () => {
         <div className="space-y-6">
           {/* Customer Details */}
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Customer Details</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Customer Details</h2>
             {order.customer ? (
               <div className="space-y-2">
                 <p className="text-white font-medium">{order.customer.firstName} {order.customer.lastName}</p>
-                <p className="text-gray-400 flex items-center gap-2">
+                <p className="text-slate-400 flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   {order.customer.email}
                 </p>
-                <p className="text-gray-400 text-sm mt-2">
+                <p className="text-slate-400 text-sm mt-2">
                   Loyalty Points: <span className="text-emerald-400 font-medium">{order.customer.loyaltyPoints || 0}</span>
                 </p>
               </div>
             ) : (
               <div className="space-y-2">
-                <p className="text-gray-400 italic">Guest Customer</p>
-                <p className="text-gray-400 flex items-center gap-2">
+                <p className="text-slate-400 italic">Guest Customer</p>
+                <p className="text-slate-400 flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
@@ -574,21 +574,21 @@ const AdminOrderDetailsPage: React.FC = () => {
 
           {/* Payment Details */}
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Payment Information</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Payment Information</h2>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Method:</span>
+                <span className="text-slate-400">Method:</span>
                 <span className="text-white capitalize font-medium">{order.paymentMethod || 'None'}</span>
               </div>
               {order.trackingNumber && (
                 <>
-                  <div className="flex justify-between text-sm mt-2 pt-2 border-t border-gray-800">
-                    <span className="text-gray-400">Tracking Number:</span>
+                  <div className="flex justify-between text-sm mt-2 pt-2 border-t border-[#1f2233]">
+                    <span className="text-slate-400">Tracking Number:</span>
                     <span className="text-white font-mono">{order.trackingNumber}</span>
                   </div>
                   {order.carrierTrackingUrl && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Carrier Track:</span>
+                      <span className="text-slate-400">Carrier Track:</span>
                       <a href={order.carrierTrackingUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 hover:underline">
                         Track with {order.carrier || 'Carrier'}
                       </a>
@@ -596,7 +596,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                   )}
                   {order.trackingUrl && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Customer Track:</span>
+                      <span className="text-slate-400">Customer Track:</span>
                       <a href={order.trackingUrl} target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 hover:underline">
                         View Tracking Page
                       </a>
@@ -615,12 +615,12 @@ const AdminOrderDetailsPage: React.FC = () => {
                 
                 return (
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-400">Status:</span>
+                    <span className="text-slate-400">Status:</span>
                     <div className="flex items-center gap-3">
                       <span className={`capitalize font-medium ${
                         computedPaymentStatus === 'paid' ? 'text-emerald-400' :
                         computedPaymentStatus === 'pending' ? 'text-amber-400' :
-                        computedPaymentStatus === 'failed' ? 'text-red-400' : 'text-gray-400'
+                        computedPaymentStatus === 'failed' ? 'text-red-400' : 'text-slate-400'
                       }`}>
                         {computedPaymentStatus}
                       </span>
@@ -638,10 +638,10 @@ const AdminOrderDetailsPage: React.FC = () => {
                 
                 if (outstandingBalance > 0) {
                   return (
-                    <div className="flex justify-between items-center text-sm mt-2 pt-2 border-t border-gray-800">
-                      <span className="text-gray-400">Outstanding Balance:</span>
+                    <div className="flex justify-between items-center text-sm mt-2 pt-2 border-t border-[#1f2233]">
+                      <span className="text-slate-400">Outstanding Balance:</span>
                       <div className="flex items-center gap-3">
-                        <span className="text-amber-400 font-bold">{formatCurrency(outstandingBalance)}</span>
+                        <span className="text-amber-400 font-medium">{formatCurrency(outstandingBalance)}</span>
                         <button
                           onClick={async () => {
                             try {
@@ -689,18 +689,18 @@ const AdminOrderDetailsPage: React.FC = () => {
 
               {order.paymentId && (
                 <div className="flex justify-between text-sm mt-2">
-                  <span className="text-gray-400">Transaction ID:</span>
-                  <span className="text-gray-300 text-xs font-mono">{order.paymentId}</span>
+                  <span className="text-slate-400">Transaction ID:</span>
+                  <span className="text-slate-300 text-xs font-mono">{order.paymentId}</span>
                 </div>
               )}
             </div>
             
             {payments.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-800">
-                <h3 className="text-sm font-bold text-white mb-3">Payment History</h3>
+              <div className="mt-4 pt-4 border-t border-[#1f2233]">
+                <h3 className="text-sm font-medium text-white mb-3">Payment History</h3>
                 <div className="space-y-3">
                   {payments.map(payment => (
-                    <div key={payment._id} className="bg-gray-800/50 p-3 rounded-lg border border-gray-700">
+                    <div key={payment._id} className="bg-[#11141d] p-3 rounded-lg border border-[#1f2233]">
                       <div className="flex justify-between items-center mb-1">
                         <span className="text-white font-medium text-sm">{formatCurrency(payment.amount)} {payment.currency.toUpperCase()}</span>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${
@@ -711,12 +711,12 @@ const AdminOrderDetailsPage: React.FC = () => {
                           {payment.status}
                         </span>
                       </div>
-                      <div className="flex justify-between text-xs text-gray-400 mb-1">
+                      <div className="flex justify-between text-xs text-slate-400 mb-1">
                         <span className="capitalize">{payment.paymentMethod}</span>
                         <span>{new Date(payment.createdAt).toLocaleDateString()}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <div className="text-xs text-gray-500 font-mono break-all">
+                        <div className="text-xs text-slate-500 font-mono break-all">
                           {payment.gatewayTransactionId}
                         </div>
                         <button
@@ -733,11 +733,11 @@ const AdminOrderDetailsPage: React.FC = () => {
             )}
 
             {invoices.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-800">
-                <h3 className="text-sm font-bold text-white mb-3">Invoices</h3>
+              <div className="mt-4 pt-4 border-t border-[#1f2233]">
+                <h3 className="text-sm font-medium text-white mb-3">Invoices</h3>
                 <div className="space-y-3">
                   {invoices.map(invoice => (
-                    <div key={invoice._id} className="bg-gray-800/50 p-3 rounded-lg border border-gray-700">
+                    <div key={invoice._id} className="bg-[#11141d] p-3 rounded-lg border border-[#1f2233]">
                       <div className="flex justify-between items-center mb-1">
                         <span className="text-white font-medium text-sm">{invoice.invoiceNumber} - {formatCurrency(invoice.amount)}</span>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${
@@ -748,7 +748,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                           {invoice.status.toUpperCase()}
                         </span>
                       </div>
-                      <div className="flex justify-between text-xs text-gray-400 mb-1">
+                      <div className="flex justify-between text-xs text-slate-400 mb-1">
                         <span>{new Date(invoice.createdAt).toLocaleDateString()}</span>
                       </div>
                       <div className="flex justify-end gap-2 mt-2">
@@ -770,18 +770,18 @@ const AdminOrderDetailsPage: React.FC = () => {
 
           {/* Shipping Labels / Purchase Label */}
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Shipping Actions</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Shipping Actions</h2>
             
             {order.status !== 'shipped' && order.status !== 'out-for-delivery' && order.status !== 'delivered' && (
-              <div className="space-y-4 border border-gray-800 rounded-lg p-4 bg-gray-900/50">
-                <h3 className="text-sm font-bold text-white">Purchase Shipping Label</h3>
+              <div className="space-y-4 border border-[#1f2233] rounded-lg p-4 bg-[#0a0c13]">
+                <h3 className="text-sm font-medium text-white">Purchase Shipping Label</h3>
                 <div>
                   {order.selectedShippingRate ? (
-                    <p className="text-sm text-gray-400 mb-3">
+                    <p className="text-sm text-slate-400 mb-3">
                       Customer selected: <span className="text-white font-medium">{order.selectedShippingRate.title}</span> ({formatCurrency(order.selectedShippingRate.amount)})
                     </p>
                   ) : order.shipping > 0 ? (
-                    <p className="text-sm text-gray-400 mb-3">
+                    <p className="text-sm text-slate-400 mb-3">
                       Customer paid: <span className="text-white font-medium">{formatCurrency(order.shipping)}</span> for shipping.
                     </p>
                   ) : (
@@ -817,7 +817,7 @@ const AdminOrderDetailsPage: React.FC = () => {
             )}
             
             {(order.status === 'shipped' || order.status === 'out-for-delivery' || order.status === 'delivered') && (
-              <div className="space-y-4 border border-gray-800 rounded-lg p-4 bg-gray-900/50">
+              <div className="space-y-4 border border-[#1f2233] rounded-lg p-4 bg-[#0a0c13]">
                 <div className="flex items-center gap-3 text-emerald-400">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -835,7 +835,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                       href={order.labelUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-sm text-center block w-full px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded border border-gray-700 transition-colors"
+                      className="text-sm text-center block w-full px-3 py-2 bg-[#11141d] hover:bg-[#1f2233] text-white rounded border border-[#1f2233] transition-colors"
                     >
                       Download Shipping Label (PDF)
                     </a>
@@ -847,62 +847,62 @@ const AdminOrderDetailsPage: React.FC = () => {
 
           {/* Shipping Address */}
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Shipping Address</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Shipping Address</h2>
             {shippingAddress && (
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">First Name</label>
+                    <label className="block text-xs text-slate-500 mb-1">First Name</label>
                     <input 
                       type="text" 
                       value={shippingAddress.firstName} 
                       onChange={(e) => setShippingAddress({...shippingAddress, firstName: e.target.value})}
-                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Last Name</label>
+                    <label className="block text-xs text-slate-500 mb-1">Last Name</label>
                     <input 
                       type="text" 
                       value={shippingAddress.lastName} 
                       onChange={(e) => setShippingAddress({...shippingAddress, lastName: e.target.value})}
-                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Street Address</label>
+                  <label className="block text-xs text-slate-500 mb-1">Street Address</label>
                   <input 
                     type="text" 
                     value={shippingAddress.address} 
                     onChange={(e) => setShippingAddress({...shippingAddress, address: e.target.value})}
-                    className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                    className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">City</label>
+                    <label className="block text-xs text-slate-500 mb-1">City</label>
                     <input 
                       type="text" 
                       value={shippingAddress.city} 
                       onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
-                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">State / Zip</label>
+                    <label className="block text-xs text-slate-500 mb-1">State / Zip</label>
                     <div className="flex gap-2">
                       <input 
                         type="text" 
                         value={shippingAddress.state} 
                         onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})}
-                        className="admin-input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                        className="admin-input w-1/2 px-2 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                       />
                       <input 
                         type="text" 
                         value={shippingAddress.zip} 
                         onChange={(e) => setShippingAddress({...shippingAddress, zip: e.target.value})}
-                        className="admin-input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                        className="admin-input w-1/2 px-2 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                       />
                     </div>
                   </div>
@@ -913,62 +913,62 @@ const AdminOrderDetailsPage: React.FC = () => {
 
           {/* Billing Address */}
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Billing Address</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Billing Address</h2>
             {billingAddress && (
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">First Name</label>
+                    <label className="block text-xs text-slate-500 mb-1">First Name</label>
                     <input 
                       type="text" 
                       value={billingAddress.firstName} 
                       onChange={(e) => setBillingAddress({...billingAddress, firstName: e.target.value})}
-                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Last Name</label>
+                    <label className="block text-xs text-slate-500 mb-1">Last Name</label>
                     <input 
                       type="text" 
                       value={billingAddress.lastName} 
                       onChange={(e) => setBillingAddress({...billingAddress, lastName: e.target.value})}
-                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">Street Address</label>
+                  <label className="block text-xs text-slate-500 mb-1">Street Address</label>
                   <input 
                     type="text" 
                     value={billingAddress.address} 
                     onChange={(e) => setBillingAddress({...billingAddress, address: e.target.value})}
-                    className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                    className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">City</label>
+                    <label className="block text-xs text-slate-500 mb-1">City</label>
                     <input 
                       type="text" 
                       value={billingAddress.city} 
                       onChange={(e) => setBillingAddress({...billingAddress, city: e.target.value})}
-                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">State / Zip</label>
+                    <label className="block text-xs text-slate-500 mb-1">State / Zip</label>
                     <div className="flex gap-2">
                       <input 
                         type="text" 
                         value={billingAddress.state} 
                         onChange={(e) => setBillingAddress({...billingAddress, state: e.target.value})}
-                        className="admin-input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                        className="admin-input w-1/2 px-2 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                       />
                       <input 
                         type="text" 
                         value={billingAddress.zip} 
                         onChange={(e) => setBillingAddress({...billingAddress, zip: e.target.value})}
-                        className="admin-input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                        className="admin-input w-1/2 px-2 py-2 bg-[#11141d] border border-[#1f2233] rounded-lg text-white text-sm"
                       />
                     </div>
                   </div>
@@ -982,14 +982,14 @@ const AdminOrderDetailsPage: React.FC = () => {
       {/* Shipping Purchase Modal */}
       {showShippingModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-xl w-full">
-            <h2 className="text-2xl font-bold text-white mb-4">Purchase Shipping Label</h2>
-            <p className="text-gray-400 mb-6">Select a shipping rate and options to generate a label via Shippo.</p>
+          <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl p-6 max-w-xl w-full">
+            <h2 className="text-2xl font-medium text-white mb-4">Purchase Shipping Label</h2>
+            <p className="text-slate-400 mb-6">Select a shipping rate and options to generate a label via Shippo.</p>
             
             <div className="space-y-4 mb-6">
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Available Rates</h3>
               {isLoadingRates ? (
-                <div className="p-8 text-center text-gray-400 border border-gray-800 border-dashed rounded-lg">
+                <div className="p-8 text-center text-slate-400 border border-[#1f2233] border-dashed rounded-lg">
                   <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
                   Generating fresh shipping rates...
                 </div>
@@ -1002,16 +1002,16 @@ const AdminOrderDetailsPage: React.FC = () => {
                       className={`p-4 rounded-lg border cursor-pointer transition-colors ${
                         selectedRateId === rate.objectId 
                           ? 'border-indigo-500 bg-indigo-500/10' 
-                          : 'border-gray-700 bg-gray-800/50 hover:bg-gray-800'
+                          : 'border-[#1f2233] bg-[#11141d] hover:bg-[#11141d]'
                       }`}
                     >
                       <div className="flex justify-between items-center mb-1">
-                        <span className="font-bold text-white flex items-center gap-2">
+                        <span className="font-medium text-white flex items-center gap-2">
                           {rate.title}
                         </span>
-                        <span className="font-bold text-emerald-400">{formatCurrency(parseFloat(rate.amount))}</span>
+                        <span className="font-medium text-emerald-400">{formatCurrency(parseFloat(rate.amount))}</span>
                       </div>
-                      <div className="text-sm text-gray-400">
+                      <div className="text-sm text-slate-400">
                         Estimated Delivery: {rate.estimatedDays} days
                       </div>
                     </div>
@@ -1025,13 +1025,13 @@ const AdminOrderDetailsPage: React.FC = () => {
             </div>
 
             {(order.shipping > 0 || order.selectedShippingRate) && (
-              <div className="mb-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                <h3 className="text-sm font-semibold text-gray-400 mb-2">Original Checkout Selection</h3>
+              <div className="mb-6 p-4 bg-[#11141d] rounded-lg border border-[#1f2233]">
+                <h3 className="text-sm font-semibold text-slate-400 mb-2">Original Checkout Selection</h3>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-white font-medium">
                     {order.selectedShippingRate?.title || 'Shipping Charge'}
                   </span>
-                  <span className="text-emerald-400 font-bold">
+                  <span className="text-emerald-400 font-medium">
                     {formatCurrency(order.selectedShippingRate?.amount || order.shipping)}
                   </span>
                 </div>
@@ -1040,7 +1040,7 @@ const AdminOrderDetailsPage: React.FC = () => {
 
             <div className="space-y-4 mb-8">
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Additional Options</h3>
-              <label className="flex items-center gap-3 p-4 rounded-lg border border-gray-700 bg-gray-800/50 cursor-pointer">
+              <label className="flex items-center gap-3 p-4 rounded-lg border border-[#1f2233] bg-[#11141d] cursor-pointer">
                 <input 
                   type="checkbox" 
                   checked={addInsurance}
@@ -1048,16 +1048,16 @@ const AdminOrderDetailsPage: React.FC = () => {
                   className="w-5 h-5 rounded border-gray-600 text-indigo-500 focus:ring-indigo-500 bg-gray-700"
                 />
                 <div>
-                  <div className="font-bold text-white">Add Shipping Insurance</div>
-                  <div className="text-sm text-gray-400">Protect the full value of this order ({formatCurrency(order.total)}) against loss or damage in transit.</div>
+                  <div className="font-medium text-white">Add Shipping Insurance</div>
+                  <div className="text-sm text-slate-400">Protect the full value of this order ({formatCurrency(order.total)}) against loss or damage in transit.</div>
                 </div>
               </label>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
+            <div className="flex justify-end gap-3 pt-4 border-t border-[#1f2233]">
               <button 
                 onClick={() => setShowShippingModal(false)}
-                className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-[#11141d] hover:bg-[#1f2233] text-white rounded-lg transition-colors"
                 disabled={isSaving}
               >
                 Cancel

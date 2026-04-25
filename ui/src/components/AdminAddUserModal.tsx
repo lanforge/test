@@ -34,12 +34,12 @@ const AdminAddUserModal: React.FC<AdminAddUserModalProps> = ({ onClose, onSucces
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-        <div className="p-6 border-b border-gray-800 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-white">Add New User</h2>
+      <div className="bg-[#0a0c13] border border-[#1f2233] rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+        <div className="p-6 border-b border-[#1f2233] flex justify-between items-center">
+          <h2 className="text-xl font-medium text-white">Add New User</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-slate-400 hover:text-white transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -55,60 +55,60 @@ const AdminAddUserModal: React.FC<AdminAddUserModalProps> = ({ onClose, onSucces
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Name</label>
+            <label className="block text-sm font-medium text-slate-400 mb-1">Name</label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={e => setFormData({ ...formData, name: e.target.value })}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full bg-[#11141d] border border-[#1f2233] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
               placeholder="John Doe"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
+            <label className="block text-sm font-medium text-slate-400 mb-1">Email</label>
             <input
               type="email"
               required
               value={formData.email}
               onChange={e => setFormData({ ...formData, email: e.target.value })}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full bg-[#11141d] border border-[#1f2233] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
               placeholder="john@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
+            <label className="block text-sm font-medium text-slate-400 mb-1">Password</label>
             <input
               type="password"
               required
               value={formData.password}
               onChange={e => setFormData({ ...formData, password: e.target.value })}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full bg-[#11141d] border border-[#1f2233] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
               placeholder="Min. 8 characters"
             />
-            <p className="text-xs text-gray-500 mt-1">Must contain an uppercase letter, lowercase letter, number, and special character.</p>
+            <p className="text-xs text-slate-500 mt-1">Must contain an uppercase letter, lowercase letter, number, and special character.</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Role</label>
+            <label className="block text-sm font-medium text-slate-400 mb-1">Role</label>
             <select
               value={formData.role}
               onChange={e => setFormData({ ...formData, role: e.target.value as 'admin' | 'staff' })}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full bg-[#11141d] border border-[#1f2233] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
             >
               <option value="staff">Staff</option>
               <option value="admin">Admin</option>
             </select>
-            <p className="text-xs text-gray-500 mt-1">Admins have full access. Staff have restricted access.</p>
+            <p className="text-xs text-slate-500 mt-1">Admins have full access. Staff have restricted access.</p>
           </div>
 
           <div className="pt-4 flex justify-end space-x-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors font-medium"
+              className="px-4 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-[#11141d] transition-colors font-medium"
             >
               Cancel
             </button>

@@ -111,7 +111,7 @@ const AdminProductsPage: React.FC = () => {
 
   const getStatusInfo = (product: Product) => {
     if (!product.isActive) {
-      return { text: 'Draft/Inactive', color: 'bg-gray-500/10 text-gray-400 border border-gray-500/30' };
+      return { text: 'Draft/Inactive', color: 'bg-gray-500/10 text-slate-400 border border-gray-500/30' };
     }
     if (product.stock <= 0) {
       return { text: 'Out of Stock', color: 'bg-red-500/10 text-red-400 border border-red-500/30' };
@@ -135,7 +135,7 @@ const AdminProductsPage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-white">Products Management</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage your product catalog</p>
+          <p className="text-slate-500 text-sm mt-1">Manage your product catalog</p>
         </div>
         <div className="flex items-center space-x-3">
           <button 
@@ -186,7 +186,7 @@ const AdminProductsPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Total Products</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Total Products</p>
               <p className="text-2xl font-medium text-white mt-1">{products.length}</p>
             </div>
             <div className="w-8 h-8 bg-blue-500/10 rounded-md flex items-center justify-center">
@@ -200,7 +200,7 @@ const AdminProductsPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Out of Stock</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Out of Stock</p>
               <p className="text-2xl font-medium text-white mt-1">{products.filter(p => p.stock <= 0).length}</p>
             </div>
             <div className="w-8 h-8 bg-red-500/10 rounded-md flex items-center justify-center">
@@ -214,7 +214,7 @@ const AdminProductsPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Low Stock</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Low Stock</p>
               <p className="text-2xl font-medium text-white mt-1">{products.filter(p => p.stock > 0 && p.stock <= (p.reorderPoint || 5)).length}</p>
             </div>
             <div className="w-8 h-8 bg-amber-500/10 rounded-md flex items-center justify-center">
@@ -228,7 +228,7 @@ const AdminProductsPage: React.FC = () => {
         <div className="admin-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider">Active Listings</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Active Listings</p>
               <p className="text-2xl font-medium text-white mt-1">{products.filter(p => p.isActive).length}</p>
             </div>
             <div className="w-8 h-8 bg-emerald-500/10 rounded-md flex items-center justify-center">
@@ -244,19 +244,19 @@ const AdminProductsPage: React.FC = () => {
       <div className="admin-card p-4">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
-            <div className="flex-1 flex items-center bg-[#050505] border border-white/5 rounded-md focus-within:border-white/20 transition-all">
-              <svg className="w-4 h-4 text-gray-500 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex-1 flex items-center bg-[#07090e] border border-[#1f2233] rounded-md focus-within:border-white/20 transition-all">
+              <svg className="w-4 h-4 text-slate-500 ml-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
                 type="text"
                 placeholder="Search products..."
-                className="w-full pl-2 pr-4 py-2 bg-transparent text-sm text-gray-200 placeholder-gray-600 focus:outline-none"
+                className="w-full pl-2 pr-4 py-2 bg-transparent text-sm text-slate-200 placeholder-gray-600 focus:outline-none"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <button onClick={fetchProducts} className="p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-md transition-colors" title="Refresh">
+            <button onClick={fetchProducts} className="p-2 bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-400 hover:text-white rounded-md transition-colors" title="Refresh">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -288,15 +288,15 @@ const AdminProductsPage: React.FC = () => {
 
       {/* Products table */}
       <div className="admin-card overflow-hidden">
-        <div className="p-3 border-b border-white/5 flex items-center justify-between bg-[#050505]">
+        <div className="p-3 border-b border-[#1f2233] flex items-center justify-between bg-[#07090e]">
           <div className="flex items-center space-x-3">
             <input
               type="checkbox"
-              className="w-3.5 h-3.5 rounded bg-[#0a0a0a] border-white/10"
+              className="w-3.5 h-3.5 rounded bg-[#11141d] border-[#1f2233]"
               checked={selectedProducts.length === filteredProducts.length && filteredProducts.length > 0}
               onChange={handleSelectAll}
             />
-            <span className="text-gray-500 text-xs">
+            <span className="text-slate-500 text-xs">
               {selectedProducts.length > 0 ? `${selectedProducts.length} selected` : `${filteredProducts.length} products`}
             </span>
           </div>
@@ -315,42 +315,42 @@ const AdminProductsPage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5 bg-[#050505]">
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Product</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Category</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Price</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Stock</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Status</th>
-                <th className="text-left py-3 px-4 text-gray-500 font-medium text-xs">Actions</th>
+              <tr className="border-b border-[#1f2233] bg-[#07090e]">
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Product</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Category</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Price</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Stock</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Status</th>
+                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {isLoading ? (
-                <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500 text-sm">Loading products...</td></tr>
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500 text-sm">Loading products...</td></tr>
               ) : filteredProducts.length === 0 ? (
-                <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500 text-sm">No products found.</td></tr>
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500 text-sm">No products found.</td></tr>
               ) : filteredProducts.map((product) => {
                 const statusInfo = getStatusInfo(product);
                 return (
-                <tr key={product._id} className="hover:bg-white/[0.02] transition-colors">
+                <tr key={product._id} className="hover:bg-[#1f2233]/50 transition-colors">
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-3">
                       <input
                         type="checkbox"
-                        className="w-3.5 h-3.5 rounded bg-[#0a0a0a] border-white/10"
+                        className="w-3.5 h-3.5 rounded bg-[#11141d] border-[#1f2233]"
                         checked={selectedProducts.includes(product._id)}
                         onChange={() => handleSelectProduct(product._id)}
                       />
                       <div>
-                        <p className="text-gray-200 font-medium">{product.name}</p>
-                        <p className="text-gray-500 text-xs">SKU: {product.sku}</p>
+                        <p className="text-slate-200 font-medium">{product.name}</p>
+                        <p className="text-slate-500 text-xs">SKU: {product.sku}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-gray-400">{product.category}</td>
+                  <td className="py-3 px-4 text-slate-400">{product.category}</td>
                   <td className="py-3 px-4">
                     <div className="flex flex-col">
-                      <span className="text-gray-200 font-medium">{formatCurrency(product.price)}</span>
+                      <span className="text-slate-200 font-medium">{formatCurrency(product.price)}</span>
                       <span className={`text-xs ${product.price - (product.cost || 0) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                         PnL: {formatCurrency(product.price - (product.cost || 0))}
                       </span>
@@ -371,7 +371,7 @@ const AdminProductsPage: React.FC = () => {
                   <td className="py-3 px-4">
                     <div className="flex items-center space-x-2">
                       <button 
-                        className="p-1.5 text-gray-500 hover:text-white hover:bg-white/10 rounded-md transition-colors" 
+                        className="p-1.5 text-slate-500 hover:text-white hover:bg-[#1f2233] rounded-md transition-colors" 
                         title="Edit"
                         onClick={() => navigate(`/admin/products/edit/${product._id}`)}
                       >
@@ -379,7 +379,7 @@ const AdminProductsPage: React.FC = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                       </button>
-                      <button onClick={() => handleDelete(product._id)} className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-white/10 rounded-md transition-colors" title="Delete">
+                      <button onClick={() => handleDelete(product._id)} className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-[#1f2233] rounded-md transition-colors" title="Delete">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>

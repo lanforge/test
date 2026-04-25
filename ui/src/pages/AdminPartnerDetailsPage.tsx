@@ -123,7 +123,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="text-gray-400">Loading partner details...</div>;
+    return <div className="text-slate-400">Loading partner details...</div>;
   }
 
   if (!partner) {
@@ -135,7 +135,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link to="/admin/partners" className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+          <Link to="/admin/partners" className="p-2 text-slate-400 hover:text-white hover:bg-[#11141d] rounded-lg transition-colors">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -146,7 +146,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
             )}
             <div>
               <h1 className="text-xl font-medium text-white">{partner.name}</h1>
-              <p className="text-gray-400 text-sm">Creator Code: <span className="text-emerald-400 font-mono">{partner.creatorCode}</span></p>
+              <p className="text-slate-400 text-sm">Creator Code: <span className="text-emerald-400 font-mono">{partner.creatorCode}</span></p>
             </div>
           </div>
         </div>
@@ -177,71 +177,71 @@ const AdminPartnerDetailsPage: React.FC = () => {
         {/* Left Column - Details */}
         <div className="lg:col-span-2 space-y-6">
           <div className="admin-card p-6 space-y-6">
-            <h2 className="text-lg font-bold text-white mb-4">Partner Details</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Partner Details</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Name</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Name</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name || ''}
                   onChange={handleChange}
-                  className="admin-input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-[#0a0c13]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email || ''}
                   onChange={handleChange}
-                  className="admin-input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-[#0a0c13]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Creator Code</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Creator Code</label>
                 <input
                   type="text"
                   name="creatorCode"
                   value={formData.creatorCode || ''}
                   onChange={handleChange}
-                  className="admin-input w-full bg-gray-900/50 uppercase"
+                  className="admin-input w-full bg-[#0a0c13] uppercase"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Commission Rate (%)</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Commission Rate (%)</label>
                 <input
                   type="number"
                   name="commissionRate"
                   value={formData.commissionRate || 0}
                   onChange={handleChange}
-                  className="admin-input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-[#0a0c13]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Website URL</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Website URL</label>
                 <input
                   type="url"
                   name="website"
                   value={formData.website || ''}
                   onChange={handleChange}
-                  className="admin-input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-[#0a0c13]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Logo URL</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Logo URL</label>
                 <input
                   type="text"
                   name="logo"
                   value={formData.logo || ''}
                   onChange={handleChange}
-                  className="admin-input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-[#0a0c13]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Type</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Type</label>
                 <select
                   name="partnerType"
                   value={formData.partnerType || 'affiliate'}
@@ -250,7 +250,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                     partnerType: e.target.value as 'brand' | 'individual' | 'affiliate',
                     isPartner: e.target.value !== 'affiliate' 
                   }))}
-                  className="admin-input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-[#0a0c13]"
                 >
                   <option value="brand">Brand Partner</option>
                   <option value="individual">Individual Partner</option>
@@ -258,12 +258,12 @@ const AdminPartnerDetailsPage: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Customer Discount Type</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Customer Discount Type</label>
                 <select
                   name="customerDiscountType"
                   value={formData.customerDiscountType || ''}
                   onChange={handleChange}
-                  className="admin-input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-[#0a0c13]"
                 >
                   <option value="">None</option>
                   <option value="percentage">Percentage (%)</option>
@@ -274,19 +274,19 @@ const AdminPartnerDetailsPage: React.FC = () => {
               
               {formData.customerDiscountType && formData.customerDiscountType !== 'free_shipping' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Discount Value</label>
+                  <label className="block text-sm font-medium text-slate-400 mb-1">Discount Value</label>
                   <input
                     type="number"
                     name="customerDiscountValue"
                     value={formData.customerDiscountValue || 0}
                     onChange={handleChange}
-                    className="admin-input w-full bg-gray-900/50"
+                    className="admin-input w-full bg-[#0a0c13]"
                   />
                 </div>
               )}
               
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Status</label>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Status</label>
                 <label className="flex items-center space-x-3 mt-2 cursor-pointer">
                   <div className="relative">
                     <input
@@ -298,7 +298,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                     />
                     <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                   </div>
-                  <span className="text-sm text-gray-300">
+                  <span className="text-sm text-slate-300">
                     {formData.isActive ? 'Active (Visible)' : 'Inactive (Hidden)'}
                   </span>
                 </label>
@@ -306,79 +306,79 @@ const AdminPartnerDetailsPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">Description</label>
+              <label className="block text-sm font-medium text-slate-400 mb-1">Description</label>
               <textarea
                 name="description"
                 value={formData.description || ''}
                 onChange={handleChange}
                 rows={3}
-                className="admin-input w-full bg-gray-900/50"
+                className="admin-input w-full bg-[#0a0c13]"
               />
             </div>
           </div>
 
           <div className="admin-card p-6 space-y-6">
-            <h2 className="text-lg font-bold text-white mb-4">Social Links</h2>
+            <h2 className="text-lg font-medium text-white mb-4">Social Links</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Twitter</label>
-                <input type="text" name="twitter" value={formData.twitter || ''} onChange={handleChange} className="admin-input w-full bg-gray-900/50" />
+                <label className="block text-sm font-medium text-slate-400 mb-1">Twitter</label>
+                <input type="text" name="twitter" value={formData.twitter || ''} onChange={handleChange} className="admin-input w-full bg-[#0a0c13]" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Twitch</label>
-                <input type="text" name="twitch" value={formData.twitch || ''} onChange={handleChange} className="admin-input w-full bg-gray-900/50" />
+                <label className="block text-sm font-medium text-slate-400 mb-1">Twitch</label>
+                <input type="text" name="twitch" value={formData.twitch || ''} onChange={handleChange} className="admin-input w-full bg-[#0a0c13]" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">YouTube</label>
-                <input type="text" name="youtube" value={formData.youtube || ''} onChange={handleChange} className="admin-input w-full bg-gray-900/50" />
+                <label className="block text-sm font-medium text-slate-400 mb-1">YouTube</label>
+                <input type="text" name="youtube" value={formData.youtube || ''} onChange={handleChange} className="admin-input w-full bg-[#0a0c13]" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Instagram</label>
-                <input type="text" name="instagram" value={formData.instagram || ''} onChange={handleChange} className="admin-input w-full bg-gray-900/50" />
+                <label className="block text-sm font-medium text-slate-400 mb-1">Instagram</label>
+                <input type="text" name="instagram" value={formData.instagram || ''} onChange={handleChange} className="admin-input w-full bg-[#0a0c13]" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">TikTok</label>
-                <input type="text" name="tiktok" value={formData.tiktok || ''} onChange={handleChange} className="admin-input w-full bg-gray-900/50" />
+                <label className="block text-sm font-medium text-slate-400 mb-1">TikTok</label>
+                <input type="text" name="tiktok" value={formData.tiktok || ''} onChange={handleChange} className="admin-input w-full bg-[#0a0c13]" />
               </div>
             </div>
           </div>
 
           <div className="admin-card overflow-hidden">
-            <div className="p-6 border-b border-gray-800">
-              <h2 className="text-lg font-bold text-white">Orders Using Code</h2>
+            <div className="p-6 border-b border-[#1f2233]">
+              <h2 className="text-lg font-medium text-white">Orders Using Code</h2>
             </div>
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-800 bg-gray-900/50">
-                  <th className="py-3 px-6 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Order</th>
-                  <th className="py-3 px-6 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Customer</th>
-                  <th className="py-3 px-6 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                  <th className="py-3 px-6 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total</th>
-                  <th className="py-3 px-6 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                <tr className="border-b border-[#1f2233] bg-[#0a0c13]">
+                  <th className="py-3 px-6 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Order</th>
+                  <th className="py-3 px-6 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Customer</th>
+                  <th className="py-3 px-6 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Date</th>
+                  <th className="py-3 px-6 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Total</th>
+                  <th className="py-3 px-6 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
                 {orders.length === 0 ? (
-                  <tr><td colSpan={5} className="py-4 px-6 text-center text-gray-500">No orders found with this creator code.</td></tr>
+                  <tr><td colSpan={5} className="py-4 px-6 text-center text-slate-500">No orders found with this creator code.</td></tr>
                 ) : (
                   orders.map(order => (
-                    <tr key={order._id} className="hover:bg-gray-800/30">
+                    <tr key={order._id} className="hover:bg-[#1f2233]/30">
                       <td className="py-3 px-6">
                         <Link to={`/admin/orders/${order._id}`} className="text-emerald-400 hover:underline font-medium">
                           {order.orderNumber}
                         </Link>
                       </td>
-                      <td className="py-3 px-6 text-gray-300">
+                      <td className="py-3 px-6 text-slate-300">
                         {order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : (order.guestEmail || 'Guest')}
                       </td>
-                      <td className="py-3 px-6 text-gray-400 text-sm">
+                      <td className="py-3 px-6 text-slate-400 text-sm">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </td>
                       <td className="py-3 px-6 text-white font-medium">
                         ${order.total.toFixed(2)}
                       </td>
                       <td className="py-3 px-6">
-                        <span className="px-2 py-1 text-xs rounded-full bg-gray-800 text-gray-300 border border-gray-700 uppercase tracking-wide">
+                        <span className="px-2 py-1 text-xs rounded-full bg-[#11141d] text-slate-300 border border-[#1f2233] uppercase tracking-wide">
                           {order.status.replace('-', ' ')}
                         </span>
                       </td>
@@ -393,43 +393,43 @@ const AdminPartnerDetailsPage: React.FC = () => {
         {/* Right Column - Stats */}
         <div className="space-y-6">
           <div className="admin-card p-6">
-            <h2 className="text-lg font-bold text-white mb-6">Performance Stats</h2>
+            <h2 className="text-lg font-medium text-white mb-6">Performance Stats</h2>
             
             <div className="space-y-4">
-              <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-800">
-                <p className="text-sm text-gray-400 mb-1">Total Referrals</p>
+              <div className="p-4 bg-[#0a0c13] rounded-lg border border-[#1f2233]">
+                <p className="text-sm text-slate-400 mb-1">Total Referrals</p>
                 <p className="text-xl font-medium text-white">{partner.stats?.referrals || orders.length}</p>
               </div>
               
-              <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-800">
-                <p className="text-sm text-gray-400 mb-1">Total Revenue Generated</p>
-                <p className="text-2xl font-bold text-emerald-400">
+              <div className="p-4 bg-[#0a0c13] rounded-lg border border-[#1f2233]">
+                <p className="text-sm text-slate-400 mb-1">Total Revenue Generated</p>
+                <p className="text-2xl font-medium text-emerald-400">
                   ${(partner.stats?.totalRevenue || orders.reduce((sum, o) => sum + o.total, 0)).toFixed(2)}
                 </p>
               </div>
 
-              <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-800">
-                <p className="text-sm text-gray-400 mb-1">Commission Earned</p>
-                <p className="text-2xl font-bold text-blue-400">
+              <div className="p-4 bg-[#0a0c13] rounded-lg border border-[#1f2233]">
+                <p className="text-sm text-slate-400 mb-1">Commission Earned</p>
+                <p className="text-2xl font-medium text-blue-400">
                   ${(partner.stats?.commissionEarned || 0).toFixed(2)}
                 </p>
               </div>
 
-              <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-800">
-                <p className="text-sm text-gray-400 mb-1">Commission Paid</p>
-                <p className="text-xl font-bold text-white">
+              <div className="p-4 bg-[#0a0c13] rounded-lg border border-[#1f2233]">
+                <p className="text-sm text-slate-400 mb-1">Commission Paid</p>
+                <p className="text-xl font-medium text-white">
                   ${(partner.stats?.commissionPaid || 0).toFixed(2)}
                 </p>
               </div>
 
-              <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-800">
-                <p className="text-sm text-gray-400 mb-1">Link Clicks</p>
-                <p className="text-xl font-bold text-white">{partner.stats?.clicks || 0}</p>
+              <div className="p-4 bg-[#0a0c13] rounded-lg border border-[#1f2233]">
+                <p className="text-sm text-slate-400 mb-1">Link Clicks</p>
+                <p className="text-xl font-medium text-white">{partner.stats?.clicks || 0}</p>
               </div>
             </div>
             
-            <div className="mt-6 pt-6 border-t border-gray-800">
-              <p className="text-sm text-gray-500">
+            <div className="mt-6 pt-6 border-t border-[#1f2233]">
+              <p className="text-sm text-slate-500">
                 Partner since {new Date(partner.createdAt).toLocaleDateString()}
               </p>
             </div>

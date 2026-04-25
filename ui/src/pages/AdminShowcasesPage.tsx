@@ -62,7 +62,7 @@ const AdminShowcasesPage: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="p-8 text-gray-400">Loading showcases...</div>;
+    return <div className="p-8 text-slate-400">Loading showcases...</div>;
   }
 
   return (
@@ -70,7 +70,7 @@ const AdminShowcasesPage: React.FC = () => {
       {errorMsg && (
         <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-xl text-sm mb-4">
           {errorMsg}
-          <button onClick={() => setErrorMsg(null)} className="float-right text-gray-400 hover:text-white">x</button>
+          <button onClick={() => setErrorMsg(null)} className="float-right text-slate-400 hover:text-white">x</button>
         </div>
       )}
       <div className="flex justify-between items-center mb-6">
@@ -83,9 +83,9 @@ const AdminShowcasesPage: React.FC = () => {
         </button>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-        <table className="w-full text-left text-gray-300">
-          <thead className="bg-gray-800/50 text-gray-400 text-sm">
+      <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl overflow-hidden">
+        <table className="w-full text-left text-slate-300">
+          <thead className="bg-[#11141d] text-slate-400 text-sm">
             <tr>
               <th className="px-6 py-4 font-medium">Name</th>
               <th className="px-6 py-4 font-medium">Creator</th>
@@ -97,13 +97,13 @@ const AdminShowcasesPage: React.FC = () => {
           </thead>
           <tbody className="divide-y divide-gray-800">
             {showcases.map((sc) => (
-              <tr key={sc._id} className="hover:bg-gray-800/50">
+              <tr key={sc._id} className="hover:bg-[#11141d]">
                 <td className="px-6 py-4">{sc.name}</td>
                 <td className="px-6 py-4">{sc.creatorName}</td>
                 <td className="px-6 py-4">{sc.creatorCode}</td>
                 <td className="px-6 py-4">${sc.total.toFixed(2)}</td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${sc.isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-gray-800 text-gray-400'}`}>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${sc.isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-[#11141d] text-slate-400'}`}>
                     {sc.isActive ? 'Active' : 'Draft'}
                   </span>
                 </td>
@@ -125,7 +125,7 @@ const AdminShowcasesPage: React.FC = () => {
             ))}
             {showcases.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
                   No showcases found. Create one to get started.
                 </td>
               </tr>

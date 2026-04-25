@@ -110,16 +110,16 @@ const AdminInvoicesPage: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-white">Invoices</h1>
+        <h1 className="text-3xl font-medium text-white">Invoices</h1>
         <button onClick={() => setShowAddModal(true)} className="btn btn-primary btn-small">
           <FontAwesomeIcon icon={faPlus} className="mr-2" />
           Create Invoice
         </button>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-        <table className="w-full text-left text-sm text-gray-400">
-          <thead className="bg-gray-800 text-xs uppercase text-gray-300">
+      <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl overflow-hidden">
+        <table className="w-full text-left text-sm text-slate-400">
+          <thead className="bg-[#11141d] text-xs uppercase text-slate-300">
             <tr>
               <th className="px-6 py-3">Invoice #</th>
               <th className="px-6 py-3">Customer</th>
@@ -133,7 +133,7 @@ const AdminInvoicesPage: React.FC = () => {
             {invoices.length > 0 ? invoices.map((invoice) => (
               <React.Fragment key={invoice._id}>
                 <tr 
-                  className={`border-b border-gray-800 hover:bg-gray-800/50 cursor-pointer ${expandedInvoiceId === invoice._id ? 'bg-gray-800/30' : ''}`}
+                  className={`border-b border-[#1f2233] hover:bg-[#11141d] cursor-pointer ${expandedInvoiceId === invoice._id ? 'bg-[#1f2233]/30' : ''}`}
                   onClick={() => toggleInvoiceExpand(invoice._id)}
                 >
                   <td className="px-6 py-4 font-medium text-white">{invoice.invoiceNumber}</td>
@@ -142,9 +142,9 @@ const AdminInvoicesPage: React.FC = () => {
                     <div className="text-xs">{invoice.customerEmail}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-pre-wrap">{invoice.description}</td>
-                  <td className="px-6 py-4 text-emerald-400 font-bold">${invoice.amount.toFixed(2)}</td>
+                  <td className="px-6 py-4 text-emerald-400 font-medium">${invoice.amount.toFixed(2)}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
                       invoice.status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 
                       invoice.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400'
                     }`}>
@@ -174,20 +174,20 @@ const AdminInvoicesPage: React.FC = () => {
                   </td>
                 </tr>
                 {expandedInvoiceId === invoice._id && (
-                  <tr className="bg-gray-900 border-b border-gray-800">
+                  <tr className="bg-[#0a0c13] border-b border-[#1f2233]">
                     <td colSpan={6} className="px-6 py-4">
-                      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                        <h4 className="text-sm font-bold text-white mb-3">Payment History</h4>
+                      <div className="bg-[#11141d] rounded-lg p-4 border border-[#1f2233]">
+                        <h4 className="text-sm font-medium text-white mb-3">Payment History</h4>
                         {payments[invoice._id] && payments[invoice._id].length > 0 ? (
                           <div className="space-y-2">
                             {payments[invoice._id].map(payment => (
-                              <div key={payment._id} className="flex justify-between items-center bg-gray-900 p-3 rounded border border-gray-700">
+                              <div key={payment._id} className="flex justify-between items-center bg-[#0a0c13] p-3 rounded border border-[#1f2233]">
                                 <div>
                                   <div className="text-emerald-400 font-medium mb-1">${payment.amount.toFixed(2)} {payment.currency.toUpperCase()}</div>
-                                  <div className="text-xs text-gray-400">
+                                  <div className="text-xs text-slate-400">
                                     <span className="capitalize">{payment.paymentMethod}</span> &bull; {new Date(payment.createdAt).toLocaleString()}
                                   </div>
-                                  <div className="text-xs text-gray-500 font-mono mt-1">
+                                  <div className="text-xs text-slate-500 font-mono mt-1">
                                     {payment.gatewayTransactionId}
                                   </div>
                                 </div>
@@ -204,7 +204,7 @@ const AdminInvoicesPage: React.FC = () => {
                             ))}
                           </div>
                         ) : (
-                          <div className="text-sm text-gray-500">No payments recorded for this invoice.</div>
+                          <div className="text-sm text-slate-500">No payments recorded for this invoice.</div>
                         )}
                       </div>
                     </td>
@@ -213,7 +213,7 @@ const AdminInvoicesPage: React.FC = () => {
               </React.Fragment>
             )) : (
               <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
                   No invoices found. Create one to get started.
                 </td>
               </tr>
@@ -224,54 +224,54 @@ const AdminInvoicesPage: React.FC = () => {
 
       {showAddModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-md w-full">
-            <h2 className="text-xl font-bold text-white mb-4">Create Manual Invoice</h2>
+          <div className="bg-[#0a0c13] border border-[#1f2233] rounded-xl p-6 max-w-md w-full">
+            <h2 className="text-xl font-medium text-white mb-4">Create Manual Invoice</h2>
             <form onSubmit={handleAddSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Customer Name</label>
+                <label className="block text-sm text-slate-400 mb-1">Customer Name</label>
                 <input
                   type="text"
                   required
-                  className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#11141d] border border-[#1f2233] rounded p-2 text-white focus:outline-none focus:border-emerald-500"
                   value={formData.customerName}
                   onChange={e => setFormData({...formData, customerName: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Customer Email</label>
+                <label className="block text-sm text-slate-400 mb-1">Customer Email</label>
                 <input
                   type="email"
                   required
-                  className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#11141d] border border-[#1f2233] rounded p-2 text-white focus:outline-none focus:border-emerald-500"
                   value={formData.customerEmail}
                   onChange={e => setFormData({...formData, customerEmail: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Description / Reason</label>
+                <label className="block text-sm text-slate-400 mb-1">Description / Reason</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Order #1234 Overage"
-                  className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#11141d] border border-[#1f2233] rounded p-2 text-white focus:outline-none focus:border-emerald-500"
                   value={formData.description}
                   onChange={e => setFormData({...formData, description: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Amount (USD)</label>
+                <label className="block text-sm text-slate-400 mb-1">Amount (USD)</label>
                 <input
                   type="number"
                   step="0.01"
                   min="1"
                   required
-                  className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#11141d] border border-[#1f2233] rounded p-2 text-white focus:outline-none focus:border-emerald-500"
                   value={formData.amount}
                   onChange={e => setFormData({...formData, amount: e.target.value})}
                 />
               </div>
               <div className="flex justify-end gap-2 mt-6">
-                <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 rounded text-gray-400 hover:text-white">Cancel</button>
+                <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 rounded text-slate-400 hover:text-white">Cancel</button>
                 <button type="submit" className="btn btn-primary btn-small">Create Invoice</button>
               </div>
             </form>
