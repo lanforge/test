@@ -177,7 +177,20 @@ router.get('/feed/google-merchant', async (req: Request, res: Response): Promise
   }
 });
 
+import { syncGoogleMerchantProducts } from '../services/googleMerchantService';
+
 // ─── ADMIN ROUTES ─────────────────────────────────────────────────────────────
+
+// POST /api/products/admin/sync-google-merchant — admin/staff
+router.post('/admin/sync-google-merchant', protect, staffOrAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const merchantId = req.body.merchantId || '10642610247'; // default to provided source ID
+    const result = await syncGoogleMerchantProducts(merchantId);
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message || 'Failed to sync with Google Merchant' });
+  }
+});
 
 // GET /api/products/admin/all — admin/staff, includes cost and stock
 router.get('/admin/all', protect, staffOrAdmin, async (_req: AuthRequest, res: Response): Promise<void> => {
