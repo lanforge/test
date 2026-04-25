@@ -2,6 +2,36 @@ import { google } from 'googleapis';
 import Product, { IProduct } from '../models/Product';
 import { env } from '../config/env';
 
+import { Agenda } from 'agenda';
+import { MongoBackend } from '@agendajs/mongo-backend';
+import { generateXml } from '../scripts/generate-google-xml';
+
+let agenda: Agenda;
+
+export const startGoogleMerchantCron = async () => {
+  agenda = new Agenda({
+    backend: new MongoBackend({
+      address: process.env.MONGODB_URI || 'mongodb://localhost:27017/lanforge',
+      collection: 'agendaJobs'
+    })
+  });
+
+  agenda.define('generate google xml feed', async () => {
+    try {
+      console.log('[GoogleMerchant] Auto-generating XML feed...');
+      await generateXml();
+      console.log('[GoogleMerchant] XML feed generated successfully.');
+    } catch (error) {
+      console.error('[GoogleMerchant] Error generating XML feed:', error);
+    }
+  });
+
+  await agenda.start();
+  
+  // Run every 24 hours
+  await agenda.every('24 hours', 'generate google xml feed');
+};
+
 export const syncGoogleMerchantProducts = async (merchantId: string) => {
   try {
     const auth = new google.auth.GoogleAuth({

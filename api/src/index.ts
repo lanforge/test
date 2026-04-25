@@ -11,6 +11,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import connectDB from './config/db';
 import { startPriceScrapingJob } from './services/scraperService';
 import { startAbandonedCartJob } from './services/cartSchedulerService';
+import { startGoogleMerchantCron } from './services/googleMerchantService';
 import { AppError } from './utils/AppError';
 import { env } from './config/env';
 
@@ -231,6 +232,7 @@ app.listen(PORT, () => {
   // Start background jobs
   startPriceScrapingJob();
   startAbandonedCartJob();
+  startGoogleMerchantCron();
 });
 
 export default app;

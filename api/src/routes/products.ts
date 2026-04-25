@@ -107,8 +107,8 @@ router.get('/search', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// GET /api/products/feed/google-merchant — public xml feed
-router.get('/feed/google-merchant', async (req: Request, res: Response): Promise<void> => {
+// GET /api/products/google-merchant.xml — public xml feed
+router.get('/google-merchant.xml', async (req: Request, res: Response): Promise<void> => {
   try {
     const products = await Product.find({ isActive: true })
       .select('name slug description shortDescription price images category sku stock');

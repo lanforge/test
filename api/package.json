@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "seed": "ts-node src/scripts/seed.ts",
-    "stress-test": "ts-node src/scripts/stress-test.ts"
+    "stress-test": "ts-node src/scripts/stress-test.ts",
+    "generate-xml": "ts-node src/scripts/generate-google-xml.ts"
   },
   "dependencies": {
     "@agendajs/mongo-backend": "^4.0.1",
