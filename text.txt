@@ -1,4 +1,4 @@
-[Error] Failed to load resource: the server responded with a status of 500 () (69e6b4342314dbddf6e79423, line 0)
-[Error] Failed to update order: – AxiosError: Request failed with status code 500
-AxiosError: Request failed with status code 500
-	(anonymous function) (main.a2a84c37.js:2:1540597)
+[Error] Failed to load resource: the server responded with a status of 404 () (all, line 0)
+[Error] Failed to fetch orders – AxiosError: Request failed with status code 404
+AxiosError: Request failed with status code 404
+	(anonymous function) (main.0da8d48a.js:2:1525953)
