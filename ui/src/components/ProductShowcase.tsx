@@ -65,6 +65,35 @@ const ProductShowcase: React.FC = () => {
     { label: 'Pre Configured', tag: 'preconfig' }
   ];
 
+  const createCartSessionId = () => {
+    const sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('cartSessionId', sessionId);
+    return sessionId;
+  };
+
+  const normalizeCartItems = (items: any[]) => (
+    items
+      .map((item: any) => {
+        const normalized: any = {
+          quantity: item.quantity || 1,
+        };
+
+        const product = item.product?._id || item.product;
+        const pcPart = item.pcPart?._id || item.pcPart;
+        const accessory = item.accessory?._id || item.accessory;
+        const customBuild = item.customBuild?._id || item.customBuild;
+
+        if (product) normalized.product = product;
+        if (pcPart) normalized.pcPart = pcPart;
+        if (accessory) normalized.accessory = accessory;
+        if (customBuild) normalized.customBuild = customBuild;
+        if (item.notes) normalized.notes = item.notes;
+
+        return normalized;
+      })
+      .filter((item: any) => item.product || item.pcPart || item.accessory || item.customBuild)
+  );
+
   const handleAddToCart = async (product: Product) => {
     setCartError(null);
     setAddingProductId(product.id);
@@ -72,22 +101,20 @@ const ProductShowcase: React.FC = () => {
     try {
       let sessionId = localStorage.getItem('cartSessionId');
       if (!sessionId) {
-        sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
-        localStorage.setItem('cartSessionId', sessionId);
+        sessionId = createCartSessionId();
       }
 
-      const { data } = await api.get(`/carts/${sessionId}`);
-      const existingItems = data.cart?.items || [];
-      const mappedItems = existingItems.map((i: any) => ({
-        product: i.product?._id || i.product,
-        pcPart: i.pcPart?._id || i.pcPart,
-        accessory: i.accessory?._id || i.accessory,
-        customBuild: i.customBuild?._id || i.customBuild,
-        quantity: i.quantity,
-        notes: i.notes,
-      }));
+      let existingItems: any[] = [];
+      try {
+        const { data } = await api.get(`/carts/${sessionId}`);
+        existingItems = data.cart?.items || [];
+      } catch (cartLoadError) {
+        // A stale/corrupted anonymous cart should not block a new add-to-cart.
+        sessionId = createCartSessionId();
+      }
 
       const color = selectedColors[product.id] || 'Black';
+      const mappedItems = normalizeCartItems(existingItems);
       mappedItems.push({
         product: product.id,
         quantity: 1,
