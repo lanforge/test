@@ -39,15 +39,21 @@ const Hero: React.FC = () => {
 
             {/* Actions */}
             <motion.div
-              className="flex flex-col sm:flex-row sm:items-center gap-4"
+              className="flex flex-wrap items-center gap-3"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <Link to="/configurator" className="btn btn-primary px-8 py-4 text-lg">
+              <Link
+                to="/configurator"
+                className="inline-flex items-center justify-center rounded-xl bg-cyan-400 px-8 py-4 text-lg font-bold text-gray-950 shadow-lg shadow-cyan-500/20 transition-all duration-300 hover:-translate-y-1 hover:bg-cyan-300 hover:shadow-cyan-500/30 active:translate-y-0"
+              >
                 Start a Custom Build
               </Link>
-              <Link to="/pcs" className="btn btn-outline px-8 py-4 text-lg">
+              <Link
+                to="/pcs"
+                className="inline-flex items-center justify-center rounded-xl border border-gray-700 bg-gray-900/60 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:text-cyan-300 active:translate-y-0"
+              >
                 Shop prebuilt PCs
               </Link>
             </motion.div>
