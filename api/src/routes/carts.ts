@@ -1,9 +1,50 @@
 import { Router, Request, Response } from 'express';
+import mongoose from 'mongoose';
 import Cart from '../models/Cart';
 import Discount from '../models/Discount';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
+
+const cartPopulate = [
+  { path: 'items.product', select: 'name price images slug stock reserved category subcategory type tags' },
+  { path: 'items.pcPart', select: 'name brand price images slug stock reserved type category' },
+  { path: 'items.accessory', select: 'name brand price images slug stock reserved type category' },
+  {
+    path: 'items.customBuild',
+    populate: { path: 'parts.part', select: 'name price images type' }
+  },
+  { path: 'donationCause' },
+  { path: 'appliedDiscount', select: 'code type value' }
+];
+
+const sanitizeCartItems = (items: any[] = []) => (
+  items
+    .map((item) => {
+      const sanitized: any = {
+        quantity: Math.max(1, Number(item.quantity) || 1)
+      };
+
+      (['product', 'pcPart', 'accessory', 'customBuild'] as const).forEach((field) => {
+        const value = item[field]?._id || item[field];
+        if (typeof value === 'string' && mongoose.isValidObjectId(value)) {
+          sanitized[field] = value;
+        }
+      });
+
+      if (typeof item.notes === 'string' && item.notes.trim()) {
+        sanitized.notes = item.notes.trim();
+      }
+
+      return sanitized;
+    })
+    .filter((item) => item.product || item.pcPart || item.accessory || item.customBuild)
+);
+
+const resetActiveCart = async (sessionId: string) => {
+  await Cart.deleteMany({ sessionId, status: 'active' });
+  return Cart.create({ sessionId, items: [] });
+};
 
 // Track active SSE connections by sessionId
 const activeConnections = new Map<string, Response>();
@@ -72,15 +113,7 @@ router.get('/stream/:sessionId', (req: Request, res: Response) => {
 router.get('/:sessionId', async (req: Request, res: Response): Promise<void> => {
   try {
     let cart = await Cart.findOne({ sessionId: req.params.sessionId, status: 'active' })
-      .populate('items.product', 'name price images slug stock reserved category subcategory type tags')
-      .populate('items.pcPart', 'name brand price images slug stock reserved type category')
-      .populate('items.accessory', 'name brand price images slug stock reserved type category')
-      .populate({
-        path: 'items.customBuild',
-        populate: { path: 'parts.part', select: 'name price images type' }
-      })
-      .populate('donationCause')
-      .populate('appliedDiscount', 'code type value');
+      .populate(cartPopulate);
 
     if (!cart) {
       cart = await Cart.create({ sessionId: req.params.sessionId, items: [] });
@@ -88,7 +121,14 @@ router.get('/:sessionId', async (req: Request, res: Response): Promise<void> => 
 
     res.json({ cart });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error fetching cart, resetting anonymous cart:', error);
+    try {
+      const cart = await resetActiveCart(req.params.sessionId);
+      res.json({ cart });
+    } catch (resetError) {
+      console.error('Error resetting cart:', resetError);
+      res.status(500).json({ message: 'Server error' });
+    }
   }
 });
 
@@ -100,8 +140,9 @@ router.put('/:sessionId', async (req: Request, res: Response): Promise<void> => 
     // Auto-update expiry (rolling 30 days on interaction)
     const expiresAt = new Date(+new Date() + 30 * 24 * 60 * 60 * 1000);
 
-    const update: any = { items, expiresAt };
-    if (customerId) update.customer = customerId;
+    const sanitizedItems = sanitizeCartItems(Array.isArray(items) ? items : []);
+    const update: any = { items: sanitizedItems, expiresAt };
+    if (customerId && mongoose.isValidObjectId(customerId)) update.customer = customerId;
     
     if (discountCode !== undefined) {
       if (discountCode) {
@@ -115,8 +156,10 @@ router.put('/:sessionId', async (req: Request, res: Response): Promise<void> => 
     }
     
     if (creatorCode !== undefined) update.creatorCode = creatorCode;
-    if (donationCause !== undefined) update.donationCause = donationCause;
-    if (clearDiscount || (items && items.length === 0)) {
+    if (donationCause !== undefined && mongoose.isValidObjectId(donationCause)) {
+      update.donationCause = donationCause;
+    }
+    if (clearDiscount || sanitizedItems.length === 0) {
       update.customDiscountAmount = 0;
     }
 
@@ -125,19 +168,12 @@ router.put('/:sessionId', async (req: Request, res: Response): Promise<void> => 
       update,
       { new: true, upsert: true, setDefaultsOnInsert: true }
     )
-      .populate('items.product', 'name price images slug stock reserved category subcategory type tags')
-      .populate('items.pcPart', 'name brand price images slug stock reserved type category')
-      .populate('items.accessory', 'name brand price images slug stock reserved type category')
-      .populate({
-        path: 'items.customBuild',
-        populate: { path: 'parts.part', select: 'name price images type' }
-      })
-      .populate('donationCause')
-      .populate('appliedDiscount', 'code type value');
+      .populate(cartPopulate);
 
     res.json({ cart });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error updating cart:', error);
+    res.status(400).json({ message: 'Invalid cart payload' });
   }
 });
 
