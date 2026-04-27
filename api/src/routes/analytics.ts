@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import AnalyticsEvent from '../models/AnalyticsEvent';
 import { protect, adminOnly } from '../middleware/auth';
 
@@ -11,23 +12,33 @@ router.post('/event', async (req, res) => {
   try {
     const { sessionId, cartSessionId, userId, eventType, pageUrl, productId, discountCode } = req.body;
 
-    const event = new AnalyticsEvent({
-      sessionId,
-      cartSessionId,
-      userId,
-      eventType,
-      pageUrl,
-      productId,
-      discountCode,
+    if (!sessionId || !eventType || !pageUrl) {
+      res.status(202).json({ success: false });
+      return;
+    }
+
+    const eventPayload: any = {
+      sessionId: String(sessionId),
+      eventType: String(eventType),
+      pageUrl: String(pageUrl),
       ipAddress: req.ip,
       userAgent: req.headers['user-agent']
-    });
+    };
+
+    if (cartSessionId) eventPayload.cartSessionId = String(cartSessionId);
+    if (productId) eventPayload.productId = String(productId);
+    if (discountCode) eventPayload.discountCode = String(discountCode);
+    if (userId && mongoose.Types.ObjectId.isValid(String(userId))) {
+      eventPayload.userId = userId;
+    }
+
+    const event = new AnalyticsEvent(eventPayload);
 
     await event.save();
     res.status(201).json({ success: true });
   } catch (error) {
     console.error('Error saving analytics event:', error);
-    res.status(500).json({ message: 'Server error saving analytics event' });
+    res.status(202).json({ success: false });
   }
 });
 

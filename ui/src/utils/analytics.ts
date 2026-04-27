@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from './api';
 
+const isValidObjectId = (value: string) => /^[a-f\d]{24}$/i.test(value);
+
 // Generate or retrieve session ID
 export const getSessionId = () => {
   let sessionId = sessionStorage.getItem('lanforge_session_id');
@@ -37,7 +39,10 @@ export const trackEvent = async (
       const userStr = localStorage.getItem('user');
       if (userStr) {
         const user = JSON.parse(userStr);
-        userId = user._id || user.id;
+        const storedUserId = user._id || user.id;
+        userId = typeof storedUserId === 'string' && isValidObjectId(storedUserId)
+          ? storedUserId
+          : undefined;
       }
     } catch(e) {}
 

@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDesktop } from '@fortawesome/free-solid-svg-icons';
 import { trackEvent } from '../utils/analytics';
+import api from '../utils/api';
 
 interface Product {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: string;
@@ -20,7 +21,9 @@ interface Product {
 
 const ProductShowcase: React.FC = () => {
   const [products, setProducts] = React.useState<Product[]>([]);
-  const [selectedColors, setSelectedColors] = React.useState<Record<number, string>>({});
+  const [selectedColors, setSelectedColors] = React.useState<Record<string, string>>({});
+  const [addingProductId, setAddingProductId] = React.useState<string | null>(null);
+  const [cartError, setCartError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/products?limit=100`)
@@ -61,6 +64,72 @@ const ProductShowcase: React.FC = () => {
     { label: 'LANForge Mini Series', tag: 'mini series' },
     { label: 'Pre Configured', tag: 'preconfig' }
   ];
+
+  const createCartSessionId = () => {
+    const sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('cartSessionId', sessionId);
+    return sessionId;
+  };
+
+  const normalizeCartItems = (items: any[]) => (
+    items
+      .map((item: any) => {
+        const normalized: any = {
+          quantity: item.quantity || 1,
+        };
+
+        const product = item.product?._id || item.product;
+        const pcPart = item.pcPart?._id || item.pcPart;
+        const accessory = item.accessory?._id || item.accessory;
+        const customBuild = item.customBuild?._id || item.customBuild;
+
+        if (product) normalized.product = product;
+        if (pcPart) normalized.pcPart = pcPart;
+        if (accessory) normalized.accessory = accessory;
+        if (customBuild) normalized.customBuild = customBuild;
+        if (item.notes) normalized.notes = item.notes;
+
+        return normalized;
+      })
+      .filter((item: any) => item.product || item.pcPart || item.accessory || item.customBuild)
+  );
+
+  const handleAddToCart = async (product: Product) => {
+    setCartError(null);
+    setAddingProductId(product.id);
+
+    try {
+      let sessionId = localStorage.getItem('cartSessionId');
+      if (!sessionId) {
+        sessionId = createCartSessionId();
+      }
+
+      let existingItems: any[] = [];
+      try {
+        const { data } = await api.get(`/carts/${sessionId}`);
+        existingItems = data.cart?.items || [];
+      } catch (cartLoadError) {
+        // A stale/corrupted anonymous cart should not block a new add-to-cart.
+        sessionId = createCartSessionId();
+      }
+
+      const color = selectedColors[product.id] || 'Black';
+      const mappedItems = normalizeCartItems(existingItems);
+      mappedItems.push({
+        product: product.id,
+        quantity: 1,
+        notes: `Case Color: ${color}`,
+      });
+
+      await api.put(`/carts/${sessionId}`, { items: mappedItems });
+      trackEvent('add_to_cart', window.location.pathname + window.location.search, product.id.toString());
+      window.location.href = '/cart';
+    } catch (err) {
+      console.error(err);
+      setCartError('Could not add this PC to your cart. Please try again.');
+      setAddingProductId(null);
+    }
+  };
 
   // Group products by tags matching the seriesOrder
   const seriesGroups = products.reduce((groups, product) => {
@@ -111,6 +180,11 @@ const ProductShowcase: React.FC = () => {
           <p className="body-large max-w-3xl mx-auto">
             Choose from our curated selection of premium gaming PCs or customize every component to create your perfect system.
           </p>
+          {cartError && (
+            <div className="mt-6 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              {cartError}
+            </div>
+          )}
         </motion.div>
         
         {seriesOrder.map((seriesObj, seriesIndex) => {
@@ -234,55 +308,13 @@ const ProductShowcase: React.FC = () => {
                         {/* Actions */}
                         <div className="flex items-center justify-between gap-2 pt-3 sm:pt-4 border-t border-gray-800/50">
                           <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg">
-                            <button 
-                              id={`showcase-add-btn-${product.id}`}
-                              className="px-4 sm:px-6 py-2 text-xs sm:text-sm font-bold text-white hover:text-cyan-400 transition-all duration-300"
-                              onClick={() => {
-                                let sessionId = localStorage.getItem('cartSessionId');
-                                if (!sessionId) {
-                                  sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
-                                  localStorage.setItem('cartSessionId', sessionId);
-                                }
-                                fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
-                                  .then(res => res.json())
-                                  .then(data => {
-                                    const existingItems = data.cart?.items || [];
-                                    const mappedItems = existingItems.map((i: any) => ({
-                                      product: i.product?._id || i.product,
-                                      pcPart: i.pcPart?._id || i.pcPart,
-                                      accessory: i.accessory?._id || i.accessory,
-                                      customBuild: i.customBuild?._id || i.customBuild,
-                                      quantity: i.quantity
-                                    }));
-                                    const color = selectedColors[product.id] || 'Black';
-                                    mappedItems.push({
-                                      product: product.id,
-                                      quantity: 1,
-                                      notes: `Case Color: ${color}`
-                                    });
-                                    trackEvent('add_to_cart', window.location.pathname + window.location.search, product.id.toString());
-                                    return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
-                                      method: 'PUT',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ items: mappedItems })
-                                    });
-                                  })
-                                  .then(() => {
-                                    const btn = document.getElementById(`showcase-add-btn-${product.id}`);
-                                    if (btn) {
-                                      btn.innerHTML = 'Added!';
-                                      btn.classList.add('!text-emerald-400', 'from-emerald-400', 'to-emerald-400');
-                                      setTimeout(() => {
-                                        window.location.href = '/cart';
-                                      }, 500);
-                                    } else {
-                                      window.location.href = '/cart';
-                                    }
-                                  })
-                                  .catch(err => console.error(err));
-                              }}
+                            <button
+                              type="button"
+                              className="px-4 sm:px-6 py-2 text-xs sm:text-sm font-bold text-white hover:text-cyan-400 disabled:cursor-not-allowed disabled:opacity-60 transition-all duration-300"
+                              onClick={() => handleAddToCart(product)}
+                              disabled={addingProductId === product.id}
                             >
-                              Add to Cart
+                              {addingProductId === product.id ? 'Adding...' : 'Add to Cart'}
                             </button>
                           </div>
                           <Link to={`/products/${product.id}`}>
