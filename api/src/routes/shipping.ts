@@ -293,7 +293,7 @@ router.post(
         }];
 
         const { insurance } = req.body;
-        const extraPayload = insurance ? { insurance: { amount: String(order.total), currency: "USD", provider: "SHIPPO", content: "PC Build and Components" } } : undefined;
+        const extraPayload = insurance ? { insurance: { amount: String(order.total), currency: "USD", content: "PC Build and Components" } } : undefined;
 
         const shipment: any = await createShipment(
           { ...defaultLineItems[0], name: 'LANForge', street1: '88 Sabal Creek Trl', city: 'Ponte Vedra', state: 'FL', zip: '32081', country: 'US' },
@@ -303,7 +303,26 @@ router.post(
         );
 
         if (shipment && shipment.rates) {
-          const oldRate = order.shippingRates?.find((r: any) => r.objectId === rateObjectId);
+          let oldRate = order.shippingRates?.find((r: any) => r.objectId === rateObjectId);
+          
+          if (!oldRate) {
+            try {
+              const { getRate } = await import('../services/shippoService');
+              const fetchedOldRate = await getRate(rateObjectId);
+              let displayTitle = '';
+              const nameToMatch = (fetchedOldRate.title || fetchedOldRate.servicelevel?.name || '').toLowerCase();
+              if (nameToMatch.includes('ground')) displayTitle = 'UPS Ground';
+              else if (nameToMatch.includes('2nd day') || nameToMatch.includes('2 day')) displayTitle = 'UPS 2 Day Air';
+              else if (nameToMatch.includes('next day')) displayTitle = 'UPS Next Day Air';
+              
+              if (displayTitle) {
+                oldRate = { title: displayTitle };
+              }
+            } catch (e) {
+              console.warn('Could not fetch old rate from shippo for matching:', e);
+            }
+          }
+
           if (oldRate) {
             // Match the newly generated rate with the old rate by title
             const matchingNewRate = shipment.rates.find((r: any) => {
@@ -313,7 +332,7 @@ router.post(
               else if (nameToMatch.includes('2nd day') || nameToMatch.includes('2 day')) displayTitle = 'UPS 2 Day Air';
               else if (nameToMatch.includes('next day')) displayTitle = 'UPS Next Day Air';
               
-              return displayTitle === oldRate.title;
+              return displayTitle && displayTitle === oldRate.title;
             });
             
             if (matchingNewRate) {

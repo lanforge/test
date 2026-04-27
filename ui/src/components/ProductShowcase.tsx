@@ -99,13 +99,13 @@ const ProductShowcase: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 sm:mb-12 lg:mb-16"
         >
-          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-cyan-500/50 mb-6 shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gray-900 border border-gray-800 mb-6 shadow-lg">
             <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">Premium Builds</span>
+            <span className="text-sm font-medium text-white">Premium Builds</span>
           </div>
           
           <h2 className="heading-2 mb-6">
-            Featured <span className="text-gradient-neon">Builds</span>
+            Featured <span className="text-cyan-400">Builds</span>
           </h2>
           
           <p className="body-large max-w-3xl mx-auto">
@@ -150,16 +150,16 @@ const ProductShowcase: React.FC = () => {
                 {seriesProducts.map((product, productIndex) => (
                   <div
                     key={product.id}
-                    className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 group"
+                    className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-lg group"
                   >
                     <div className="p-4 sm:p-5 lg:p-6">
                       {/* Series badge */}
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-cyan-500/50 mb-4 shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-900 border border-gray-800 mb-4 shadow-lg">
                         <div 
                           className="w-2 h-2 rounded-full"
                           style={{ backgroundColor: product.imageColor }}
                         />
-                        <span className="text-xs font-medium text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">{product.series}</span>
+                        <span className="text-xs font-medium text-white">{product.series}</span>
                       </div>
                       
                       {/* Product image */}
@@ -185,8 +185,8 @@ const ProductShowcase: React.FC = () => {
                         
                         {/* Price tag */}
                         <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-20">
-                          <div className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black/40 backdrop-blur-xl border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                            <span className="text-base sm:text-lg font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">{product.price}</span>
+                          <div className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gray-900 border border-gray-800 shadow-lg">
+                            <span className="text-base sm:text-lg font-bold text-white">{product.price}</span>
                           </div>
                         </div>
                       </div>
@@ -217,14 +217,14 @@ const ProductShowcase: React.FC = () => {
                             <button
                               type="button"
                               onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedColors(prev => ({ ...prev, [product.id]: 'Black' })); }}
-                              className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 cursor-pointer transition-all ${(!selectedColors[product.id] || selectedColors[product.id] === 'Black') ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(34,211,238,0.5)]' : 'border-gray-600 hover:border-gray-400'}`}
+                              className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 cursor-pointer transition-all ${(!selectedColors[product.id] || selectedColors[product.id] === 'Black') ? 'border-cyan-400 scale-110 shadow-lg' : 'border-gray-600 hover:border-gray-400'}`}
                               style={{ backgroundColor: '#111' }}
                               title="Black"
                             />
                             <button
                               type="button"
                               onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedColors(prev => ({ ...prev, [product.id]: 'White' })); }}
-                              className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 cursor-pointer transition-all ${(selectedColors[product.id] === 'White') ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(34,211,238,0.5)]' : 'border-gray-600 hover:border-gray-400'}`}
+                              className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 cursor-pointer transition-all ${(selectedColors[product.id] === 'White') ? 'border-cyan-400 scale-110 shadow-lg' : 'border-gray-600 hover:border-gray-400'}`}
                               style={{ backgroundColor: '#f3f4f6' }}
                               title="White"
                             />
@@ -233,10 +233,10 @@ const ProductShowcase: React.FC = () => {
                         
                         {/* Actions */}
                         <div className="flex items-center justify-between gap-2 pt-3 sm:pt-4 border-t border-gray-800/50">
-                          <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+                          <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg">
                             <button 
                               id={`showcase-add-btn-${product.id}`}
-                              className="skew-x-[10deg] px-4 sm:px-6 py-2 text-xs sm:text-sm font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300"
+                              className="px-4 sm:px-6 py-2 text-xs sm:text-sm font-bold text-white hover:text-cyan-400 transition-all duration-300"
                               onClick={() => {
                                 let sessionId = localStorage.getItem('cartSessionId');
                                 if (!sessionId) {
@@ -286,8 +286,8 @@ const ProductShowcase: React.FC = () => {
                             </button>
                           </div>
                           <Link to={`/products/${product.id}`}>
-                            <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                              <button className="skew-x-[10deg] px-4 sm:px-6 py-2 text-xs sm:text-sm font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+                            <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg">
+                              <button className="px-4 sm:px-6 py-2 text-xs sm:text-sm font-bold text-white hover:text-cyan-400 transition-all duration-300">
                                 Details
                               </button>
                             </div>
@@ -302,8 +302,8 @@ const ProductShowcase: React.FC = () => {
               {isPreconfigured && (
                 <div className="mt-8 flex justify-center">
                   <Link to="/pcs">
-                    <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                      <button className="skew-x-[10deg] px-8 py-3 text-sm font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+                    <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg">
+                      <button className="px-8 py-3 text-sm font-bold text-white hover:text-cyan-400 transition-all duration-300">
                         View All
                       </button>
                     </div>
@@ -322,14 +322,14 @@ const ProductShowcase: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-12 sm:mt-16 lg:mt-20 text-center"
         >
-          <div className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl p-6 sm:p-8 max-w-3xl mx-auto shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">Don't see what you're looking for?</h3>
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 sm:p-8 max-w-3xl mx-auto shadow-lg">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 text-white">Don't see what you're looking for?</h3>
             <p className="text-base sm:text-lg mb-6 sm:mb-8 text-gray-300">
               Build your perfect PC from scratch with our configurator. Choose every component and create a system tailored to your exact needs.
             </p>
             <Link to="/configurator" className="inline-block w-full sm:w-auto">
-              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                <button className="skew-x-[10deg] px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300 w-full sm:w-auto">
+              <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg">
+                <button className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-bold text-white hover:text-cyan-400 transition-all duration-300 w-full sm:w-auto">
                   <svg className="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>

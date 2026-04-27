@@ -261,3 +261,133 @@ Error: listen EADDRINUSE: address already in use :::5001[Scraper] Successfully u
 [Scraper] Failed to fetch data for Intel® Core™ i5-14600K (Status: 403)
 [Scraper] Failed to fetch data for ZOTAC SOLID CORE OC 5080 16GB (Status: 403)
 [Scraper] Failed to fetch data for ASUS ROG Ryujin III 360 (Status: 403)
+[Scraper] Failed to fetch data for ASUS ROG STRIX B850 (Status: 403)
+[Scraper] Failed to fetch data for GIGABYTE Z790 AORUS ELITE AX (Status: 403)
+[Scraper] Failed to fetch data for Cooler Master MasterLiquid 240L Core (Status: 403)
+[Scraper] Failed to fetch data for G.SKILL Trident Z5 32GB 6400 CL30 (Status: 403)
+[GoogleMerchant] Auto-generating XML feed...
+✅ MongoDB connected: ac-nvizt0b-shard-00-02.u9lcgej.mongodb.net
+Generated XML at /Users/damian/Desktop/LANForge-Final/ui/public/google-merchant.xml
+Generated XML at /Users/damian/Desktop/LANForge-Final/ui/build/google-merchant.xml
+[GoogleMerchant] XML feed generated successfully.
+[Scraper] Failed to fetch data for Thermalright Peerless Assassin 120 SE (Status: 403)
+[Scraper] Failed to fetch data for Corsair iCUE Link Titan 280 (Status: 403)
+[Scraper] Failed to fetch data for V-COLOR Manta XSky 32GB 6000 CL36 (Status: 403)
+[Scraper] Failed to fetch data for NZXT H5 Flow (Status: 403)
+[Scraper] Failed to fetch data for GIGABYTE AORUS GeForce RTX 5090 32GB (Status: 403)
+[Scraper] Failed to fetch data for MSI MAG X870 (Status: 403)
+[Scraper] Failed to fetch data for G.SKILL Trident Z5 64GB 6000 CL30 (Status: 403)
+[Scraper] Failed to fetch data for MONTECH CENTURY II 1050W (Status: 403)
+[Scraper] Failed to fetch data for GIGABYTE B760I AORUS PRO (Status: 403)
+[Scraper] Failed to fetch data for ASUS ROG STRIX Z890 (Status: 403)
+Error: Not allowed by CORS
+    at origin (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:96:22)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:328:13)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:280:10)
+    at internalNext (/Users/damian/Desktop/LANForge-Final/api/node_modules/helmet/index.cjs:537:6)
+Error: Not allowed by CORS
+    at origin (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:96:22)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:328:13)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:280:10)
+    at internalNext (/Users/damian/Desktop/LANForge-Final/api/node_modules/helmet/index.cjs:537:6)
+Error: Not allowed by CORS
+    at origin (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:96:22)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:328:13)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:280:10)
+    at internalNext (/Users/damian/Desktop/LANForge-Final/api/node_modules/helmet/index.cjs:537:6)
+Error: Not allowed by CORS
+    at origin (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:96:22)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:328:13)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:280:10)
+    at internalNext (/Users/damian/Desktop/LANForge-Final/api/node_modules/helmet/index.cjs:537:6)
+Error: Not allowed by CORS
+    at origin (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:96:22)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:328:13)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:280:10)
+    at internalNext (/Users/damian/Desktop/LANForge-Final/api/node_modules/helmet/index.cjs:537:6)
+Error: Not allowed by CORS
+    at origin (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:96:22)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:328:13)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:280:10)
+    at internalNext (/Users/damian/Desktop/LANForge-Final/api/node_modules/helmet/index.cjs:537:6)
+Error: Not allowed by CORS
+    at origin (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:96:22)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:328:13)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:280:10)
+    at internalNext (/Users/damian/Desktop/LANForge-Final/api/node_modules/helmet/index.cjs:537:6)
+Error: Not allowed by CORS
+    at origin (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:96:22)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:328:13)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:280:10)
+    at internalNext (/Users/damian/Desktop/LANForge-Final/api/node_modules/helmet/index.cjs:537:6)
+Error: Not allowed by CORS
+    at origin (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:96:22)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:328:13)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:280:10)
+    at internalNext (/Users/damian/Desktop/LANForge-Final/api/node_modules/helmet/index.cjs:537:6)
+Error: Not allowed by CORS
+    at origin (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:96:22)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:219:13
+    at optionsCallback (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:199:9)
+    at corsMiddleware (/Users/damian/Desktop/LANForge-Final/api/node_modules/cors/lib/index.js:204:7)
+    at Layer.handle [as handle_request] (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:328:13)
+    at /Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:346:12)
+    at next (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/router/index.js:280:10)
+    at internalNext (/Users/damian/Desktop/LANForge-Final/api/node_modules/helmet/index.cjs:537:6)
+[Scraper] Failed to fetch data for Kingston Fury Renegade 32GB 8000 CL38 (Status: 403)

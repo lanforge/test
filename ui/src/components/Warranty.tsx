@@ -42,13 +42,13 @@ const Warranty: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 sm:mb-12 lg:mb-16"
         >
-          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-cyan-500/50 mb-6 shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gray-900 border border-gray-800 mb-6 shadow-lg">
             <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">Warranty & Support</span>
+            <span className="text-sm font-medium text-white">Warranty & Support</span>
           </div>
           
           <h2 className="heading-2 mb-6">
-            Peace of Mind <span className="text-gradient-cyber">Guarantee</span>
+            Peace of Mind <span className="text-cyan-400">Guarantee</span>
           </h2>
           
           <p className="body-large max-w-3xl mx-auto">
@@ -60,16 +60,16 @@ const Warranty: React.FC = () => {
           {warrantyFeatures.map((feature, index) => (
             <div 
               key={index}
-              className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl overflow-hidden text-center shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 group"
+              className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden text-center shadow-lg group"
             >
               <div className="p-4 sm:p-5 lg:p-6 text-center">
                 <div className="text-3xl sm:text-4xl mb-3 sm:mb-4 transform group-hover:scale-110 transition-transform duration-300 text-white">
                   <FontAwesomeIcon icon={feature.icon} />
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 mb-2 sm:mb-3">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-sm sm:text-base text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">
+                <p className="text-sm sm:text-base text-white">
                   {feature.description}
                 </p>
               </div>
@@ -84,21 +84,21 @@ const Warranty: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mt-10 sm:mt-12 lg:mt-16 text-center"
         >
-          <div className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl p-5 sm:p-6 lg:p-8 max-w-3xl mx-auto shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-            <p className="text-sm sm:text-base text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 mb-5 sm:mb-6">
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 sm:p-6 lg:p-8 max-w-3xl mx-auto shadow-lg">
+            <p className="text-sm sm:text-base text-white mb-5 sm:mb-6">
               <strong className="text-cyan-400">Note:</strong> Longer warranty plans available at checkout.
             </p>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
               <Link to="/warranty" className="w-full sm:w-auto">
-                <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                  <button className="skew-x-[10deg] w-full px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+                <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg">
+                  <button className="w-full px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-white hover:text-cyan-400 transition-all duration-300">
                     View Full Warranty Terms
                   </button>
                 </div>
               </Link>
               <Link to="/contact" className="w-full sm:w-auto">
-                <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                  <button className="skew-x-[10deg] w-full px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+                <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg">
+                  <button className="w-full px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-white hover:text-cyan-400 transition-all duration-300">
                     Contact Support
                   </button>
                 </div>

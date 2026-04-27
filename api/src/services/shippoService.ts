@@ -133,6 +133,27 @@ export const getRates = async (shipmentObjectId: string) => {
   }
 };
 
+export const getRate = async (rateObjectId: string) => {
+  try {
+    const response = await fetch(`https://api.goshippo.com/rates/${rateObjectId}/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `ShippoToken ${process.env.SHIPPO_API_TOKEN}`,
+      }
+    });
+
+    const dataText = await response.text();
+
+    if (!response.ok) {
+      throw new Error(`Shippo API Error: ${dataText}`);
+    }
+
+    return JSON.parse(dataText);
+  } catch (error: any) {
+    throw new Error(`Failed to get rate: ${error.message}`);
+  }
+};
+
 export const refundLabel = async (transactionObjectId: string) => {
   try {
     const response = await fetch('https://api.goshippo.com/refunds/', {

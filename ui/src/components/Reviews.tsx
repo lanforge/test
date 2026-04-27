@@ -47,13 +47,13 @@ const Reviews: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-cyan-500/50 mb-6 shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gray-900 border border-gray-800 mb-6 shadow-lg">
             <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">Customer Reviews</span>
+            <span className="text-sm font-medium text-white">Customer Reviews</span>
           </div>
           
           <h2 className="heading-2 mb-6">
-            What Our <span className="text-gradient-cyber">Customers Say</span>
+            What Our <span className="text-cyan-400">Customers Say</span>
           </h2>
           
           <p className="body-large max-w-3xl mx-auto">
@@ -66,7 +66,7 @@ const Reviews: React.FC = () => {
           {reviews.map((review, index) => (
             <div
               key={review.id}
-              className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 group"
+              className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-lg group"
             >
               <div className="p-6">
                 {/* Review header */}
@@ -122,10 +122,10 @@ const Reviews: React.FC = () => {
               { number: '100%', label: 'Satisfaction Rate', icon: faHeart, color: 'text-red-500' },
               { number: '24/7', label: 'Support Available', icon: faShieldHalved, color: 'text-blue-400' }
             ].map((stat, idx) => (
-              <div key={idx} className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl text-center p-6 shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+              <div key={idx} className="bg-gray-900 border border-gray-800 rounded-xl text-center p-6 shadow-lg">
                 <div className={`text-2xl mb-3 ${stat.color}`}><FontAwesomeIcon icon={stat.icon} /></div>
-                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 mb-2">{stat.number}</div>
-                <div className="text-sm text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">{stat.label}</div>
+                <div className="text-3xl font-bold text-white mb-2">{stat.number}</div>
+                <div className="text-sm text-white">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -141,16 +141,16 @@ const Reviews: React.FC = () => {
         >
           <div className="inline-flex items-center gap-4">
             <Link to="/reviews">
-              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 inline-block">
-                <button className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+              <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg inline-block">
+                <button className="px-6 py-3 font-bold text-white hover:text-cyan-400 transition-all duration-300">
                   Read More Reviews
                 </button>
               </div>
             </Link>
-            <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+            <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg">
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300"
+                className="px-6 py-3 font-bold text-white hover:text-cyan-400 transition-all duration-300"
               >
                 Write a Review
               </button>

@@ -63,13 +63,13 @@ const FAQ: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 sm:mb-12 lg:mb-16"
         >
-          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-cyan-500/50 mb-6 shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gray-900 border border-gray-800 mb-6 shadow-lg">
             <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">FAQ</span>
+            <span className="text-sm font-medium text-white">FAQ</span>
           </div>
           
           <h2 className="heading-2 mb-6">
-            Frequently Asked <span className="text-gradient-neon">Questions</span>
+            Frequently Asked <span className="text-cyan-400">Questions</span>
           </h2>
           
           <p className="body-large max-w-3xl mx-auto">
@@ -87,24 +87,24 @@ const FAQ: React.FC = () => {
               transition={{ 
                 duration: 0.4, 
                 delay: index * 0.05,
-                ease: "easeOut"
+                ease:"easeOut"
               }}
               className="mb-4"
             >
               <motion.div 
-                className="bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl overflow-hidden cursor-pointer group shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50"
+                className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden cursor-pointer group shadow-lg"
                 onClick={() => toggleFAQ(index)}
                 whileHover={{ borderColor: 'rgba(6,182,212,0.5)' }}
                 whileTap={{ scale: 0.995 }}
               >
                 <div className="p-4 sm:p-5 lg:p-6 flex items-center justify-between gap-3">
-                  <h3 className="text-base sm:text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 group-hover:from-cyan-300 group-hover:to-cyan-500 transition-all duration-300 flex-1">
+                  <h3 className="text-base sm:text-lg font-semibold text-white group-hover:from-cyan-300 group-hover:to-cyan-500 transition-all duration-300 flex-1">
                     {item.question}
                   </h3>
                   <motion.div 
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/40 backdrop-blur-md border border-cyan-500/50 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 flex-shrink-0"
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-cyan-400 shadow-lg flex-shrink-0"
                     animate={{ rotate: openIndex === index ? 180 : 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    transition={{ duration: 0.3, ease:"easeInOut" }}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -157,19 +157,19 @@ const FAQ: React.FC = () => {
           className="mt-10 sm:mt-12 lg:mt-16 text-center"
         >
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
-            <p className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">
+            <p className="text-white">
               Still have questions?
             </p>
             <Link to="/contact" className="w-full sm:w-auto">
-              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                <button className="skew-x-[10deg] w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+              <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg">
+                <button className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-white hover:text-cyan-400 transition-all duration-300">
                   Contact Support
                 </button>
               </div>
             </Link>
             <Link to="/faq" className="w-full sm:w-auto">
-              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
-                <button className="skew-x-[10deg] w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+              <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden shadow-lg">
+                <button className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-white hover:text-cyan-400 transition-all duration-300">
                   View All FAQs
                 </button>
               </div>
