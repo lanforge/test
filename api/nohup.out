@@ -256,3 +256,4 @@ Error: listen EADDRINUSE: address already in use :::5001[Scraper] Successfully u
 [Scraper] Failed to fetch data for ASUS Prime GeForce RTX 5060 8GB (Status: 403)
 [Scraper] Failed to fetch data for MONTECH CENTURY II 850W (Status: 403)
 [Scraper] Failed to fetch data for Lian Li LI LANCOOL 207 (Status: 403)
+[Scraper] Failed to fetch data for Team Group Xtreem 32GB 7200 CL34 (Status: 403)

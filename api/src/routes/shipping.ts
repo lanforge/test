@@ -389,12 +389,14 @@ router.post(
         return;
       }
 
+      let responseMessage = 'Label refunded successfully';
+      
       if (!order.shippoTransactionId) {
-        res.status(400).json({ message: 'Stored transaction ID is missing' });
-        return;
+        // If it's an old label generated before we started tracking transaction IDs
+        responseMessage = 'Local label data cleared. (Old label: Please manually void in Shippo dashboard if necessary)';
+      } else {
+        await refundLabel(order.shippoTransactionId);
       }
-
-      await refundLabel(order.shippoTransactionId);
 
       // Clear shipping tracking details from order
       order.trackingNumber = '';
@@ -409,7 +411,7 @@ router.post(
 
       await order.save();
 
-      res.json({ message: 'Label refunded successfully', order });
+      res.json({ message: responseMessage, order });
     } catch (error: any) {
       console.error('Refund label error:', error);
       res.status(500).json({ message: error.message });
