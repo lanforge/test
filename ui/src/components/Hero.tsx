@@ -3,6 +3,12 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
+  const trustPoints = [
+    '3-year warranty',
+    'Built in-house',
+    'Stress tested before shipping',
+  ];
+
   return (
     <section className="relative overflow-hidden bg-gray-950 py-20 md:py-32">
       <div className="absolute inset-0 bg-gradient-radial from-emerald-400/10 via-transparent to-transparent" />
@@ -41,20 +47,30 @@ const Hero: React.FC = () => {
               <Link to="/configurator" className="btn btn-primary px-8 py-4 text-lg">
                 Start a Custom Build
               </Link>
-              <Link to="/pcs" className="text-gray-400 hover:text-cyan-400 transition-colors">
+              <Link to="/pcs" className="btn btn-outline px-8 py-4 text-lg">
                 Shop prebuilt PCs
               </Link>
             </motion.div>
 
             <motion.div
-              className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500"
+              className="mt-8 flex flex-wrap gap-3"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <span>3-year warranty</span>
-              <span>Built in-house</span>
-              <span>Stress tested before shipping</span>
+              {trustPoints.map((point) => (
+                <span
+                  key={point}
+                  className="inline-flex items-center gap-2 rounded-full border border-gray-800 bg-gray-900/80 px-4 py-2 text-sm text-gray-300 shadow-lg"
+                >
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-cyan-400/10 text-[10px] text-cyan-400">
+                    <svg className="h-2.5 w-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  {point}
+                </span>
+              ))}
             </motion.div>
           </div>
 

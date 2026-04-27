@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import Hero from '../components/Hero';
 import ProductShowcase from '../components/ProductShowcase';
 import Reviews from '../components/Reviews';
@@ -55,15 +57,21 @@ const HomePage: React.FC = () => {
               </div>
 
               <div className="grid gap-3 text-sm text-gray-300">
-                <div className="rounded-lg border border-gray-800 bg-gray-950/70 px-4 py-3">
-                  3-year warranty
-                </div>
-                <div className="rounded-lg border border-gray-800 bg-gray-950/70 px-4 py-3">
-                  Stress tested before shipping
-                </div>
-                <div className="rounded-lg border border-gray-800 bg-gray-950/70 px-4 py-3">
-                  Practical setup and upgrade support
-                </div>
+                {[
+                  '3-year warranty',
+                  'Stress tested before shipping',
+                  'Practical setup and upgrade support',
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-3 rounded-xl border border-gray-800 bg-gray-950/70 px-4 py-3"
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-xs text-cyan-400">
+                      <FontAwesomeIcon icon={faCheck} />
+                    </span>
+                    <span>{item}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
