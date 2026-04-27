@@ -1,22 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBolt, faClipboardCheck, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 
 const Hero: React.FC = () => {
-  const highlights = [
-    { label: 'Typical build time', value: '5 business days', icon: faBolt },
-    { label: 'Warranty coverage', value: '3 years', icon: faShieldHalved },
-    { label: 'Assembly process', value: 'Built and tested in-house', icon: faClipboardCheck },
-  ];
-
   return (
-    <section className="relative overflow-hidden bg-gray-950 py-16 md:py-24">
+    <section className="relative overflow-hidden bg-gray-950 py-20 md:py-32">
       <div className="absolute inset-0 bg-gradient-radial from-emerald-400/10 via-transparent to-transparent" />
 
       <div className="container-narrow relative z-10">
-        <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-16 items-center">
+        <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-14 lg:gap-20 items-center">
           {/* Content */}
           <div>
             <motion.div
@@ -29,48 +21,40 @@ const Hero: React.FC = () => {
                 <span className="text-sm font-medium text-white">Custom gaming PCs</span>
               </div>
               
-              <h1 className="heading-1 mb-6">
-                Performance PCs, built clean and tested properly.
+              <h1 className="heading-1 mb-6 max-w-3xl">
+                Build a PC that fits what you actually play.
               </h1>
               
-              <p className="body-large max-w-2xl mb-8">
-                Choose a ready-to-ship model or configure a system around the games,
-                software, and budget you actually use. Every LANForge PC is assembled,
-                cabled, and stress tested before it ships.
+              <p className="body-large max-w-xl mb-10">
+                Start with a clean configuration, choose the parts that matter, and
+                we will assemble, test, and ship the finished system.
               </p>
             </motion.div>
 
             {/* Actions */}
             <motion.div
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10"
+              className="flex flex-col sm:flex-row sm:items-center gap-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <Link to="/configurator" className="btn btn-primary">
+              <Link to="/configurator" className="btn btn-primary px-8 py-4 text-lg">
                 Start a Custom Build
               </Link>
-              <Link to="/pcs" className="btn btn-outline">
-                Shop Prebuilt PCs
+              <Link to="/pcs" className="text-gray-400 hover:text-cyan-400 transition-colors">
+                Shop prebuilt PCs
               </Link>
             </motion.div>
 
-            {/* Highlights */}
             <motion.div
-              className="grid gap-3 sm:grid-cols-3"
+              className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              {highlights.map((item) => (
-                <div key={item.label} className="card p-4">
-                  <div className="text-cyan-400 mb-3">
-                    <FontAwesomeIcon icon={item.icon} />
-                  </div>
-                  <div className="text-sm text-gray-500 mb-1">{item.label}</div>
-                  <div className="text-sm text-white leading-snug">{item.value}</div>
-                </div>
-              ))}
+              <span>3-year warranty</span>
+              <span>Built in-house</span>
+              <span>Stress tested before shipping</span>
             </motion.div>
           </div>
 
@@ -89,14 +73,6 @@ const Hero: React.FC = () => {
                   className="w-full h-auto object-contain"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                {['Thermals checked', 'Cable managed', 'BIOS updated', 'Burn-in tested'].map((item) => (
-                  <div key={item} className="rounded-lg bg-gray-950/70 border border-gray-800 px-3 py-2 text-xs text-gray-300">
-                    {item}
-                  </div>
-                ))}
               </div>
             </div>
           </motion.div>
